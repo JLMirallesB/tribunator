@@ -1,0 +1,3 @@
+- [Project overview](memory/project_tribunator.md) — HTML app for managing exam tribunals, rooms, and scheduling in educational centers
+- [User profile](memory/user_jose_luis.md) — Creator of Tribunator, web developer, Spanish educator context
+- [Design preferences](memory/feedback_design.md) — Minimal B&W design, color only for semantics, no emojis
