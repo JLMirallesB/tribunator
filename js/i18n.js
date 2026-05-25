@@ -259,7 +259,9 @@ Tribunator.translations = {
       subHeaderText: 'Subtítulo',
       customText: 'Texto adicional',
       logo: 'Logo (imagen)',
-      selectTribunals: 'Seleccionar tribunales'
+      selectTribunals: 'Seleccionar tribunales',
+      full: 'PDF completo',
+      membersOnly: 'Solo miembros'
     },
     templates: {
       title: 'Plantillas de prueba',
@@ -576,7 +578,9 @@ Tribunator.translations = {
       subHeaderText: 'Subtítol',
       customText: 'Text addicional',
       logo: 'Logo (imatge)',
-      selectTribunals: 'Seleccionar tribunals'
+      selectTribunals: 'Seleccionar tribunals',
+      full: 'PDF complet',
+      membersOnly: 'Només membres'
     },
     templates: {
       title: 'Plantilles de prova',
@@ -893,7 +897,9 @@ Tribunator.translations = {
       subHeaderText: 'Subtitle',
       customText: 'Additional text',
       logo: 'Logo (image)',
-      selectTribunals: 'Select tribunals'
+      selectTribunals: 'Select tribunals',
+      full: 'Full PDF',
+      membersOnly: 'Members only'
     },
     templates: {
       title: 'Exam templates',

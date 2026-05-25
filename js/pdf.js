@@ -1,172 +1,158 @@
 window.Tribunator = window.Tribunator || {};
 
 Tribunator.PDF = {
-  generate: function(options) {
+  _initDoc: function() {
     if (typeof jspdf === 'undefined' && typeof jsPDF === 'undefined' && typeof window.jspdf === 'undefined') {
       Tribunator.Utils.showToast('jsPDF library not loaded. Ensure internet connection.', 'error');
-      return;
+      return null;
     }
-
     var jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
-    var doc = new jsPDFClass({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    var store = Tribunator.Store;
-    var pageW = 210, margin = 15, contentW = pageW - margin * 2;
-    var y = margin;
+    return new jsPDFClass({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  },
 
-    var addPage = function() { doc.addPage(); y = margin; };
-    var checkPage = function(needed) { if (y + needed > 280) addPage(); };
-
-    // Header
+  _addHeader: function(doc, options, state) {
+    var margin = 15;
     if (options.logo) {
       try {
-        doc.addImage(options.logo, 'PNG', margin, y, 30, 30);
+        doc.addImage(options.logo, 'PNG', margin, state.y, 30, 30);
         if (options.headerText) {
-          doc.setFontSize(16);
-          doc.setFont(undefined, 'bold');
-          doc.text(options.headerText, margin + 35, y + 12);
-          doc.setFontSize(10);
-          doc.setFont(undefined, 'normal');
-          if (options.subHeaderText) doc.text(options.subHeaderText, margin + 35, y + 20);
+          doc.setFontSize(16); doc.setFont(undefined, 'bold');
+          doc.text(options.headerText, margin + 35, state.y + 12);
+          doc.setFontSize(10); doc.setFont(undefined, 'normal');
+          if (options.subHeaderText) doc.text(options.subHeaderText, margin + 35, state.y + 20);
         }
-        y += 35;
+        state.y += 35;
       } catch (e) {
-        if (options.headerText) {
-          doc.setFontSize(18);
-          doc.setFont(undefined, 'bold');
-          doc.text(options.headerText, margin, y + 8);
-          y += 12;
-          if (options.subHeaderText) { doc.setFontSize(10); doc.setFont(undefined, 'normal'); doc.text(options.subHeaderText, margin, y + 4); y += 8; }
-        }
+        this._addHeaderText(doc, options, state);
       }
-    } else if (options.headerText) {
-      doc.setFontSize(18);
-      doc.setFont(undefined, 'bold');
-      doc.text(options.headerText, margin, y + 8);
-      y += 12;
-      if (options.subHeaderText) { doc.setFontSize(10); doc.setFont(undefined, 'normal'); doc.text(options.subHeaderText, margin, y + 4); y += 8; }
+    } else {
+      this._addHeaderText(doc, options, state);
     }
-
-    // Custom text
     if (options.customText) {
       doc.setFontSize(10); doc.setFont(undefined, 'normal');
-      var lines = doc.splitTextToSize(options.customText, contentW);
-      checkPage(lines.length * 5 + 4);
-      doc.text(lines, margin, y + 4);
-      y += lines.length * 5 + 6;
+      var lines = doc.splitTextToSize(options.customText, 180);
+      state.check(lines.length * 5 + 4);
+      doc.text(lines, margin, state.y + 4);
+      state.y += lines.length * 5 + 6;
     }
-
-    // Separator
     doc.setDrawColor(200);
-    doc.line(margin, y, pageW - margin, y);
-    y += 6;
+    doc.line(margin, state.y, 195, state.y);
+    state.y += 6;
+  },
 
-    // Tribunals
+  _addHeaderText: function(doc, options, state) {
+    if (options.headerText) {
+      doc.setFontSize(18); doc.setFont(undefined, 'bold');
+      doc.text(options.headerText, 15, state.y + 8); state.y += 12;
+      if (options.subHeaderText) { doc.setFontSize(10); doc.setFont(undefined, 'normal'); doc.text(options.subHeaderText, 15, state.y + 4); state.y += 8; }
+    }
+  },
+
+  _addFooter: function(doc) {
+    var pageCount = doc.getNumberOfPages();
+    for (var i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8); doc.setFont(undefined, 'normal'); doc.setTextColor(150);
+      doc.text('Tribunator — ' + new Date().toLocaleDateString(), 15, 290);
+      doc.text(i + '/' + pageCount, 195, 290, { align: 'right' });
+      doc.setTextColor(0);
+    }
+  },
+
+  _printMembers: function(doc, members, store, state, indent) {
+    doc.setFontSize(9); doc.setFont(undefined, 'normal');
+    members.forEach(function(m) {
+      var c = store.getCandidate(m.candidateId);
+      var displayName = c ? (c.useTitular && c.titularSurnames ? c.titularSurnames + ', ' + c.titularName : c.surnames + ', ' + c.name) : '—';
+      var text = displayName;
+      if (m.role) text += ' — ' + m.role;
+      if (c && c.specialty) text += ' (' + c.specialty + ')';
+      if (c && store.isSubstitute(c.id)) text += c.useTitular ? ' [titular]' : ' [sustituto]';
+      state.check(5);
+      doc.text(indent + text, 15, state.y + 3);
+      state.y += 5;
+    });
+  },
+
+  // Full PDF: members + variations + schedule
+  generateFull: function(options) {
+    var doc = this._initDoc();
+    if (!doc) return;
+    var store = Tribunator.Store;
+    var margin = 15;
+    var state = { y: margin, check: function(n) { if (state.y + n > 280) { doc.addPage(); state.y = margin; } } };
+
+    this._addHeader(doc, options, state);
+
     var sol = store.getSolution(options.solutionId);
     if (!sol) return;
-    var tribunals = options.tribunalIds ? sol.tribunals.filter(function(t) { return options.tribunalIds.indexOf(t.id) !== -1; }) : sol.tribunals;
+    var tribunals = options.tribunalIds ? sol.tribunals.filter(function(tr) { return options.tribunalIds.indexOf(tr.id) !== -1; }) : sol.tribunals;
 
     tribunals.forEach(function(trib, idx) {
-      if (idx > 0) { checkPage(40); doc.setDrawColor(220); doc.line(margin, y - 2, pageW - margin, y - 2); y += 4; }
+      if (idx > 0) { state.check(40); doc.setDrawColor(220); doc.line(margin, state.y - 2, 195, state.y - 2); state.y += 4; }
 
-      // Tribunal name
-      checkPage(20);
-      doc.setFontSize(14);
-      doc.setFont(undefined, 'bold');
-      doc.text(trib.name, margin, y + 5);
-      y += 10;
+      state.check(20);
+      doc.setFontSize(14); doc.setFont(undefined, 'bold');
+      doc.text(trib.name, margin, state.y + 5); state.y += 10;
 
       // Members
       if (trib.members.length > 0) {
-        doc.setFontSize(11);
-        doc.setFont(undefined, 'bold');
-        doc.text(t('tribunals.members'), margin, y + 4);
-        y += 7;
+        doc.setFontSize(11); doc.setFont(undefined, 'bold');
+        doc.text(t('tribunals.members'), margin, state.y + 4); state.y += 7;
+        Tribunator.PDF._printMembers(doc, trib.members, store, state, '  ');
+        state.y += 2;
+      }
 
-        doc.setFontSize(9);
-        doc.setFont(undefined, 'normal');
-        trib.members.forEach(function(m) {
-          var c = store.getCandidate(m.candidateId);
-          var text = (c ? c.surnames + ', ' + c.name : '—');
-          if (m.role) text += ' — ' + m.role;
-          if (c && c.specialty) text += ' (' + c.specialty + ')';
-          checkPage(5);
-          doc.text('  ' + text, margin, y + 3);
-          y += 5;
+      // Variations
+      var variations = trib.variations || [];
+      if (variations.length > 0) {
+        variations.forEach(function(v) {
+          state.check(15);
+          doc.setFontSize(10); doc.setFont(undefined, 'bold');
+          doc.text(t('tribunals.variations') + ': ' + v.name, margin + 3, state.y + 4); state.y += 6;
+          Tribunator.PDF._printMembers(doc, v.members, store, state, '    ');
+          state.y += 2;
         });
-        y += 3;
       }
 
       // Schedule
       var schedule = trib.schedule || [];
-      if (schedule.length > 0) {
-        doc.setFontSize(11);
-        doc.setFont(undefined, 'bold');
-        checkPage(10);
-        doc.text(t('tribunals.schedule'), margin, y + 4);
-        y += 7;
+      if (schedule.length > 0 && !options.membersOnly) {
+        doc.setFontSize(11); doc.setFont(undefined, 'bold');
+        state.check(10);
+        doc.text(t('tribunals.schedule'), margin, state.y + 4); state.y += 7;
 
         schedule.forEach(function(sched) {
           var day = store.getDay(sched.dayId);
           if (!day) return;
-
-          checkPage(12);
-          doc.setFontSize(10);
-          doc.setFont(undefined, 'bold');
-          doc.text(Tribunator.Time.formatDate(day.date), margin + 3, y + 4);
-          y += 6;
-
-          doc.setFontSize(9);
-          doc.setFont(undefined, 'normal');
-
-          if (sched.primaryRoomId) {
-            var rm = store.getRoom(sched.primaryRoomId);
-            checkPage(5);
-            doc.text('  ' + t('tribunals.primaryRoom') + ': ' + (rm ? rm.room.name : '—'), margin, y + 3);
-            y += 5;
-          }
-
-          if (sched.activity) {
-            checkPage(5);
-            doc.text('  ' + t('tribunals.dayActivity') + ': ' + sched.activity, margin, y + 3);
-            y += 5;
-          }
-
-          (sched.supportRooms || []).forEach(function(sr) {
-            var srm = store.getRoom(sr.roomId);
-            checkPage(5);
-            doc.text('  ' + t('tribunals.supportRooms') + ': ' + (srm ? srm.room.name : '—') + (sr.purpose ? ' (' + sr.purpose + ')' : ''), margin, y + 3);
-            y += 5;
-          });
+          state.check(12);
+          doc.setFontSize(10); doc.setFont(undefined, 'bold');
+          doc.text(Tribunator.Time.formatDate(day.date), margin + 3, state.y + 4); state.y += 6;
+          doc.setFontSize(9); doc.setFont(undefined, 'normal');
 
           (sched.slots || []).forEach(function(slot) {
             var slotRoom = slot.roomId ? store.getRoom(slot.roomId) : null;
             var text = '  ' + slot.startTime + '–' + slot.endTime;
             if (slotRoom) text += '  ' + slotRoom.room.name;
             if (slot.activity) text += '  — ' + slot.activity;
-            checkPage(5);
-            doc.text(text, margin, y + 3);
-            y += 5;
+            state.check(5);
+            doc.text(text, margin, state.y + 3); state.y += 5;
           });
-
-          y += 3;
+          state.y += 3;
         });
       }
     });
 
-    // Footer
-    var pageCount = doc.getNumberOfPages();
-    for (var i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      doc.setFontSize(8);
-      doc.setFont(undefined, 'normal');
-      doc.setTextColor(150);
-      doc.text('Tribunator — ' + new Date().toLocaleDateString(), margin, 290);
-      doc.text(i + '/' + pageCount, pageW - margin, 290, { align: 'right' });
-      doc.setTextColor(0);
-    }
-
-    doc.save('tribunator-' + (sol.name || 'export').replace(/[^a-zA-Z0-9]/g, '_') + '.pdf');
+    this._addFooter(doc);
+    var suffix = options.membersOnly ? 'miembros' : 'completo';
+    doc.save('tribunator-' + suffix + '-' + (sol.name || 'export').replace(/[^a-zA-Z0-9]/g, '_') + '.pdf');
     Tribunator.Utils.showToast(t('common.success'));
+  },
+
+  // Members-only PDF (no dates/schedule)
+  generateMembersOnly: function(options) {
+    options.membersOnly = true;
+    this.generateFull(options);
   },
 
   showExportDialog: function() {
@@ -180,8 +166,7 @@ Tribunator.PDF = {
     var customTextInput = el('textarea', { className: 'form-textarea', placeholder: t('pdf.customText') });
     var logoInput = el('input', { type: 'file', accept: 'image/*', className: 'form-input' });
 
-    // Tribunal checkboxes
-    var selectedIds = activeSol.tribunals.map(function(t) { return t.id; });
+    var selectedIds = activeSol.tribunals.map(function(tr) { return tr.id; });
     var tribunalList = el('div', { style: { maxHeight: '200px', overflowY: 'auto', marginTop: '8px' } });
     activeSol.tribunals.forEach(function(trib) {
       var label = el('label', { style: { display: 'flex', alignItems: 'center', gap: '8px', padding: '3px 0', cursor: 'pointer', fontSize: '13px' } });
@@ -195,6 +180,24 @@ Tribunator.PDF = {
       tribunalList.appendChild(label);
     });
 
+    var buildOpts = function(callback) {
+      var opts = {
+        solutionId: activeSol.id,
+        tribunalIds: selectedIds,
+        headerText: headerInput.value,
+        subHeaderText: subHeaderInput.value,
+        customText: customTextInput.value
+      };
+      var logoFile = logoInput.files[0];
+      if (logoFile) {
+        var reader = new FileReader();
+        reader.onload = function(e) { opts.logo = e.target.result; callback(opts); };
+        reader.readAsDataURL(logoFile);
+      } else {
+        callback(opts);
+      }
+    };
+
     Tribunator.Utils.showModal({
       title: t('tribunals.pdf'),
       body: el('div', {}, [
@@ -206,31 +209,8 @@ Tribunator.PDF = {
       ]),
       buttons: [
         { text: t('common.cancel'), className: 'btn-secondary' },
-        {
-          text: t('tribunals.pdf'),
-          className: 'btn-primary',
-          action: function() {
-            var logoFile = logoInput.files[0];
-            var opts = {
-              solutionId: activeSol.id,
-              tribunalIds: selectedIds,
-              headerText: headerInput.value,
-              subHeaderText: subHeaderInput.value,
-              customText: customTextInput.value
-            };
-
-            if (logoFile) {
-              var reader = new FileReader();
-              reader.onload = function(e) {
-                opts.logo = e.target.result;
-                Tribunator.PDF.generate(opts);
-              };
-              reader.readAsDataURL(logoFile);
-            } else {
-              Tribunator.PDF.generate(opts);
-            }
-          }
-        }
+        { text: t('pdf.membersOnly'), className: 'btn-primary', action: function() { buildOpts(function(opts) { Tribunator.PDF.generateMembersOnly(opts); }); } },
+        { text: t('pdf.full'), className: 'btn-primary', action: function() { buildOpts(function(opts) { Tribunator.PDF.generateFull(opts); }); } }
       ]
     });
   }
