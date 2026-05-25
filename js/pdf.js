@@ -358,7 +358,11 @@ Tribunator.PDF = {
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.headerText') }), headerInput]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.subHeaderText') }), subHeaderInput]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.customText') }), customTextInput]),
-        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.logo') }), logoInput]),
+        el('div', { className: 'form-group' }, [
+          el('label', { className: 'form-label', textContent: t('pdf.logo') }),
+          logoInput,
+          el('span', { style: { fontSize: '11px', color: 'var(--text-muted)', marginLeft: '4px' }, textContent: t('pdf.logoHint') })
+        ]),
         el('div', { className: 'form-group' }, [
           el('label', { className: 'form-label', textContent: t('pdf.accentColor') }),
           el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } }, [

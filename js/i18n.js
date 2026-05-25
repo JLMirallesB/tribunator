@@ -265,7 +265,8 @@ Tribunator.translations = {
       membersOnly: 'Solo miembros',
       showTitular: 'Mostrar titular entre paréntesis cuando el miembro es sustituto',
       accentColor: 'Color principal',
-      accentHint: 'Gris por defecto. Elige un color para cabeceras y acentos.'
+      accentHint: 'Gris por defecto. Elige un color para cabeceras y acentos.',
+      logoHint: 'Recomendado: imagen cuadrada'
     },
     templates: {
       title: 'Plantillas de prueba',
@@ -588,7 +589,8 @@ Tribunator.translations = {
       membersOnly: 'Només membres',
       showTitular: 'Mostrar titular entre parèntesi quan el membre és substitut',
       accentColor: 'Color principal',
-      accentHint: 'Gris per defecte. Tria un color per a capçaleres i accents.'
+      accentHint: 'Gris per defecte. Tria un color per a capçaleres i accents.',
+      logoHint: 'Recomanat: imatge quadrada'
     },
     templates: {
       title: 'Plantilles de prova',
@@ -911,7 +913,8 @@ Tribunator.translations = {
       membersOnly: 'Members only',
       showTitular: 'Show titular in parentheses when member is a substitute',
       accentColor: 'Accent color',
-      accentHint: 'Gray by default. Choose a color for headers and accents.'
+      accentHint: 'Gray by default. Choose a color for headers and accents.',
+      logoHint: 'Recommended: square image'
     },
     templates: {
       title: 'Exam templates',
