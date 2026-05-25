@@ -379,7 +379,7 @@ Tribunator.PDF = {
 
     // PDF type selector
     var pdfType = 'tribunals';
-    var typeArea = el('div', { style: { display: 'flex', gap: '4px', marginBottom: '12px', flexWrap: 'wrap' } });
+    var typeArea = el('div', { className: 'btn-group', style: { marginBottom: '12px' } });
     var optionsArea = el('div');
 
     var typeButtons = {};
@@ -391,6 +391,7 @@ Tribunator.PDF = {
           pdfType = tp;
           Object.keys(typeButtons).forEach(function(k) { typeButtons[k].className = 'btn btn-sm' + (k === tp ? ' active' : ''); });
           renderOptions();
+          renderFooterButtons();
         }
       });
       typeButtons[tp] = btn;
@@ -406,82 +407,86 @@ Tribunator.PDF = {
     var logoInput = el('input', { type: 'file', accept: 'image/*', className: 'form-input' });
     var colorInput = el('input', { type: 'color', value: '#3c3c3c', style: { width: '40px', height: '28px', border: 'none', cursor: 'pointer' } });
 
-    // Role checkboxes
+    // Shared state
     var roleDefs = store.getRoleDefs();
     var selectedRoles = roleDefs.filter(function(r){return r.requireOne||r.counts;}).map(function(r){return r.name;});
-    var roleList = el('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '4px' } });
-    roleDefs.forEach(function(role) {
-      var isD = role.requireOne || role.counts;
-      var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', cursor: 'pointer' } });
-      var cb = el('input', { type: 'checkbox' }); cb.checked = isD;
-      cb.addEventListener('change', function() { if (cb.checked) { if (selectedRoles.indexOf(role.name)===-1) selectedRoles.push(role.name); } else { selectedRoles = selectedRoles.filter(function(r){return r!==role.name;}); } });
-      lbl.appendChild(cb); lbl.appendChild(document.createTextNode(role.name)); roleList.appendChild(lbl);
-    });
-    var showTitularCb = el('input', { type: 'checkbox' }); showTitularCb.checked = true;
-
-    // Tribunal checkboxes
     var selectedIds = activeSol.tribunals.map(function(tr){return tr.id;});
-    var tribunalList = el('div', { style: { maxHeight: '120px', overflowY: 'auto', marginTop: '4px' } });
-    activeSol.tribunals.forEach(function(trib) {
-      var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', padding: '2px 0', cursor: 'pointer', fontSize: '12px' } });
-      var cb = el('input', { type: 'checkbox' }); cb.checked = true;
-      cb.addEventListener('change', function() { if (cb.checked) selectedIds.push(trib.id); else selectedIds = selectedIds.filter(function(id){return id!==trib.id;}); });
-      lbl.appendChild(cb); lbl.appendChild(document.createTextNode(trib.name)); tribunalList.appendChild(lbl);
-    });
-
-    // Day selector
     var days = store.getDays();
     var selectedDayIds = days.map(function(d){return d.id;});
-    var dayList = el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' } });
-    days.forEach(function(day) {
-      var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', cursor: 'pointer' } });
-      var cb = el('input', { type: 'checkbox' }); cb.checked = true;
-      cb.addEventListener('change', function() { if (cb.checked) selectedDayIds.push(day.id); else selectedDayIds = selectedDayIds.filter(function(id){return id!==day.id;}); });
-      lbl.appendChild(cb); lbl.appendChild(document.createTextNode(Tribunator.Time.formatDate(day.date))); dayList.appendChild(lbl);
-    });
-
-    // Floor selector
     var allFloors = [];
     store.getCampuses().forEach(function(c) { c.floors.forEach(function(f) { allFloors.push({ campus: c, floor: f }); }); });
     var selectedFloorIds = allFloors.map(function(f){return f.floor.id;});
+    var showTitular = true;
+    var halfPage = false;
+    var includeEmpty = false;
+    var signDayId = days.length > 0 ? days[0].id : null;
+    var planDayId = null;
 
-    // Sign day selector
-    var signDaySel = el('select', { className: 'form-select' });
-    days.forEach(function(d, i) { var o = el('option', { value: d.id, textContent: Tribunator.Time.formatDate(d.date) }); signDaySel.appendChild(o); });
-
-    // Plan day selector
-    var planDaySel = el('select', { className: 'form-select' });
-    planDaySel.appendChild(el('option', { value: '', textContent: '— ' + t('pdf.noDay') + ' —' }));
-    days.forEach(function(d) { planDaySel.appendChild(el('option', { value: d.id, textContent: Tribunator.Time.formatDate(d.date) })); });
-
-    var halfPageCb = el('input', { type: 'checkbox' });
-    var includeEmptyCb = el('input', { type: 'checkbox' });
+    // Builders
+    var makeRoleList = function() {
+      var rl = el('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '4px' } });
+      roleDefs.forEach(function(role) {
+        var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', cursor: 'pointer' } });
+        var cb = el('input', { type: 'checkbox' }); cb.checked = selectedRoles.indexOf(role.name) !== -1;
+        cb.addEventListener('change', function() { if (cb.checked) { if (selectedRoles.indexOf(role.name)===-1) selectedRoles.push(role.name); } else { selectedRoles = selectedRoles.filter(function(r){return r!==role.name;}); } });
+        lbl.appendChild(cb); lbl.appendChild(document.createTextNode(role.name)); rl.appendChild(lbl);
+      });
+      return rl;
+    };
+    var makeTribunalList = function() {
+      var tl = el('div', { style: { maxHeight: '120px', overflowY: 'auto', marginTop: '4px' } });
+      activeSol.tribunals.forEach(function(trib) {
+        var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', padding: '2px 0', cursor: 'pointer', fontSize: '12px' } });
+        var cb = el('input', { type: 'checkbox' }); cb.checked = selectedIds.indexOf(trib.id) !== -1;
+        cb.addEventListener('change', function() { if (cb.checked) { if (selectedIds.indexOf(trib.id)===-1) selectedIds.push(trib.id); } else { selectedIds = selectedIds.filter(function(id){return id!==trib.id;}); } });
+        lbl.appendChild(cb); lbl.appendChild(document.createTextNode(trib.name)); tl.appendChild(lbl);
+      });
+      return tl;
+    };
+    var makeDayList = function() {
+      var dl = el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' } });
+      days.forEach(function(day) {
+        var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', cursor: 'pointer' } });
+        var cb = el('input', { type: 'checkbox' }); cb.checked = selectedDayIds.indexOf(day.id) !== -1;
+        cb.addEventListener('change', function() { if (cb.checked) { if (selectedDayIds.indexOf(day.id)===-1) selectedDayIds.push(day.id); } else { selectedDayIds = selectedDayIds.filter(function(id){return id!==day.id;}); } });
+        lbl.appendChild(cb); lbl.appendChild(document.createTextNode(Tribunator.Time.formatDate(day.date))); dl.appendChild(lbl);
+      });
+      return dl;
+    };
 
     var renderOptions = function() {
       Tribunator.Utils.clearElement(optionsArea);
       if (pdfType === 'tribunals') {
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), roleList]));
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [showTitularCb, document.createTextNode(t('pdf.showTitular'))])]));
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.tribunals') }), tribunalList]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), makeRoleList()]));
+        var stCb = el('input', { type: 'checkbox' }); stCb.checked = showTitular; stCb.addEventListener('change', function() { showTitular = stCb.checked; });
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [stCb, document.createTextNode(t('pdf.showTitular'))])]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.tribunals') }), makeTribunalList()]));
       } else if (pdfType === 'daily') {
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('time.days') }), dayList]));
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.tribunals') }), tribunalList]));
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), roleList]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('time.days') }), makeDayList()]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.tribunals') }), makeTribunalList()]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), makeRoleList()]));
       } else if (pdfType === 'plans') {
         var floorList = el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' } });
         allFloors.forEach(function(f) {
           var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', cursor: 'pointer' } });
-          var cb = el('input', { type: 'checkbox' }); cb.checked = true;
-          cb.addEventListener('change', function() { if (cb.checked) selectedFloorIds.push(f.floor.id); else selectedFloorIds = selectedFloorIds.filter(function(id){return id!==f.floor.id;}); });
+          var cb = el('input', { type: 'checkbox' }); cb.checked = selectedFloorIds.indexOf(f.floor.id) !== -1;
+          cb.addEventListener('change', function() { if (cb.checked) { if (selectedFloorIds.indexOf(f.floor.id)===-1) selectedFloorIds.push(f.floor.id); } else { selectedFloorIds = selectedFloorIds.filter(function(id){return id!==f.floor.id;}); } });
           lbl.appendChild(cb); lbl.appendChild(document.createTextNode(f.campus.name + ' — ' + f.floor.name)); floorList.appendChild(lbl);
         });
         optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('space.floors') }), floorList]));
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.planDay') }), planDaySel]));
+        var pdSel = el('select', { className: 'form-select', onChange: function() { planDayId = pdSel.value || null; } });
+        pdSel.appendChild(el('option', { value: '', textContent: '— ' + t('pdf.noDay') + ' —' }));
+        days.forEach(function(d) { var o = el('option', { value: d.id, textContent: Tribunator.Time.formatDate(d.date) }); if (d.id === planDayId) o.selected = true; pdSel.appendChild(o); });
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.planDay') }), pdSel]));
       } else if (pdfType === 'signs') {
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('time.date') }), signDaySel]));
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), roleList]));
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [halfPageCb, document.createTextNode(t('pdf.halfPage'))])]));
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [includeEmptyCb, document.createTextNode(t('pdf.includeEmpty'))])]));
+        var sdSel = el('select', { className: 'form-select', onChange: function() { signDayId = sdSel.value; } });
+        days.forEach(function(d) { var o = el('option', { value: d.id, textContent: Tribunator.Time.formatDate(d.date) }); if (d.id === signDayId) o.selected = true; sdSel.appendChild(o); });
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('time.date') }), sdSel]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), makeRoleList()]));
+        var hpCb = el('input', { type: 'checkbox' }); hpCb.checked = halfPage; hpCb.addEventListener('change', function() { halfPage = hpCb.checked; });
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [hpCb, document.createTextNode(t('pdf.halfPage'))])]));
+        var ieCb = el('input', { type: 'checkbox' }); ieCb.checked = includeEmpty; ieCb.addEventListener('change', function() { includeEmpty = ieCb.checked; });
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [ieCb, document.createTextNode(t('pdf.includeEmpty'))])]));
       }
     };
     renderOptions();
@@ -492,13 +497,32 @@ Tribunator.PDF = {
         headerText: headerInput.value, subHeaderText: subHeaderInput.value, customText: customTextInput.value,
         accentColor: self._hexToRgb(colorInput.value),
         solutionId: activeSol.id, tribunalIds: selectedIds.slice(), selectedRoles: selectedRoles.slice(),
-        showTitular: showTitularCb.checked, dayIds: selectedDayIds.slice(), floorIds: selectedFloorIds.slice(),
-        planDayId: planDaySel.value || null, signDayId: signDaySel.value, halfPage: halfPageCb.checked, includeEmpty: includeEmptyCb.checked
+        showTitular: showTitular, dayIds: selectedDayIds.slice(), floorIds: selectedFloorIds.slice(),
+        planDayId: planDayId, signDayId: signDayId, halfPage: halfPage, includeEmpty: includeEmpty
       };
       var logoFile = logoInput.files[0];
       if (logoFile) { var reader = new FileReader(); reader.onload = function(e) { opts.logo = e.target.result; callback(opts); }; reader.readAsDataURL(logoFile); }
       else callback(opts);
     };
+
+    // Footer buttons that update based on type
+    var footerArea = el('div', { id: 'pdf-footer-buttons', style: { display: 'flex', gap: '8px', justifyContent: 'flex-end' } });
+    var renderFooterButtons = function() {
+      Tribunator.Utils.clearElement(footerArea);
+      footerArea.appendChild(el('button', { className: 'btn btn-secondary', textContent: t('common.cancel'), onClick: function() { var ov = footerArea.closest('.modal-overlay'); if (ov) ov.remove(); } }));
+      if (pdfType === 'tribunals') {
+        footerArea.appendChild(el('button', { className: 'btn btn-primary', textContent: t('pdf.membersOnly'), onClick: function() { buildOpts(function(o) { o.membersOnly = true; self.generateTribunals(o); }); } }));
+      }
+      footerArea.appendChild(el('button', { className: 'btn btn-primary', textContent: t('pdf.generate'), onClick: function() {
+        buildOpts(function(o) {
+          if (pdfType === 'tribunals') self.generateTribunals(o);
+          else if (pdfType === 'daily') self.generateDailyPlanning(o);
+          else if (pdfType === 'plans') self.generateFloorPlans(o);
+          else if (pdfType === 'signs') self.generateRoomSigns(o);
+        });
+      }}));
+    };
+    renderFooterButtons();
 
     Tribunator.Utils.showModal({
       title: t('tribunals.pdf'),
@@ -512,20 +536,10 @@ Tribunator.PDF = {
           el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.logo') }), logoInput, el('span', { style: { fontSize: '10px', color: 'var(--text-muted)' }, textContent: t('pdf.logoHint') })]),
           el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.accentColor') }), colorInput])
         ]),
-        optionsArea
+        optionsArea,
+        footerArea
       ]),
-      buttons: [
-        { text: t('common.cancel'), className: 'btn-secondary' },
-        pdfType === 'tribunals' ? { text: t('pdf.membersOnly'), className: 'btn-primary', action: function() { buildOpts(function(o) { o.membersOnly = true; self.generateTribunals(o); }); } } : null,
-        { text: t('pdf.generate'), className: 'btn-primary', action: function() {
-          buildOpts(function(o) {
-            if (pdfType === 'tribunals') self.generateTribunals(o);
-            else if (pdfType === 'daily') self.generateDailyPlanning(o);
-            else if (pdfType === 'plans') self.generateFloorPlans(o);
-            else if (pdfType === 'signs') self.generateRoomSigns(o);
-          });
-        }}
-      ].filter(Boolean)
+      buttons: []
     });
   }
 };
