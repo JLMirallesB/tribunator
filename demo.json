@@ -882,21 +882,21 @@
           "variations": [
             {
               "id": "v1",
-              "name": "Variación tarde",
+              "name": "Alumnos de Ana García",
               "members": [
                 {
                   "id": "vm1",
-                  "candidateId": "c1",
+                  "candidateId": "c15",
                   "role": "Presidente/a"
                 },
                 {
                   "id": "vm2",
-                  "candidateId": "c11",
+                  "candidateId": "c2",
                   "role": "Vocal"
                 },
                 {
                   "id": "vm3",
-                  "candidateId": "c2",
+                  "candidateId": "c11",
                   "role": "Secretario/a"
                 },
                 {
@@ -999,21 +999,21 @@
           "variations": [
             {
               "id": "v2",
-              "name": "Si falta Marta",
+              "name": "Alumnos de Pablo Ruiz",
               "members": [
                 {
                   "id": "vm5",
-                  "candidateId": "c7",
+                  "candidateId": "c5",
                   "role": "Presidente/a"
                 },
                 {
                   "id": "vm6",
-                  "candidateId": "c6",
+                  "candidateId": "c16",
                   "role": "Vocal"
                 },
                 {
                   "id": "vm7",
-                  "candidateId": "c16",
+                  "candidateId": "c7",
                   "role": "Secretario/a"
                 },
                 {
@@ -1232,7 +1232,7 @@
           "variations": [
             {
               "id": "v3",
-              "name": "Con titular (Pedro Gómez)",
+              "name": "Alumnos de Andrés Romero",
               "members": [
                 {
                   "id": "vm9",
@@ -1241,7 +1241,7 @@
                 },
                 {
                   "id": "vm10",
-                  "candidateId": "c10",
+                  "candidateId": "c3",
                   "role": "Vocal"
                 },
                 {
