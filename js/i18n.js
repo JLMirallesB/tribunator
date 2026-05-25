@@ -266,7 +266,8 @@ Tribunator.translations = {
       showTitular: 'Mostrar titular entre paréntesis cuando el miembro es sustituto',
       accentColor: 'Color principal',
       accentHint: 'Gris por defecto. Elige un color para cabeceras y acentos.',
-      logoHint: 'Recomendado: imagen cuadrada'
+      logoHint: 'Recomendado: imagen cuadrada',
+      titularFootnote: 'será sustituido/a por el/la titular de la plaza si se reincorpora'
     },
     templates: {
       title: 'Plantillas de prueba',
@@ -590,7 +591,8 @@ Tribunator.translations = {
       showTitular: 'Mostrar titular entre parèntesi quan el membre és substitut',
       accentColor: 'Color principal',
       accentHint: 'Gris per defecte. Tria un color per a capçaleres i accents.',
-      logoHint: 'Recomanat: imatge quadrada'
+      logoHint: 'Recomanat: imatge quadrada',
+      titularFootnote: 'serà substituït/da pel/la titular de la plaça si es reincorpora'
     },
     templates: {
       title: 'Plantilles de prova',
@@ -914,7 +916,8 @@ Tribunator.translations = {
       showTitular: 'Show titular in parentheses when member is a substitute',
       accentColor: 'Accent color',
       accentHint: 'Gray by default. Choose a color for headers and accents.',
-      logoHint: 'Recommended: square image'
+      logoHint: 'Recommended: square image',
+      titularFootnote: 'will be replaced by the position holder if they return'
     },
     templates: {
       title: 'Exam templates',

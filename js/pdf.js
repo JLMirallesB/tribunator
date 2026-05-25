@@ -95,14 +95,13 @@ Tribunator.PDF = {
 
   _tribunalHeader: function(doc, name, state, options) {
     state.check(18);
-    doc.setFillColor.apply(doc, this._accent(options));
-    doc.rect(this.MARGIN, state.y, this.CONTENT_W, 0.8, 'F');
-    state.y += 4;
-    // Tribunal name
-    doc.setFontSize(14); doc.setFont(undefined, 'bold');
-    doc.setTextColor.apply(doc, this.DARK);
-    doc.text(name, this.MARGIN, state.y + 5);
-    state.y += 10;
+    var bandH = 9;
+    doc.setFillColor.apply(doc, this.DARK);
+    doc.rect(this.MARGIN, state.y, this.CONTENT_W, bandH, 'F');
+    doc.setFontSize(12); doc.setFont(undefined, 'bold');
+    doc.setTextColor.apply(doc, this.WHITE);
+    doc.text(name, this.MARGIN + 4, state.y + 6.5);
+    state.y += bandH + 3;
     doc.setTextColor(0);
   },
 
@@ -123,33 +122,33 @@ Tribunator.PDF = {
     if (filtered.length === 0) return;
 
     var self = this;
+    var footnotes = [];
+    var footnoteIdx = 0;
+
     var rows = filtered.map(function(m) {
       var c = store.getCandidate(m.candidateId);
       var surnames = c ? (c.useTitular && c.titularSurnames ? c.titularSurnames : c.surnames) : '—';
       var name = c ? (c.useTitular && c.titularName ? c.titularName : c.name) : '';
       var role = m.role || '';
       var specialty = c ? (c.specialty || '') : '';
-      var note = '';
       if (c && store.isSubstitute(c.id) && !c.useTitular && showTitular) {
-        note = '(titular: ' + c.titularSurnames + ', ' + c.titularName + ')';
+        footnoteIdx++;
+        surnames += ' *' + footnoteIdx;
+        footnotes.push({ idx: footnoteIdx, sub: c.surnames + ', ' + c.name, titular: c.titularSurnames + ', ' + c.titularName });
       }
-      return [surnames, name, role, specialty, note];
+      return [surnames, name, role, specialty];
     });
 
-    var hasTitularNotes = rows.some(function(r) { return r[4] !== ''; });
     var head = [[t('tribunals.candidateSurnames'), t('tribunals.candidateName'), t('tribunals.role'), t('tribunals.candidateSpecialty')]];
-    if (hasTitularNotes) head[0].push(t('tribunals.titular'));
-    var body = rows.map(function(r) { return hasTitularNotes ? r : r.slice(0, 4); });
 
     doc.autoTable({
       startY: state.y,
       margin: { left: self.MARGIN, right: self.MARGIN },
       head: head,
-      body: body,
+      body: rows,
       styles: { fontSize: 8, cellPadding: 2, lineColor: [220, 220, 220], lineWidth: 0.2 },
       headStyles: { fillColor: self._accent(options), textColor: self.WHITE, fontStyle: 'bold', fontSize: 8 },
       alternateRowStyles: { fillColor: self.TABLE_ALT },
-      columnStyles: hasTitularNotes ? { 4: { fontStyle: 'italic', textColor: self.GRAY, fontSize: 7 } } : {},
       didParseCell: function(data) {
         if (data.section === 'body') {
           var m = filtered[data.row.index];
@@ -164,7 +163,19 @@ Tribunator.PDF = {
       }
     });
 
-    state.y = doc.lastAutoTable.finalY + 4;
+    state.y = doc.lastAutoTable.finalY + 2;
+
+    if (footnotes.length > 0) {
+      doc.setFontSize(7); doc.setFont(undefined, 'italic');
+      doc.setTextColor.apply(doc, self.GRAY);
+      footnotes.forEach(function(fn) {
+        state.check(8);
+        doc.text('*' + fn.idx + ' ' + fn.sub + ' — ' + t('pdf.titularFootnote') + ': ' + fn.titular, self.MARGIN + 2, state.y + 3);
+        state.y += 4;
+      });
+      doc.setTextColor(0); doc.setFont(undefined, 'normal');
+      state.y += 2;
+    }
   },
 
   _variationsBlock: function(doc, variations, store, state, selectedRoles, showTitular, options) {
