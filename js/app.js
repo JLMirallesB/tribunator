@@ -28,7 +28,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v0.2.3' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v0.3.0' })
     ]));
 
     // Phase nav
@@ -217,38 +217,62 @@ Tribunator.App = {
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
       {
-        version: '0.2.3',
+        version: '0.3.0',
         date: '2026-05-25',
         changes: {
           es: [
-            'PDF: selección de roles a imprimir con checkboxes',
-            'PDF: opción de mostrar titular entre paréntesis para sustitutos',
-            'PDF: dos modos de exportación (completo y solo miembros)',
-            'PDF: variaciones de tribunal incluidas en ambos modos',
-            'Presidente/a, Vocal y Secretario/a ahora son roles requeridos (aviso si faltan)',
-            'Demo: roles de Asesor/a y Ayudante en tribunales de ejemplo',
-            'Demo: planos en forma de L y variaciones de tribunal',
-            'Enlace de contacto para errores y sugerencias en el footer'
+            'PDF rediseñado con tablas reales (jsPDF-AutoTable)',
+            'PDF: franja negra con nombre del tribunal en blanco',
+            'PDF: sustitutos con asterisco y nota al pie sobre titulares',
+            'PDF: color principal configurable (escala de grises por defecto)',
+            'PDF: selección de roles a imprimir',
+            'PDF: opción de mostrar titular entre paréntesis',
+            'PDF: horario ordenado cronológicamente',
+            'Sidebar rediseñado: cabeceras con fondo oscuro',
+            'Secciones colapsables: Agrupaciones, Campos, Roles, Exportar/Importar',
+            'Tribunales: ordenación manual (↑↓) y alfabética (A↓)',
+            'Tribunales: indicador simplificado (solo ⚠ si hay problemas)',
+            'Demo: planos en forma de L, variaciones, tribunales multi-día',
+            'Botón Cargar ejemplo con datos de demo',
+            'Presidente/a, Vocal y Secretario/a como roles requeridos',
+            'Enlace de contacto en el footer',
+            'Cache-busting para evitar versiones cacheadas'
           ],
           va: [
-            'PDF: selecció de rols a imprimir amb checkboxes',
-            'PDF: opció de mostrar titular entre parèntesi per a substituts',
-            'PDF: dos modes d\'exportació (complet i només membres)',
-            'PDF: variacions de tribunal incloses en ambdós modes',
-            'President/a, Vocal i Secretari/a ara són rols requerits (avís si falten)',
-            'Demo: rols d\'Assessor/a i Ajudant en tribunals d\'exemple',
-            'Demo: plànols en forma de L i variacions de tribunal',
-            'Enllaç de contacte per a errors i suggeriments al footer'
+            'PDF redissenyat amb taules reals (jsPDF-AutoTable)',
+            'PDF: franja negra amb nom del tribunal en blanc',
+            'PDF: substituts amb asterisc i nota al peu sobre titulars',
+            'PDF: color principal configurable (escala de grisos per defecte)',
+            'PDF: selecció de rols a imprimir',
+            'PDF: opció de mostrar titular entre parèntesi',
+            'PDF: horari ordenat cronològicament',
+            'Sidebar redissenyat: capçaleres amb fons fosc',
+            'Seccions col·lapsables: Agrupacions, Camps, Rols, Exportar/Importar',
+            'Tribunals: ordenació manual (↑↓) i alfabètica (A↓)',
+            'Tribunals: indicador simplificat (només ⚠ si hi ha problemes)',
+            'Demo: plànols en forma de L, variacions, tribunals multi-dia',
+            'Botó Carregar exemple amb dades de demo',
+            'President/a, Vocal i Secretari/a com a rols requerits',
+            'Enllaç de contacte al footer',
+            'Cache-busting per a evitar versions cacheades'
           ],
           en: [
-            'PDF: role selection with checkboxes for printing',
-            'PDF: option to show titular in parentheses for substitutes',
-            'PDF: two export modes (full and members only)',
-            'PDF: tribunal variations included in both modes',
-            'President, Member and Secretary are now required roles (warning if missing)',
-            'Demo: Advisor and Assistant roles in sample tribunals',
-            'Demo: L-shaped floor plans and tribunal variations',
-            'Contact link for bugs and suggestions in footer'
+            'PDF redesigned with real tables (jsPDF-AutoTable)',
+            'PDF: dark band with tribunal name in white',
+            'PDF: substitutes with asterisk and footnote about titulars',
+            'PDF: configurable accent color (grayscale by default)',
+            'PDF: role selection for printing',
+            'PDF: option to show titular in parentheses',
+            'PDF: schedule sorted chronologically',
+            'Sidebar redesigned: dark background headers',
+            'Collapsible sections: Groups, Fields, Roles, Export/Import',
+            'Tribunals: manual ordering (↑↓) and alphabetical sort (A↓)',
+            'Tribunals: simplified indicator (only ⚠ if issues)',
+            'Demo: L-shaped plans, variations, multi-day tribunals',
+            'Load example button with demo data',
+            'President, Member and Secretary as required roles',
+            'Contact link in footer',
+            'Cache-busting to prevent stale versions'
           ]
         }
       },

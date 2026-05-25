@@ -2,7 +2,7 @@
   <img src="logo.svg" alt="Tribunator" width="128" height="128">
 </p>
 
-<h1 align="center">Tribunator <sub>v0.2.0</sub></h1>
+<h1 align="center">Tribunator <sub>v0.3.0</sub></h1>
 
 <p align="center">
   Herramienta para la gestion de tribunales, aulas y horarios en centros educativos.
@@ -128,7 +128,24 @@ Auditoria automatica de la solucion activa. Detecta:
 
 ### PDF
 
-Logo, cabecera, texto libre personalizables. Seleccion de tribunales a incluir.
+PDF profesional con tablas reales (jsPDF-AutoTable):
+- Franja negra con nombre del tribunal en blanco
+- Tablas de miembros con cabeceras coloreadas y filas alternas
+- Sustitutos marcados con asterisco y nota al pie sobre titulares
+- Color principal configurable (escala de grises por defecto)
+- Seleccion de roles a imprimir (por defecto los obligatorios)
+- Opcion de mostrar titular entre parentesis para sustitutos
+- Dos modos: PDF completo (con horarios) y solo miembros
+- Variaciones de tribunal incluidas
+- Horario ordenado cronologicamente
+
+### Interfaz
+
+- Sidebars con cabeceras oscuras para distinguir secciones
+- Secciones colapsables (Agrupaciones, Campos, Roles, Exportar/Importar)
+- Tribunales ordenables manualmente (arriba/abajo) y alfabeticamente
+- Demo cargable con datos de ejemplo
+- Enlace de contacto para errores y sugerencias
 
 ### Idiomas
 
