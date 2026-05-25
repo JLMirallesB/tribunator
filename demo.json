@@ -877,6 +877,11 @@
               "id": "m4",
               "candidateId": "c8",
               "role": "Suplente"
+            },
+            {
+              "id": "m35",
+              "candidateId": "c12",
+              "role": "Asesor/a"
             }
           ],
           "variations": [
@@ -903,6 +908,11 @@
                   "id": "vm4",
                   "candidateId": "c8",
                   "role": "Suplente"
+                },
+                {
+                  "id": "vm13",
+                  "candidateId": "c12",
+                  "role": "Asesor/a"
                 }
               ]
             }
@@ -994,6 +1004,11 @@
               "id": "m11",
               "candidateId": "c13",
               "role": "Suplente"
+            },
+            {
+              "id": "m36",
+              "candidateId": "c10",
+              "role": "Ayudante"
             }
           ],
           "variations": [
@@ -1020,6 +1035,11 @@
                   "id": "vm8",
                   "candidateId": "c13",
                   "role": "Suplente"
+                },
+                {
+                  "id": "vm14",
+                  "candidateId": "c10",
+                  "role": "Ayudante"
                 }
               ]
             }
@@ -1227,6 +1247,11 @@
               "id": "m26",
               "candidateId": "c4",
               "role": "Suplente"
+            },
+            {
+              "id": "m37",
+              "candidateId": "c9",
+              "role": "Asesor/a"
             }
           ],
           "variations": [
@@ -1253,6 +1278,11 @@
                   "id": "vm12",
                   "candidateId": "c4",
                   "role": "Suplente"
+                },
+                {
+                  "id": "vm15",
+                  "candidateId": "c9",
+                  "role": "Asesor/a"
                 }
               ]
             }
@@ -1356,6 +1386,11 @@
               "id": "m34",
               "candidateId": "c9",
               "role": "Suplente"
+            },
+            {
+              "id": "m38",
+              "candidateId": "c12",
+              "role": "Ayudante"
             }
           ],
           "variations": [],
