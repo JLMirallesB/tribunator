@@ -4,7 +4,7 @@ Tribunator.translations = {
   es: {
     app: {
       title: 'Tribunator',
-      version: 'v0.3.0',
+      version: 'v0.3.1',
       phases: { space: 'Espacio', time: 'Tiempo', templates: 'Plantillas', tribunals: 'Tribunales', verify: 'Verificación' },
       changelog: 'Changelog',
       checkVersion: 'Versiones',
@@ -268,7 +268,9 @@ Tribunator.translations = {
       accentColor: 'Color principal',
       accentHint: 'Gris por defecto. Elige un color para cabeceras y acentos.',
       logoHint: 'Recomendado: imagen cuadrada',
-      titularFootnote: 'será sustituido/a por el/la titular de la plaza si se reincorpora'
+      titularFootnote: 'será sustituido/a por el/la titular de la plaza si se reincorpora',
+      filename: 'Nombre del archivo',
+      copyTitle: 'Usar título'
     },
     templates: {
       title: 'Plantillas de prueba',
@@ -330,7 +332,7 @@ Tribunator.translations = {
   va: {
     app: {
       title: 'Tribunator',
-      version: 'v0.3.0',
+      version: 'v0.3.1',
       phases: { space: 'Espai', time: 'Temps', templates: 'Plantilles', tribunals: 'Tribunals', verify: 'Verificació' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
@@ -594,7 +596,9 @@ Tribunator.translations = {
       accentColor: 'Color principal',
       accentHint: 'Gris per defecte. Tria un color per a capçaleres i accents.',
       logoHint: 'Recomanat: imatge quadrada',
-      titularFootnote: 'serà substituït/da pel/la titular de la plaça si es reincorpora'
+      titularFootnote: 'serà substituït/da pel/la titular de la plaça si es reincorpora',
+      filename: 'Nom del fitxer',
+      copyTitle: 'Usar títol'
     },
     templates: {
       title: 'Plantilles de prova',
@@ -656,7 +660,7 @@ Tribunator.translations = {
   en: {
     app: {
       title: 'Tribunator',
-      version: 'v0.3.0',
+      version: 'v0.3.1',
       phases: { space: 'Space', time: 'Time', templates: 'Templates', tribunals: 'Tribunals', verify: 'Verification' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
@@ -920,7 +924,9 @@ Tribunator.translations = {
       accentColor: 'Accent color',
       accentHint: 'Gray by default. Choose a color for headers and accents.',
       logoHint: 'Recommended: square image',
-      titularFootnote: 'will be replaced by the position holder if they return'
+      titularFootnote: 'will be replaced by the position holder if they return',
+      filename: 'File name',
+      copyTitle: 'Use title'
     },
     templates: {
       title: 'Exam templates',

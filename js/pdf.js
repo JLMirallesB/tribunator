@@ -286,7 +286,8 @@ Tribunator.PDF = {
 
     this._addFooter(doc);
     var suffix = options.membersOnly ? 'miembros' : 'completo';
-    doc.save('tribunator-' + suffix + '-' + (sol.name || 'export').replace(/[^a-zA-Z0-9]/g, '_') + '.pdf');
+    var fname = (options.filename || 'tribunator').replace(/[^a-zA-Z0-9áéíóúñüÁÉÍÓÚÑÜ_\- ]/g, '').replace(/\s+/g, '_');
+    doc.save(fname + '.pdf');
     Tribunator.Utils.showToast(t('common.success'));
   },
 
@@ -303,7 +304,11 @@ Tribunator.PDF = {
     if (!activeSol) { Tribunator.Utils.showToast(t('tribunals.noSolutions'), 'warning'); return; }
 
     var self = this;
+    var filenameInput = el('input', { className: 'form-input', type: 'text', placeholder: t('pdf.filename'), value: 'tribunator' });
     var headerInput = el('input', { className: 'form-input', type: 'text', placeholder: t('pdf.headerText') });
+    var copyTitleBtn = el('button', { className: 'btn btn-sm', textContent: '← ' + t('pdf.copyTitle'), style: { flexShrink: '0' }, onClick: function() {
+      if (headerInput.value.trim()) filenameInput.value = headerInput.value.trim().replace(/[^a-zA-Z0-9áéíóúñüÁÉÍÓÚÑÜ \-_]/g, '').replace(/\s+/g, '_');
+    }});
     var subHeaderInput = el('input', { className: 'form-input', type: 'text', placeholder: t('pdf.subHeaderText') });
     var customTextInput = el('textarea', { className: 'form-textarea', placeholder: t('pdf.customText') });
     var logoInput = el('input', { type: 'file', accept: 'image/*', className: 'form-input' });
@@ -355,6 +360,7 @@ Tribunator.PDF = {
         selectedRoles: selectedRoles.slice(),
         showTitular: showTitularCb.checked,
         accentColor: self._hexToRgb(colorInput.value),
+        filename: filenameInput.value.trim() || 'tribunator',
         headerText: headerInput.value,
         subHeaderText: subHeaderInput.value,
         customText: customTextInput.value
@@ -372,6 +378,10 @@ Tribunator.PDF = {
     Tribunator.Utils.showModal({
       title: t('tribunals.pdf'),
       body: el('div', {}, [
+        el('div', { className: 'form-group' }, [
+          el('label', { className: 'form-label', textContent: t('pdf.filename') }),
+          el('div', { style: { display: 'flex', gap: '6px', alignItems: 'center' } }, [filenameInput, copyTitleBtn])
+        ]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.headerText') }), headerInput]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.subHeaderText') }), subHeaderInput]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.customText') }), customTextInput]),
