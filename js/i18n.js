@@ -270,7 +270,16 @@ Tribunator.translations = {
       logoHint: 'Recomendado: imagen cuadrada',
       titularFootnote: 'será sustituido/a por el/la titular de la plaza si se reincorpora',
       filename: 'Nombre del archivo',
-      copyTitle: 'Usar título'
+      copyTitle: 'Usar título',
+      generate: 'Generar PDF',
+      type_tribunals: 'Tribunales',
+      type_daily: 'Planning diario',
+      type_plans: 'Planos',
+      type_signs: 'Cartelería',
+      planDay: 'Día de ocupación (opcional)',
+      noDay: 'Sin día',
+      halfPage: 'Dos carteles por página',
+      includeEmpty: 'Incluir aulas sin tribunal'
     },
     templates: {
       title: 'Plantillas de prueba',
@@ -598,7 +607,16 @@ Tribunator.translations = {
       logoHint: 'Recomanat: imatge quadrada',
       titularFootnote: 'serà substituït/da pel/la titular de la plaça si es reincorpora',
       filename: 'Nom del fitxer',
-      copyTitle: 'Usar títol'
+      copyTitle: 'Usar títol',
+      generate: 'Generar PDF',
+      type_tribunals: 'Tribunals',
+      type_daily: 'Planning diari',
+      type_plans: 'Plànols',
+      type_signs: 'Cartelleria',
+      planDay: 'Dia d\'ocupació (opcional)',
+      noDay: 'Sense dia',
+      halfPage: 'Dos cartells per pàgina',
+      includeEmpty: 'Incloure aules sense tribunal'
     },
     templates: {
       title: 'Plantilles de prova',
@@ -926,7 +944,16 @@ Tribunator.translations = {
       logoHint: 'Recommended: square image',
       titularFootnote: 'will be replaced by the position holder if they return',
       filename: 'File name',
-      copyTitle: 'Use title'
+      copyTitle: 'Use title',
+      generate: 'Generate PDF',
+      type_tribunals: 'Tribunals',
+      type_daily: 'Daily planning',
+      type_plans: 'Floor plans',
+      type_signs: 'Room signs',
+      planDay: 'Occupation day (optional)',
+      noDay: 'No day',
+      halfPage: 'Two signs per page',
+      includeEmpty: 'Include rooms without tribunal'
     },
     templates: {
       title: 'Exam templates',

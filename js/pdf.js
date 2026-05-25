@@ -10,406 +10,522 @@ Tribunator.PDF = {
   WHITE: [255, 255, 255],
   TABLE_ALT: [248, 248, 248],
 
-  _accent: function(options) {
-    if (options && options.accentColor) return options.accentColor;
-    return [60, 60, 60];
-  },
-
-  _hexToRgb: function(hex) {
-    hex = hex.replace('#', '');
-    return [parseInt(hex.substring(0,2),16), parseInt(hex.substring(2,4),16), parseInt(hex.substring(4,6),16)];
-  },
-
+  _accent: function(o) { return (o && o.accentColor) || [60, 60, 60]; },
+  _hexToRgb: function(h) { h = h.replace('#',''); return [parseInt(h.substring(0,2),16), parseInt(h.substring(2,4),16), parseInt(h.substring(4,6),16)]; },
   _initDoc: function() {
-    if (typeof jspdf === 'undefined' && typeof jsPDF === 'undefined' && typeof window.jspdf === 'undefined') {
-      Tribunator.Utils.showToast('jsPDF library not loaded. Ensure internet connection.', 'error');
-      return null;
-    }
-    var jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
-    return new jsPDFClass({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    var C = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+    if (!C) { Tribunator.Utils.showToast('jsPDF not loaded', 'error'); return null; }
+    return new C({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   },
-
-  _state: function(doc) {
-    var m = this.MARGIN;
-    return {
-      y: m,
-      check: function(needed) { if (this.y + needed > 280) { doc.addPage(); this.y = m; } }
-    };
-  },
-
-  _addHeader: function(doc, options, state) {
-    var m = this.MARGIN, w = this.CONTENT_W;
-    var headerH = 28;
-    var hasLogo = !!options.logo;
-    var hasText = !!options.headerText;
-
-    if (hasLogo || hasText) {
-      // Dark header band
-      doc.setFillColor.apply(doc, this.DARK);
-      doc.rect(0, 0, this.PAGE_W, headerH + 10, 'F');
-
-      var textX = m;
-      if (hasLogo) {
-        try {
-          doc.addImage(options.logo, 'PNG', m, 5, 22, 22);
-          textX = m + 28;
-        } catch (e) {}
-      }
-
-      if (hasText) {
-        doc.setTextColor.apply(doc, this.WHITE);
-        doc.setFontSize(18); doc.setFont(undefined, 'bold');
-        doc.text(options.headerText, textX, 16);
-        if (options.subHeaderText) {
-          doc.setFontSize(10); doc.setFont(undefined, 'normal');
-          doc.text(options.subHeaderText, textX, 23);
-        }
-      }
-      doc.setTextColor(0);
-      state.y = headerH + 14;
-    }
-
-    if (options.customText) {
-      doc.setFontSize(10); doc.setFont(undefined, 'normal');
-      doc.setTextColor.apply(doc, this.GRAY);
-      var lines = doc.splitTextToSize(options.customText, w);
-      state.check(lines.length * 5 + 6);
-      doc.text(lines, m, state.y);
-      state.y += lines.length * 5 + 4;
-      doc.setTextColor(0);
-    }
-  },
-
+  _state: function(doc) { var m = this.MARGIN; return { y: m, check: function(n) { if (this.y + n > 280) { doc.addPage(); this.y = m; } } }; },
   _addFooter: function(doc) {
-    var pageCount = doc.getNumberOfPages();
-    for (var i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      doc.setFontSize(8); doc.setFont(undefined, 'normal');
-      doc.setTextColor(170);
-      doc.text(i + ' / ' + pageCount, this.PAGE_W / 2, 290, { align: 'center' });
-      doc.setTextColor(0);
-    }
+    var pc = doc.getNumberOfPages();
+    for (var i = 1; i <= pc; i++) { doc.setPage(i); doc.setFontSize(8); doc.setFont(undefined,'normal'); doc.setTextColor(170); doc.text(i+' / '+pc, this.PAGE_W/2, 290, {align:'center'}); doc.setTextColor(0); }
   },
-
-  _tribunalHeader: function(doc, name, state, options) {
-    state.check(18);
-    var bandH = 9;
-    doc.setFillColor.apply(doc, this.DARK);
-    doc.rect(this.MARGIN, state.y, this.CONTENT_W, bandH, 'F');
-    doc.setFontSize(12); doc.setFont(undefined, 'bold');
-    doc.setTextColor.apply(doc, this.WHITE);
-    doc.text(name, this.MARGIN + 4, state.y + 6.5);
-    state.y += bandH + 3;
-    doc.setTextColor(0);
-  },
-
-  _sectionLabel: function(doc, label, state, options) {
-    state.check(10);
-    doc.setFontSize(10); doc.setFont(undefined, 'bold');
-    doc.setTextColor.apply(doc, this._accent(options));
-    doc.text(label, this.MARGIN, state.y + 4);
-    state.y += 7;
-    doc.setTextColor(0);
-  },
-
-  _membersTable: function(doc, members, store, state, selectedRoles, showTitular, options) {
-    var filtered = members.filter(function(m) {
-      if (selectedRoles && m.role && selectedRoles.indexOf(m.role) === -1) return false;
-      return true;
-    });
-    if (filtered.length === 0) return;
-
-    var self = this;
-    var footnotes = [];
-    var footnoteIdx = 0;
-
-    var rows = filtered.map(function(m) {
-      var c = store.getCandidate(m.candidateId);
-      var surnames = c ? (c.useTitular && c.titularSurnames ? c.titularSurnames : c.surnames) : '—';
-      var name = c ? (c.useTitular && c.titularName ? c.titularName : c.name) : '';
-      var role = m.role || '';
-      var specialty = c ? (c.specialty || '') : '';
-      if (c && store.isSubstitute(c.id) && !c.useTitular && showTitular) {
-        footnoteIdx++;
-        surnames += ' *' + footnoteIdx;
-        footnotes.push({ idx: footnoteIdx, sub: c.surnames + ', ' + c.name, titular: c.titularSurnames + ', ' + c.titularName });
-      }
-      return [surnames, name, role, specialty];
-    });
-
-    var head = [[t('tribunals.candidateSurnames'), t('tribunals.candidateName'), t('tribunals.role'), t('tribunals.candidateSpecialty')]];
-
-    doc.autoTable({
-      startY: state.y,
-      margin: { left: self.MARGIN, right: self.MARGIN },
-      head: head,
-      body: rows,
-      styles: { fontSize: 8, cellPadding: 2, lineColor: [220, 220, 220], lineWidth: 0.2 },
-      headStyles: { fillColor: self._accent(options), textColor: self.WHITE, fontStyle: 'bold', fontSize: 8 },
-      alternateRowStyles: { fillColor: self.TABLE_ALT },
-      didParseCell: function(data) {
-        if (data.section === 'body') {
-          var m = filtered[data.row.index];
-          if (m) {
-            var roleDef = store.getRoleDefByName(m.role);
-            if (roleDef && !roleDef.counts) {
-              data.cell.styles.textColor = self.GRAY;
-              data.cell.styles.fontStyle = 'italic';
-            }
-          }
-        }
-      }
-    });
-
-    state.y = doc.lastAutoTable.finalY + 2;
-
-    if (footnotes.length > 0) {
-      doc.setFontSize(7); doc.setFont(undefined, 'italic');
-      doc.setTextColor.apply(doc, self.GRAY);
-      footnotes.forEach(function(fn) {
-        state.check(8);
-        doc.text('*' + fn.idx + ' ' + fn.sub + ' — ' + t('pdf.titularFootnote') + ': ' + fn.titular, self.MARGIN + 2, state.y + 3);
-        state.y += 4;
-      });
-      doc.setTextColor(0); doc.setFont(undefined, 'normal');
-      state.y += 2;
-    }
-  },
-
-  _variationsBlock: function(doc, variations, store, state, selectedRoles, showTitular, options) {
-    if (!variations || variations.length === 0) return;
-    var self = this;
-
-    variations.forEach(function(v) {
-      state.check(15);
-      doc.setFillColor(210, 210, 210);
-      doc.rect(self.MARGIN + 2, state.y, 1, 6, 'F');
-      doc.setFontSize(9); doc.setFont(undefined, 'bold');
-      doc.setTextColor.apply(doc, self.GRAY);
-      doc.text(t('tribunals.variations') + ': ' + v.name, self.MARGIN + 6, state.y + 4);
-      state.y += 7;
-      doc.setTextColor(0);
-
-      self._membersTable(doc, v.members, store, state, selectedRoles, showTitular, options);
-    });
-  },
-
-  _scheduleTable: function(doc, schedule, store, state) {
-    var self = this;
-    var sorted = schedule.slice().sort(function(a, b) {
-      var dayA = store.getDay(a.dayId);
-      var dayB = store.getDay(b.dayId);
-      if (!dayA || !dayB) return 0;
-      return dayA.date.localeCompare(dayB.date);
-    });
-    sorted.forEach(function(sched) {
-      var day = store.getDay(sched.dayId);
-      if (!day) return;
-      var slots = (sched.slots || []).slice().sort(function(a, b) {
-        return a.startTime.localeCompare(b.startTime);
-      });
-      if (slots.length === 0) return;
-
-      state.check(15);
-      // Day header with background
-      doc.setFillColor.apply(doc, self.LIGHT_BG);
-      doc.rect(self.MARGIN, state.y, self.CONTENT_W, 7, 'F');
-      doc.setFontSize(10); doc.setFont(undefined, 'bold');
-      doc.setTextColor.apply(doc, self.DARK);
-      doc.text(Tribunator.Time.formatDate(day.date), self.MARGIN + 3, state.y + 5);
-      state.y += 9;
-      doc.setTextColor(0);
-
-      var rows = slots.map(function(slot) {
-        var slotRoom = slot.roomId ? store.getRoom(slot.roomId) : null;
-        return [
-          slot.startTime + ' – ' + slot.endTime,
-          slotRoom ? slotRoom.room.name : '—',
-          slot.activity || ''
-        ];
-      });
-
-      doc.autoTable({
-        startY: state.y,
-        margin: { left: self.MARGIN + 2, right: self.MARGIN },
-        head: [[t('time.timeSlot'), t('space.room'), t('tribunals.slotActivity')]],
-        body: rows,
-        styles: { fontSize: 8, cellPadding: 2, lineColor: [220, 220, 220], lineWidth: 0.2 },
-        headStyles: { fillColor: [80, 80, 80], textColor: self.WHITE, fontStyle: 'bold', fontSize: 7 },
-        alternateRowStyles: { fillColor: [250, 250, 252] },
-        columnStyles: { 0: { cellWidth: 28 }, 1: { cellWidth: 30 } }
-      });
-
-      state.y = doc.lastAutoTable.finalY + 4;
-    });
-  },
-
-  // === GENERATE ===
-  generateFull: function(options) {
-    var doc = this._initDoc();
-    if (!doc) return;
-    var store = Tribunator.Store;
-    var state = this._state(doc);
-
-    this._addHeader(doc, options, state);
-
-    var sol = store.getSolution(options.solutionId);
-    if (!sol) return;
-    var tribunals = options.tribunalIds ? sol.tribunals.filter(function(tr) { return options.tribunalIds.indexOf(tr.id) !== -1; }) : sol.tribunals;
-    var self = this;
-
-    tribunals.forEach(function(trib, idx) {
-      if (idx > 0) state.check(20);
-
-      self._tribunalHeader(doc, trib.name, state, options);
-
-      // Members
-      if (trib.members.length > 0) {
-        self._sectionLabel(doc, t('tribunals.members'), state, options);
-        self._membersTable(doc, trib.members, store, state, options.selectedRoles, options.showTitular, options);
-      }
-
-      // Variations
-      self._variationsBlock(doc, trib.variations, store, state, options.selectedRoles, options.showTitular, options);
-
-      // Schedule
-      if (!options.membersOnly) {
-        var schedule = trib.schedule || [];
-        if (schedule.length > 0) {
-          self._sectionLabel(doc, t('tribunals.schedule'), state, options);
-          self._scheduleTable(doc, schedule, store, state);
-        }
-      }
-
-      state.y += 4;
-    });
-
+  _savePdf: function(doc, options) {
     this._addFooter(doc);
-    var suffix = options.membersOnly ? 'miembros' : 'completo';
     var fname = (options.filename || 'tribunator').replace(/[^a-zA-Z0-9áéíóúñüÁÉÍÓÚÑÜ_\- ]/g, '').replace(/\s+/g, '_');
     doc.save(fname + '.pdf');
     Tribunator.Utils.showToast(t('common.success'));
   },
-
-  generateMembersOnly: function(options) {
-    options.membersOnly = true;
-    this.generateFull(options);
+  _addHeader: function(doc, options, state) {
+    var m = this.MARGIN;
+    if (options.logo || options.headerText) {
+      doc.setFillColor.apply(doc, this.DARK);
+      doc.rect(0, 0, this.PAGE_W, 38, 'F');
+      var tx = m;
+      if (options.logo) { try { doc.addImage(options.logo, 'PNG', m, 5, 22, 22); tx = m + 28; } catch(e) {} }
+      if (options.headerText) { doc.setTextColor.apply(doc, this.WHITE); doc.setFontSize(18); doc.setFont(undefined,'bold'); doc.text(options.headerText, tx, 16); if (options.subHeaderText) { doc.setFontSize(10); doc.setFont(undefined,'normal'); doc.text(options.subHeaderText, tx, 23); } }
+      doc.setTextColor(0); state.y = 42;
+    }
+    if (options.customText) { doc.setFontSize(10); doc.setFont(undefined,'normal'); doc.setTextColor.apply(doc, this.GRAY); var lines = doc.splitTextToSize(options.customText, this.CONTENT_W); state.check(lines.length*5+6); doc.text(lines, m, state.y); state.y += lines.length*5+4; doc.setTextColor(0); }
+  },
+  _tribunalBand: function(doc, name, state) {
+    state.check(16); doc.setFillColor.apply(doc, this.DARK); doc.rect(this.MARGIN, state.y, this.CONTENT_W, 9, 'F');
+    doc.setFontSize(12); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, this.WHITE); doc.text(name, this.MARGIN+4, state.y+6.5); state.y += 12; doc.setTextColor(0);
+  },
+  _sectionLabel: function(doc, label, state, options) {
+    state.check(10); doc.setFontSize(10); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, this._accent(options)); doc.text(label, this.MARGIN, state.y+4); state.y += 7; doc.setTextColor(0);
+  },
+  _membersTable: function(doc, members, store, state, options) {
+    var filtered = members.filter(function(m) { return !options.selectedRoles || !m.role || options.selectedRoles.indexOf(m.role) !== -1; });
+    if (!filtered.length) return;
+    var self = this, footnotes = [], fi = 0;
+    var rows = filtered.map(function(m) {
+      var c = store.getCandidate(m.candidateId);
+      var sn = c ? (c.useTitular && c.titularSurnames ? c.titularSurnames : c.surnames) : '—';
+      var nm = c ? (c.useTitular && c.titularName ? c.titularName : c.name) : '';
+      if (c && store.isSubstitute(c.id) && !c.useTitular && options.showTitular) { fi++; sn += ' *'+fi; footnotes.push({i:fi, sub:c.surnames+', '+c.name, tit:c.titularSurnames+', '+c.titularName}); }
+      return [sn, nm, m.role||'', c?(c.specialty||''):''];
+    });
+    doc.autoTable({ startY: state.y, margin:{left:self.MARGIN,right:self.MARGIN}, head:[[t('tribunals.candidateSurnames'),t('tribunals.candidateName'),t('tribunals.role'),t('tribunals.candidateSpecialty')]], body:rows, styles:{fontSize:8,cellPadding:2,lineColor:[220,220,220],lineWidth:0.2}, headStyles:{fillColor:self._accent(options),textColor:self.WHITE,fontStyle:'bold',fontSize:8}, alternateRowStyles:{fillColor:self.TABLE_ALT},
+      didParseCell:function(d){ if(d.section==='body'){ var m=filtered[d.row.index]; if(m){var rd=store.getRoleDefByName(m.role); if(rd&&!rd.counts){d.cell.styles.textColor=self.GRAY;d.cell.styles.fontStyle='italic';}} }}
+    });
+    state.y = doc.lastAutoTable.finalY + 2;
+    if (footnotes.length > 0) { doc.setFontSize(7); doc.setFont(undefined,'italic'); doc.setTextColor.apply(doc,self.GRAY); footnotes.forEach(function(fn){ state.check(8); doc.text('*'+fn.i+' '+fn.sub+' — '+t('pdf.titularFootnote')+': '+fn.tit, self.MARGIN+2, state.y+3); state.y+=4; }); doc.setTextColor(0); doc.setFont(undefined,'normal'); state.y+=2; }
+  },
+  _variationsBlock: function(doc, variations, store, state, options) {
+    if (!variations || !variations.length) return;
+    var self = this;
+    variations.forEach(function(v) { state.check(15); doc.setFillColor(210,210,210); doc.rect(self.MARGIN+2,state.y,1,6,'F'); doc.setFontSize(9); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc,self.GRAY); doc.text(t('tribunals.variations')+': '+v.name, self.MARGIN+6, state.y+4); state.y+=7; doc.setTextColor(0); self._membersTable(doc, v.members, store, state, options); });
+  },
+  _scheduleTable: function(doc, schedule, store, state) {
+    var self = this;
+    var sorted = schedule.slice().sort(function(a,b){ var da=store.getDay(a.dayId),db=store.getDay(b.dayId); return da&&db?da.date.localeCompare(db.date):0; });
+    sorted.forEach(function(sched) {
+      var day = store.getDay(sched.dayId); if (!day) return;
+      var slots = (sched.slots||[]).slice().sort(function(a,b){return a.startTime.localeCompare(b.startTime);}); if (!slots.length) return;
+      state.check(15); doc.setFillColor.apply(doc, self.LIGHT_BG); doc.rect(self.MARGIN, state.y, self.CONTENT_W, 7, 'F'); doc.setFontSize(10); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, self.DARK); doc.text(Tribunator.Time.formatDate(day.date), self.MARGIN+3, state.y+5); state.y+=9; doc.setTextColor(0);
+      var rows = slots.map(function(s){ var rm=s.roomId?store.getRoom(s.roomId):null; return [s.startTime+' – '+s.endTime, rm?rm.room.name:'—', s.activity||'']; });
+      doc.autoTable({ startY:state.y, margin:{left:self.MARGIN+2,right:self.MARGIN}, head:[[t('time.timeSlot'),t('space.room'),t('tribunals.slotActivity')]], body:rows, styles:{fontSize:8,cellPadding:2,lineColor:[220,220,220],lineWidth:0.2}, headStyles:{fillColor:[80,80,80],textColor:self.WHITE,fontStyle:'bold',fontSize:7}, alternateRowStyles:{fillColor:[250,250,252]}, columnStyles:{0:{cellWidth:28},1:{cellWidth:30}} });
+      state.y = doc.lastAutoTable.finalY + 4;
+    });
   },
 
-  // === DIALOG ===
+  // ============================================================
+  // TYPE 1: Tribunals (full / members only)
+  // ============================================================
+  generateTribunals: function(options) {
+    var doc = this._initDoc(); if (!doc) return;
+    var store = Tribunator.Store, state = this._state(doc), self = this;
+    this._addHeader(doc, options, state);
+    var sol = store.getSolution(options.solutionId); if (!sol) return;
+    var tribunals = options.tribunalIds ? sol.tribunals.filter(function(tr){return options.tribunalIds.indexOf(tr.id)!==-1;}) : sol.tribunals;
+    tribunals.forEach(function(trib, idx) {
+      if (idx > 0) state.check(20);
+      self._tribunalBand(doc, trib.name, state);
+      if (trib.members.length > 0) { self._sectionLabel(doc, t('tribunals.members'), state, options); self._membersTable(doc, trib.members, store, state, options); }
+      self._variationsBlock(doc, trib.variations, store, state, options);
+      if (!options.membersOnly) { var sched = trib.schedule||[]; if (sched.length) { self._sectionLabel(doc, t('tribunals.schedule'), state, options); self._scheduleTable(doc, sched, store, state); } }
+      state.y += 4;
+    });
+    this._savePdf(doc, options);
+  },
+
+  // ============================================================
+  // TYPE 2: Daily planning
+  // ============================================================
+  generateDailyPlanning: function(options) {
+    var doc = this._initDoc(); if (!doc) return;
+    var store = Tribunator.Store, self = this;
+    var sol = store.getSolution(options.solutionId); if (!sol) return;
+    var days = (options.dayIds || store.getDays().map(function(d){return d.id;}));
+
+    days.forEach(function(dayId, dayIdx) {
+      var day = store.getDay(dayId); if (!day) return;
+      if (dayIdx > 0) doc.addPage();
+      var state = self._state(doc);
+      self._addHeader(doc, options, state);
+
+      // Day title
+      state.check(14); doc.setFillColor.apply(doc, self.DARK); doc.rect(self.MARGIN, state.y, self.CONTENT_W, 9, 'F');
+      doc.setFontSize(12); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, self.WHITE);
+      doc.text(Tribunator.Time.formatDate(day.date) + '  (' + day.startTime + ' – ' + day.endTime + ')', self.MARGIN+4, state.y+6.5);
+      state.y += 12; doc.setTextColor(0);
+
+      // Collect all slots for this day across all tribunals
+      var allSlots = [];
+      var tribunals = options.tribunalIds ? sol.tribunals.filter(function(tr){return options.tribunalIds.indexOf(tr.id)!==-1;}) : sol.tribunals;
+      tribunals.forEach(function(trib) {
+        var sched = (trib.schedule||[]).find(function(s){return s.dayId===dayId;});
+        if (!sched || !sched.slots) return;
+        sched.slots.forEach(function(slot) {
+          var rm = slot.roomId ? store.getRoom(slot.roomId) : null;
+          var memberNames = trib.members.filter(function(m) {
+            return !options.selectedRoles || !m.role || options.selectedRoles.indexOf(m.role) !== -1;
+          }).map(function(m) {
+            var c = store.getCandidate(m.candidateId);
+            return c ? (c.useTitular && c.titularSurnames ? c.titularSurnames : c.surnames) + (m.role ? ' ('+m.role+')' : '') : '?';
+          }).join(', ');
+          allSlots.push([slot.startTime + ' – ' + slot.endTime, trib.name, rm ? rm.room.name : '—', slot.activity || '', memberNames]);
+        });
+      });
+
+      allSlots.sort(function(a,b){ return a[0].localeCompare(b[0]); });
+
+      if (allSlots.length === 0) {
+        doc.setFontSize(10); doc.setFont(undefined,'normal'); doc.text(t('time.noDays'), self.MARGIN, state.y+5); state.y+=10;
+      } else {
+        doc.autoTable({
+          startY: state.y, margin:{left:self.MARGIN, right:self.MARGIN},
+          head: [[t('time.timeSlot'), t('tribunals.tribunal'), t('space.room'), t('tribunals.slotActivity'), t('tribunals.members')]],
+          body: allSlots,
+          styles: {fontSize:7, cellPadding:2, lineColor:[220,220,220], lineWidth:0.2, overflow:'linebreak'},
+          headStyles: {fillColor:self._accent(options), textColor:self.WHITE, fontStyle:'bold', fontSize:7},
+          alternateRowStyles: {fillColor:self.TABLE_ALT},
+          columnStyles: {0:{cellWidth:22}, 1:{cellWidth:28}, 2:{cellWidth:20}, 3:{cellWidth:35}}
+        });
+        state.y = doc.lastAutoTable.finalY + 4;
+      }
+    });
+    this._savePdf(doc, options);
+  },
+
+  // ============================================================
+  // TYPE 3: Floor plans
+  // ============================================================
+  generateFloorPlans: function(options) {
+    var doc = this._initDoc(); if (!doc) return;
+    var store = Tribunator.Store, self = this;
+    var campuses = store.getCampuses();
+    var occupation = {};
+    if (options.planDayId) {
+      var activeSol = store.getActiveSolution();
+      if (activeSol) occupation = store.getRoomOccupation(activeSol.id, options.planDayId);
+    }
+    var firstPage = true;
+
+    campuses.forEach(function(campus) {
+      campus.floors.forEach(function(floor) {
+        if (options.floorIds && options.floorIds.indexOf(floor.id) === -1) return;
+        if (!firstPage) doc.addPage();
+        firstPage = false;
+        var state = self._state(doc);
+        self._addHeader(doc, options, state);
+
+        // Floor title
+        state.check(14); doc.setFillColor.apply(doc, self.DARK); doc.rect(self.MARGIN, state.y, self.CONTENT_W, 9, 'F');
+        doc.setFontSize(11); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, self.WHITE);
+        doc.text(campus.name + ' — ' + floor.name, self.MARGIN+4, state.y+6.5);
+        state.y += 12; doc.setTextColor(0);
+
+        // Draw grid
+        var maxW = self.CONTENT_W;
+        var cellSize = Math.min(Math.floor(maxW / floor.gridCols), 8);
+        var gridW = cellSize * floor.gridCols;
+        var gridH = cellSize * floor.gridRows;
+        var offsetX = self.MARGIN + (maxW - gridW) / 2;
+
+        state.check(gridH + 20);
+
+        var cellLookup = {};
+        floor.rooms.forEach(function(room) { room.cells.forEach(function(c) { cellLookup[c.col+','+c.row] = room; }); });
+
+        for (var row = 0; row < floor.gridRows; row++) {
+          for (var col = 0; col < floor.gridCols; col++) {
+            var x = offsetX + col * cellSize;
+            var y = state.y + row * cellSize;
+            var room = cellLookup[col+','+row];
+            if (room) {
+              var occ = occupation[room.id];
+              if (occ && occ.length > 0) {
+                doc.setFillColor(255, 200, 200);
+              } else if (options.planDayId) {
+                doc.setFillColor(200, 240, 200);
+              } else {
+                doc.setFillColor(200, 210, 230);
+              }
+              doc.rect(x, y, cellSize, cellSize, 'F');
+              // Borders
+              var rid = room.id;
+              var topN = cellLookup[col+','+(row-1)]; var botN = cellLookup[col+','+(row+1)];
+              var lefN = cellLookup[(col-1)+','+row]; var rigN = cellLookup[(col+1)+','+row];
+              doc.setDrawColor(60); doc.setLineWidth(0.3);
+              if (!topN || topN.id !== rid) doc.line(x, y, x+cellSize, y);
+              if (!botN || botN.id !== rid) doc.line(x, y+cellSize, x+cellSize, y+cellSize);
+              if (!lefN || lefN.id !== rid) doc.line(x, y, x, y+cellSize);
+              if (!rigN || rigN.id !== rid) doc.line(x+cellSize, y, x+cellSize, y+cellSize);
+              // Label on first cell
+              if (room.cells[0].col === col && room.cells[0].row === row) {
+                doc.setFontSize(Math.max(4, cellSize * 0.45)); doc.setFont(undefined,'bold'); doc.setTextColor(30);
+                doc.text(room.name, x + 1, y + cellSize * 0.65, { maxWidth: cellSize * room.cells.length - 1 });
+              }
+            } else {
+              doc.setFillColor(250, 250, 250);
+              doc.rect(x, y, cellSize, cellSize, 'F');
+              doc.setDrawColor(230); doc.setLineWidth(0.1);
+              doc.rect(x, y, cellSize, cellSize, 'S');
+            }
+          }
+        }
+        doc.setTextColor(0); doc.setDrawColor(0); doc.setLineWidth(0.2);
+        state.y += gridH + 6;
+
+        // Legend table
+        var legendRows = [];
+        floor.rooms.forEach(function(room) {
+          var occ = occupation[room.id];
+          var status = '';
+          if (options.planDayId) {
+            status = occ && occ.length > 0 ? occ.map(function(o){return o.tribunal.name;}).join(', ') : t('common.free');
+          }
+          var row = [room.name, room.notes || ''];
+          if (options.planDayId) row.push(status);
+          legendRows.push(row);
+        });
+        var legendHead = [t('space.room'), t('common.notes')];
+        if (options.planDayId) legendHead.push(t('space.status'));
+        doc.autoTable({
+          startY: state.y, margin:{left:self.MARGIN, right:self.MARGIN},
+          head: [legendHead], body: legendRows,
+          styles: {fontSize:7, cellPadding:1.5, lineColor:[220,220,220], lineWidth:0.1},
+          headStyles: {fillColor:self._accent(options), textColor:self.WHITE, fontStyle:'bold', fontSize:7},
+          alternateRowStyles: {fillColor:self.TABLE_ALT}
+        });
+      });
+    });
+    this._savePdf(doc, options);
+  },
+
+  // ============================================================
+  // TYPE 4: Room signs (cartelería)
+  // ============================================================
+  generateRoomSigns: function(options) {
+    var doc = this._initDoc(); if (!doc) return;
+    var store = Tribunator.Store, self = this;
+    var sol = store.getActiveSolution(); if (!sol) return;
+    var day = store.getDay(options.signDayId); if (!day) return;
+    var occupation = store.getRoomOccupation(sol.id, options.signDayId);
+    var allRooms = store.getAllRooms();
+    var signRooms = options.signRoomIds ? allRooms.filter(function(r){return options.signRoomIds.indexOf(r.room.id)!==-1;}) : allRooms;
+    var halfPage = options.halfPage;
+    var m = self.MARGIN;
+
+    signRooms.forEach(function(item, idx) {
+      var room = item.room;
+      var occ = occupation[room.id] || [];
+      if (occ.length === 0 && !options.includeEmpty) return;
+
+      if (halfPage) {
+        if (idx > 0 && idx % 2 === 0) doc.addPage();
+        var yOffset = (idx % 2 === 0) ? 0 : 148.5;
+        var availH = 148.5;
+      } else {
+        if (idx > 0) doc.addPage();
+        var yOffset = 0;
+        var availH = 297;
+      }
+
+      // Room name big
+      doc.setFontSize(28); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, self.DARK);
+      doc.text(room.name, self.PAGE_W/2, yOffset + 30, {align:'center'});
+
+      // Campus / floor
+      doc.setFontSize(10); doc.setFont(undefined,'normal'); doc.setTextColor.apply(doc, self.GRAY);
+      doc.text(item.campus.name + ' — ' + item.floor.name, self.PAGE_W/2, yOffset + 38, {align:'center'});
+
+      // Day
+      doc.setFontSize(12); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, self.DARK);
+      doc.text(Tribunator.Time.formatDate(day.date), self.PAGE_W/2, yOffset + 50, {align:'center'});
+      doc.setTextColor(0);
+
+      if (occ.length === 0) {
+        doc.setFontSize(14); doc.setFont(undefined,'normal'); doc.setTextColor.apply(doc, self.GRAY);
+        doc.text(t('common.free'), self.PAGE_W/2, yOffset + 70, {align:'center'});
+        doc.setTextColor(0);
+      } else {
+        var signY = yOffset + 56;
+        occ.forEach(function(o) {
+          var trib = o.tribunal;
+          // Tribunal name
+          doc.setFillColor.apply(doc, self.DARK);
+          doc.rect(m, signY, self.CONTENT_W, 8, 'F');
+          doc.setFontSize(11); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, self.WHITE);
+          doc.text(trib.name, m+3, signY+5.5);
+          doc.setTextColor(0); signY += 10;
+
+          // Members
+          var members = trib.members.filter(function(mb) { return !options.selectedRoles || !mb.role || options.selectedRoles.indexOf(mb.role) !== -1; });
+          var memberRows = members.map(function(mb) {
+            var c = store.getCandidate(mb.candidateId);
+            var nm = c ? (c.useTitular && c.titularSurnames ? c.titularSurnames+', '+c.titularName : c.surnames+', '+c.name) : '?';
+            return [nm, mb.role || ''];
+          });
+          if (memberRows.length) {
+            doc.autoTable({
+              startY: signY, margin:{left:m, right:m},
+              body: memberRows,
+              styles: {fontSize:9, cellPadding:2, lineColor:[220,220,220], lineWidth:0.1},
+              alternateRowStyles: {fillColor:self.TABLE_ALT},
+              columnStyles: {1:{cellWidth:30}}
+            });
+            signY = doc.lastAutoTable.finalY + 2;
+          }
+
+          // Slots for this day
+          var sched = (trib.schedule||[]).find(function(s){return s.dayId===options.signDayId;});
+          if (sched && sched.slots && sched.slots.length) {
+            var slotRows = sched.slots.slice().sort(function(a,b){return a.startTime.localeCompare(b.startTime);}).map(function(s) { return [s.startTime+' – '+s.endTime, s.activity||'']; });
+            doc.autoTable({
+              startY: signY, margin:{left:m, right:m},
+              body: slotRows,
+              styles: {fontSize:8, cellPadding:1.5, lineColor:[220,220,220], lineWidth:0.1},
+              alternateRowStyles: {fillColor:[250,250,252]},
+              columnStyles: {0:{cellWidth:28}}
+            });
+            signY = doc.lastAutoTable.finalY + 4;
+          }
+        });
+      }
+
+      // Separator for half page
+      if (halfPage && idx % 2 === 0) {
+        doc.setDrawColor(200); doc.setLineWidth(0.3);
+        doc.line(0, 148.5, self.PAGE_W, 148.5);
+      }
+    });
+    this._savePdf(doc, options);
+  },
+
+  // ============================================================
+  // UNIFIED DIALOG
+  // ============================================================
   showExportDialog: function() {
     var store = Tribunator.Store;
     var el = Tribunator.Utils.el;
     var activeSol = store.getActiveSolution();
     if (!activeSol) { Tribunator.Utils.showToast(t('tribunals.noSolutions'), 'warning'); return; }
-
     var self = this;
+
+    // PDF type selector
+    var pdfType = 'tribunals';
+    var typeArea = el('div', { style: { display: 'flex', gap: '4px', marginBottom: '12px', flexWrap: 'wrap' } });
+    var optionsArea = el('div');
+
+    var typeButtons = {};
+    ['tribunals', 'daily', 'plans', 'signs'].forEach(function(tp) {
+      var btn = el('button', {
+        className: 'btn btn-sm' + (tp === pdfType ? ' active' : ''),
+        textContent: t('pdf.type_' + tp),
+        onClick: function() {
+          pdfType = tp;
+          Object.keys(typeButtons).forEach(function(k) { typeButtons[k].className = 'btn btn-sm' + (k === tp ? ' active' : ''); });
+          renderOptions();
+        }
+      });
+      typeButtons[tp] = btn;
+      typeArea.appendChild(btn);
+    });
+
+    // Common fields
     var filenameInput = el('input', { className: 'form-input', type: 'text', placeholder: t('pdf.filename'), value: 'tribunator' });
     var headerInput = el('input', { className: 'form-input', type: 'text', placeholder: t('pdf.headerText') });
-    var copyTitleBtn = el('button', { className: 'btn btn-sm', textContent: '← ' + t('pdf.copyTitle'), style: { flexShrink: '0' }, onClick: function() {
-      if (headerInput.value.trim()) filenameInput.value = headerInput.value.trim().replace(/[^a-zA-Z0-9áéíóúñüÁÉÍÓÚÑÜ \-_]/g, '').replace(/\s+/g, '_');
-    }});
+    var copyTitleBtn = el('button', { className: 'btn btn-sm', textContent: '← ' + t('pdf.copyTitle'), style: { flexShrink: '0' }, onClick: function() { if (headerInput.value.trim()) filenameInput.value = headerInput.value.trim().replace(/[^a-zA-Z0-9áéíóúñüÁÉÍÓÚÑÜ \-_]/g, '').replace(/\s+/g, '_'); } });
     var subHeaderInput = el('input', { className: 'form-input', type: 'text', placeholder: t('pdf.subHeaderText') });
-    var customTextInput = el('textarea', { className: 'form-textarea', placeholder: t('pdf.customText') });
+    var customTextInput = el('textarea', { className: 'form-textarea', placeholder: t('pdf.customText'), style: { minHeight: '40px' } });
     var logoInput = el('input', { type: 'file', accept: 'image/*', className: 'form-input' });
-
-    // Accent color picker
-    var colorInput = el('input', { type: 'color', value: '#3c3c3c', style: { width: '40px', height: '28px', border: 'none', cursor: 'pointer', verticalAlign: 'middle' } });
+    var colorInput = el('input', { type: 'color', value: '#3c3c3c', style: { width: '40px', height: '28px', border: 'none', cursor: 'pointer' } });
 
     // Role checkboxes
     var roleDefs = store.getRoleDefs();
-    var selectedRoles = roleDefs.filter(function(r) { return r.requireOne || r.counts; }).map(function(r) { return r.name; });
-    var roleList = el('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '4px' } });
+    var selectedRoles = roleDefs.filter(function(r){return r.requireOne||r.counts;}).map(function(r){return r.name;});
+    var roleList = el('div', { style: { display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '4px' } });
     roleDefs.forEach(function(role) {
-      var isDefault = role.requireOne || role.counts;
-      var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', cursor: 'pointer' } });
-      var cb = el('input', { type: 'checkbox' });
-      cb.checked = isDefault;
-      cb.addEventListener('change', function() {
-        if (cb.checked) { if (selectedRoles.indexOf(role.name) === -1) selectedRoles.push(role.name); }
-        else { selectedRoles = selectedRoles.filter(function(r) { return r !== role.name; }); }
-      });
-      lbl.appendChild(cb);
-      lbl.appendChild(document.createTextNode(role.name));
-      roleList.appendChild(lbl);
+      var isD = role.requireOne || role.counts;
+      var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', cursor: 'pointer' } });
+      var cb = el('input', { type: 'checkbox' }); cb.checked = isD;
+      cb.addEventListener('change', function() { if (cb.checked) { if (selectedRoles.indexOf(role.name)===-1) selectedRoles.push(role.name); } else { selectedRoles = selectedRoles.filter(function(r){return r!==role.name;}); } });
+      lbl.appendChild(cb); lbl.appendChild(document.createTextNode(role.name)); roleList.appendChild(lbl);
     });
-
-    // Show titular option
-    var showTitularCb = el('input', { type: 'checkbox' });
-    showTitularCb.checked = true;
+    var showTitularCb = el('input', { type: 'checkbox' }); showTitularCb.checked = true;
 
     // Tribunal checkboxes
-    var selectedIds = activeSol.tribunals.map(function(tr) { return tr.id; });
-    var tribunalList = el('div', { style: { maxHeight: '150px', overflowY: 'auto', marginTop: '4px' } });
+    var selectedIds = activeSol.tribunals.map(function(tr){return tr.id;});
+    var tribunalList = el('div', { style: { maxHeight: '120px', overflowY: 'auto', marginTop: '4px' } });
     activeSol.tribunals.forEach(function(trib) {
-      var label = el('label', { style: { display: 'flex', alignItems: 'center', gap: '8px', padding: '3px 0', cursor: 'pointer', fontSize: '13px' } });
-      var cb = el('input', { type: 'checkbox' });
-      cb.checked = true;
-      cb.addEventListener('change', function() {
-        if (cb.checked) { selectedIds.push(trib.id); } else { selectedIds = selectedIds.filter(function(id) { return id !== trib.id; }); }
-      });
-      label.appendChild(cb);
-      label.appendChild(document.createTextNode(trib.name));
-      tribunalList.appendChild(label);
+      var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', padding: '2px 0', cursor: 'pointer', fontSize: '12px' } });
+      var cb = el('input', { type: 'checkbox' }); cb.checked = true;
+      cb.addEventListener('change', function() { if (cb.checked) selectedIds.push(trib.id); else selectedIds = selectedIds.filter(function(id){return id!==trib.id;}); });
+      lbl.appendChild(cb); lbl.appendChild(document.createTextNode(trib.name)); tribunalList.appendChild(lbl);
     });
+
+    // Day selector
+    var days = store.getDays();
+    var selectedDayIds = days.map(function(d){return d.id;});
+    var dayList = el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' } });
+    days.forEach(function(day) {
+      var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', cursor: 'pointer' } });
+      var cb = el('input', { type: 'checkbox' }); cb.checked = true;
+      cb.addEventListener('change', function() { if (cb.checked) selectedDayIds.push(day.id); else selectedDayIds = selectedDayIds.filter(function(id){return id!==day.id;}); });
+      lbl.appendChild(cb); lbl.appendChild(document.createTextNode(Tribunator.Time.formatDate(day.date))); dayList.appendChild(lbl);
+    });
+
+    // Floor selector
+    var allFloors = [];
+    store.getCampuses().forEach(function(c) { c.floors.forEach(function(f) { allFloors.push({ campus: c, floor: f }); }); });
+    var selectedFloorIds = allFloors.map(function(f){return f.floor.id;});
+
+    // Sign day selector
+    var signDaySel = el('select', { className: 'form-select' });
+    days.forEach(function(d, i) { var o = el('option', { value: d.id, textContent: Tribunator.Time.formatDate(d.date) }); signDaySel.appendChild(o); });
+
+    // Plan day selector
+    var planDaySel = el('select', { className: 'form-select' });
+    planDaySel.appendChild(el('option', { value: '', textContent: '— ' + t('pdf.noDay') + ' —' }));
+    days.forEach(function(d) { planDaySel.appendChild(el('option', { value: d.id, textContent: Tribunator.Time.formatDate(d.date) })); });
+
+    var halfPageCb = el('input', { type: 'checkbox' });
+    var includeEmptyCb = el('input', { type: 'checkbox' });
+
+    var renderOptions = function() {
+      Tribunator.Utils.clearElement(optionsArea);
+      if (pdfType === 'tribunals') {
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), roleList]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [showTitularCb, document.createTextNode(t('pdf.showTitular'))])]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.tribunals') }), tribunalList]));
+      } else if (pdfType === 'daily') {
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('time.days') }), dayList]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.tribunals') }), tribunalList]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), roleList]));
+      } else if (pdfType === 'plans') {
+        var floorList = el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' } });
+        allFloors.forEach(function(f) {
+          var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', cursor: 'pointer' } });
+          var cb = el('input', { type: 'checkbox' }); cb.checked = true;
+          cb.addEventListener('change', function() { if (cb.checked) selectedFloorIds.push(f.floor.id); else selectedFloorIds = selectedFloorIds.filter(function(id){return id!==f.floor.id;}); });
+          lbl.appendChild(cb); lbl.appendChild(document.createTextNode(f.campus.name + ' — ' + f.floor.name)); floorList.appendChild(lbl);
+        });
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('space.floors') }), floorList]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.planDay') }), planDaySel]));
+      } else if (pdfType === 'signs') {
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('time.date') }), signDaySel]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), roleList]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [halfPageCb, document.createTextNode(t('pdf.halfPage'))])]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [includeEmptyCb, document.createTextNode(t('pdf.includeEmpty'))])]));
+      }
+    };
+    renderOptions();
 
     var buildOpts = function(callback) {
       var opts = {
-        solutionId: activeSol.id,
-        tribunalIds: selectedIds,
-        selectedRoles: selectedRoles.slice(),
-        showTitular: showTitularCb.checked,
-        accentColor: self._hexToRgb(colorInput.value),
         filename: filenameInput.value.trim() || 'tribunator',
-        headerText: headerInput.value,
-        subHeaderText: subHeaderInput.value,
-        customText: customTextInput.value
+        headerText: headerInput.value, subHeaderText: subHeaderInput.value, customText: customTextInput.value,
+        accentColor: self._hexToRgb(colorInput.value),
+        solutionId: activeSol.id, tribunalIds: selectedIds.slice(), selectedRoles: selectedRoles.slice(),
+        showTitular: showTitularCb.checked, dayIds: selectedDayIds.slice(), floorIds: selectedFloorIds.slice(),
+        planDayId: planDaySel.value || null, signDayId: signDaySel.value, halfPage: halfPageCb.checked, includeEmpty: includeEmptyCb.checked
       };
       var logoFile = logoInput.files[0];
-      if (logoFile) {
-        var reader = new FileReader();
-        reader.onload = function(e) { opts.logo = e.target.result; callback(opts); };
-        reader.readAsDataURL(logoFile);
-      } else {
-        callback(opts);
-      }
+      if (logoFile) { var reader = new FileReader(); reader.onload = function(e) { opts.logo = e.target.result; callback(opts); }; reader.readAsDataURL(logoFile); }
+      else callback(opts);
     };
 
     Tribunator.Utils.showModal({
       title: t('tribunals.pdf'),
       body: el('div', {}, [
-        el('div', { className: 'form-group' }, [
-          el('label', { className: 'form-label', textContent: t('pdf.filename') }),
-          el('div', { style: { display: 'flex', gap: '6px', alignItems: 'center' } }, [filenameInput, copyTitleBtn])
-        ]),
+        typeArea,
+        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.filename') }), el('div', { style: { display: 'flex', gap: '6px' } }, [filenameInput, copyTitleBtn])]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.headerText') }), headerInput]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.subHeaderText') }), subHeaderInput]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.customText') }), customTextInput]),
-        el('div', { className: 'form-group' }, [
-          el('label', { className: 'form-label', textContent: t('pdf.logo') }),
-          logoInput,
-          el('span', { style: { fontSize: '11px', color: 'var(--text-muted)', marginLeft: '4px' }, textContent: t('pdf.logoHint') })
+        el('div', { className: 'form-inline', style: { marginBottom: '12px' } }, [
+          el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.logo') }), logoInput, el('span', { style: { fontSize: '10px', color: 'var(--text-muted)' }, textContent: t('pdf.logoHint') })]),
+          el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.accentColor') }), colorInput])
         ]),
-        el('div', { className: 'form-group' }, [
-          el('label', { className: 'form-label', textContent: t('pdf.accentColor') }),
-          el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } }, [
-            colorInput,
-            el('span', { style: { fontSize: '11px', color: 'var(--text-muted)' }, textContent: t('pdf.accentHint') })
-          ])
-        ]),
-        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), roleList]),
-        el('div', { className: 'form-group' }, [
-          el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [
-            showTitularCb, document.createTextNode(t('pdf.showTitular'))
-          ])
-        ]),
-        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.tribunals') }), tribunalList])
+        optionsArea
       ]),
       buttons: [
         { text: t('common.cancel'), className: 'btn-secondary' },
-        { text: t('pdf.membersOnly'), className: 'btn-primary', action: function() { buildOpts(function(opts) { Tribunator.PDF.generateMembersOnly(opts); }); } },
-        { text: t('pdf.full'), className: 'btn-primary', action: function() { buildOpts(function(opts) { Tribunator.PDF.generateFull(opts); }); } }
-      ]
+        pdfType === 'tribunals' ? { text: t('pdf.membersOnly'), className: 'btn-primary', action: function() { buildOpts(function(o) { o.membersOnly = true; self.generateTribunals(o); }); } } : null,
+        { text: t('pdf.generate'), className: 'btn-primary', action: function() {
+          buildOpts(function(o) {
+            if (pdfType === 'tribunals') self.generateTribunals(o);
+            else if (pdfType === 'daily') self.generateDailyPlanning(o);
+            else if (pdfType === 'plans') self.generateFloorPlans(o);
+            else if (pdfType === 'signs') self.generateRoomSigns(o);
+          });
+        }}
+      ].filter(Boolean)
     });
   }
 };
