@@ -13,7 +13,7 @@
           "id": "demo_pb",
           "name": "Planta Baja",
           "gridCols": 18,
-          "gridRows": 8,
+          "gridRows": 10,
           "rooms": [
             {
               "id": "ra1",
@@ -157,163 +157,6 @@
               "customFields": {}
             },
             {
-              "id": "ra6",
-              "name": "Aula 6",
-              "cells": [
-                {
-                  "col": 0,
-                  "row": 4
-                },
-                {
-                  "col": 1,
-                  "row": 4
-                },
-                {
-                  "col": 0,
-                  "row": 5
-                },
-                {
-                  "col": 1,
-                  "row": 5
-                },
-                {
-                  "col": 2,
-                  "row": 4
-                },
-                {
-                  "col": 3,
-                  "row": 4
-                },
-                {
-                  "col": 2,
-                  "row": 5
-                },
-                {
-                  "col": 3,
-                  "row": 5
-                }
-              ],
-              "color": "#D46A6A",
-              "notes": "Aula doble. 2 pianos verticales.",
-              "customFields": {}
-            },
-            {
-              "id": "ra7",
-              "name": "Aula 7",
-              "cells": [
-                {
-                  "col": 5,
-                  "row": 4
-                },
-                {
-                  "col": 6,
-                  "row": 4
-                },
-                {
-                  "col": 5,
-                  "row": 5
-                },
-                {
-                  "col": 6,
-                  "row": 5
-                }
-              ],
-              "color": "#E8A838",
-              "notes": "1 piano vertical.",
-              "customFields": {}
-            },
-            {
-              "id": "ra8",
-              "name": "Aula 8",
-              "cells": [
-                {
-                  "col": 8,
-                  "row": 4
-                },
-                {
-                  "col": 9,
-                  "row": 4
-                },
-                {
-                  "col": 10,
-                  "row": 4
-                },
-                {
-                  "col": 8,
-                  "row": 5
-                },
-                {
-                  "col": 9,
-                  "row": 5
-                },
-                {
-                  "col": 10,
-                  "row": 5
-                }
-              ],
-              "color": "#9B7DC4",
-              "notes": "Sala mediana. Percusión.",
-              "customFields": {}
-            },
-            {
-              "id": "ra9",
-              "name": "Aula 9",
-              "cells": [
-                {
-                  "col": 12,
-                  "row": 4
-                },
-                {
-                  "col": 13,
-                  "row": 4
-                },
-                {
-                  "col": 12,
-                  "row": 5
-                },
-                {
-                  "col": 13,
-                  "row": 5
-                }
-              ],
-              "color": "#7DC47D",
-              "notes": "Sin piano.",
-              "customFields": {}
-            },
-            {
-              "id": "ra10",
-              "name": "Aula 10",
-              "cells": [
-                {
-                  "col": 15,
-                  "row": 4
-                },
-                {
-                  "col": 16,
-                  "row": 4
-                },
-                {
-                  "col": 17,
-                  "row": 4
-                },
-                {
-                  "col": 15,
-                  "row": 5
-                },
-                {
-                  "col": 16,
-                  "row": 5
-                },
-                {
-                  "col": 17,
-                  "row": 5
-                }
-              ],
-              "color": "#5B9BD5",
-              "notes": "Sala grande. 1 piano de cola + 1 vertical.",
-              "customFields": {}
-            },
-            {
               "id": "demo_hall",
               "name": "Hall",
               "cells": [
@@ -353,14 +196,171 @@
               "color": "#AAAAAA",
               "notes": "Espacio común.",
               "customFields": {}
+            },
+            {
+              "id": "ra6",
+              "name": "Aula 6",
+              "cells": [
+                {
+                  "col": 0,
+                  "row": 6
+                },
+                {
+                  "col": 1,
+                  "row": 6
+                },
+                {
+                  "col": 2,
+                  "row": 6
+                },
+                {
+                  "col": 3,
+                  "row": 6
+                },
+                {
+                  "col": 0,
+                  "row": 7
+                },
+                {
+                  "col": 1,
+                  "row": 7
+                },
+                {
+                  "col": 2,
+                  "row": 7
+                },
+                {
+                  "col": 3,
+                  "row": 7
+                }
+              ],
+              "color": "#D46A6A",
+              "notes": "Aula doble. 2 pianos verticales.",
+              "customFields": {}
+            },
+            {
+              "id": "ra7",
+              "name": "Aula 7",
+              "cells": [
+                {
+                  "col": 5,
+                  "row": 6
+                },
+                {
+                  "col": 6,
+                  "row": 6
+                },
+                {
+                  "col": 5,
+                  "row": 7
+                },
+                {
+                  "col": 6,
+                  "row": 7
+                }
+              ],
+              "color": "#E8A838",
+              "notes": "1 piano vertical.",
+              "customFields": {}
+            },
+            {
+              "id": "ra8",
+              "name": "Aula 8",
+              "cells": [
+                {
+                  "col": 8,
+                  "row": 6
+                },
+                {
+                  "col": 9,
+                  "row": 6
+                },
+                {
+                  "col": 10,
+                  "row": 6
+                },
+                {
+                  "col": 8,
+                  "row": 7
+                },
+                {
+                  "col": 9,
+                  "row": 7
+                },
+                {
+                  "col": 10,
+                  "row": 7
+                }
+              ],
+              "color": "#9B7DC4",
+              "notes": "Sala mediana. Percusión.",
+              "customFields": {}
+            },
+            {
+              "id": "ra9",
+              "name": "Aula 9",
+              "cells": [
+                {
+                  "col": 12,
+                  "row": 4
+                },
+                {
+                  "col": 13,
+                  "row": 4
+                },
+                {
+                  "col": 12,
+                  "row": 5
+                },
+                {
+                  "col": 13,
+                  "row": 5
+                }
+              ],
+              "color": "#7DC47D",
+              "notes": "Esquina. Sin piano.",
+              "customFields": {}
+            },
+            {
+              "id": "ra10",
+              "name": "Aula 10",
+              "cells": [
+                {
+                  "col": 14,
+                  "row": 4
+                },
+                {
+                  "col": 15,
+                  "row": 4
+                },
+                {
+                  "col": 16,
+                  "row": 4
+                },
+                {
+                  "col": 14,
+                  "row": 5
+                },
+                {
+                  "col": 15,
+                  "row": 5
+                },
+                {
+                  "col": 16,
+                  "row": 5
+                }
+              ],
+              "color": "#5B9BD5",
+              "notes": "Sala grande. 1 piano de cola + 1 vertical.",
+              "customFields": {}
             }
           ]
         },
         {
           "id": "demo_p1",
           "name": "Primera Planta",
-          "gridCols": 14,
-          "gridRows": 8,
+          "gridCols": 16,
+          "gridRows": 10,
           "rooms": [
             {
               "id": "rb1",
@@ -471,24 +471,49 @@
               "customFields": {}
             },
             {
+              "id": "rb_dep",
+              "name": "Dep. Tecla",
+              "cells": [
+                {
+                  "col": 13,
+                  "row": 0
+                },
+                {
+                  "col": 14,
+                  "row": 0
+                },
+                {
+                  "col": 13,
+                  "row": 1
+                },
+                {
+                  "col": 14,
+                  "row": 1
+                }
+              ],
+              "color": "#8E99A4",
+              "notes": "Departamento de Tecla.",
+              "customFields": {}
+            },
+            {
               "id": "rb5",
               "name": "Aula 15",
               "cells": [
                 {
-                  "col": 0,
-                  "row": 4
+                  "col": 4,
+                  "row": 6
                 },
                 {
-                  "col": 1,
-                  "row": 4
+                  "col": 5,
+                  "row": 6
                 },
                 {
-                  "col": 0,
-                  "row": 5
+                  "col": 4,
+                  "row": 7
                 },
                 {
-                  "col": 1,
-                  "row": 5
+                  "col": 5,
+                  "row": 7
                 }
               ],
               "color": "#7DC47D",
@@ -500,28 +525,28 @@
               "name": "Aula 16",
               "cells": [
                 {
-                  "col": 3,
-                  "row": 4
+                  "col": 7,
+                  "row": 6
                 },
                 {
-                  "col": 4,
-                  "row": 4
+                  "col": 8,
+                  "row": 6
                 },
                 {
-                  "col": 5,
-                  "row": 4
+                  "col": 9,
+                  "row": 6
                 },
                 {
-                  "col": 3,
-                  "row": 5
+                  "col": 7,
+                  "row": 7
                 },
                 {
-                  "col": 4,
-                  "row": 5
+                  "col": 8,
+                  "row": 7
                 },
                 {
-                  "col": 5,
-                  "row": 5
+                  "col": 9,
+                  "row": 7
                 }
               ],
               "color": "#5B9BD5",
@@ -533,20 +558,20 @@
               "name": "Sala Prof.",
               "cells": [
                 {
-                  "col": 7,
-                  "row": 4
+                  "col": 11,
+                  "row": 6
                 },
                 {
-                  "col": 8,
-                  "row": 4
+                  "col": 12,
+                  "row": 6
                 },
                 {
-                  "col": 7,
-                  "row": 5
+                  "col": 11,
+                  "row": 7
                 },
                 {
-                  "col": 8,
-                  "row": 5
+                  "col": 12,
+                  "row": 7
                 }
               ],
               "color": "#AAAAAA",
@@ -555,27 +580,60 @@
             },
             {
               "id": "rb8",
-              "name": "Dep. Tecla",
+              "name": "Aula 17",
               "cells": [
                 {
-                  "col": 10,
+                  "col": 14,
+                  "row": 6
+                },
+                {
+                  "col": 15,
+                  "row": 6
+                },
+                {
+                  "col": 14,
+                  "row": 7
+                },
+                {
+                  "col": 15,
+                  "row": 7
+                }
+              ],
+              "color": "#D46A6A",
+              "notes": "Aula esquina. 1 piano vertical.",
+              "customFields": {}
+            },
+            {
+              "id": "rb9",
+              "name": "Aula 18",
+              "cells": [
+                {
+                  "col": 0,
                   "row": 4
                 },
                 {
-                  "col": 11,
+                  "col": 1,
                   "row": 4
                 },
                 {
-                  "col": 10,
+                  "col": 2,
+                  "row": 4
+                },
+                {
+                  "col": 0,
                   "row": 5
                 },
                 {
-                  "col": 11,
+                  "col": 1,
+                  "row": 5
+                },
+                {
+                  "col": 2,
                   "row": 5
                 }
               ],
-              "color": "#8E99A4",
-              "notes": "Departamento de Tecla.",
+              "color": "#E8A838",
+              "notes": "1 piano vertical. Ala izquierda.",
               "customFields": {}
             }
           ]
@@ -821,7 +879,34 @@
               "role": "Suplente"
             }
           ],
-          "variations": [],
+          "variations": [
+            {
+              "id": "v1",
+              "name": "Variación tarde",
+              "members": [
+                {
+                  "id": "vm1",
+                  "candidateId": "c1",
+                  "role": "Presidente/a"
+                },
+                {
+                  "id": "vm2",
+                  "candidateId": "c11",
+                  "role": "Vocal"
+                },
+                {
+                  "id": "vm3",
+                  "candidateId": "c2",
+                  "role": "Secretario/a"
+                },
+                {
+                  "id": "vm4",
+                  "candidateId": "c8",
+                  "role": "Suplente"
+                }
+              ]
+            }
+          ],
           "schedule": [
             {
               "dayId": "day1",
@@ -911,7 +996,34 @@
               "role": "Suplente"
             }
           ],
-          "variations": [],
+          "variations": [
+            {
+              "id": "v2",
+              "name": "Si falta Marta",
+              "members": [
+                {
+                  "id": "vm5",
+                  "candidateId": "c7",
+                  "role": "Presidente/a"
+                },
+                {
+                  "id": "vm6",
+                  "candidateId": "c6",
+                  "role": "Vocal"
+                },
+                {
+                  "id": "vm7",
+                  "candidateId": "c16",
+                  "role": "Secretario/a"
+                },
+                {
+                  "id": "vm8",
+                  "candidateId": "c13",
+                  "role": "Suplente"
+                }
+              ]
+            }
+          ],
           "schedule": [
             {
               "dayId": "day2",
@@ -1117,7 +1229,34 @@
               "role": "Suplente"
             }
           ],
-          "variations": [],
+          "variations": [
+            {
+              "id": "v3",
+              "name": "Con titular (Pedro Gómez)",
+              "members": [
+                {
+                  "id": "vm9",
+                  "candidateId": "c14",
+                  "role": "Presidente/a"
+                },
+                {
+                  "id": "vm10",
+                  "candidateId": "c10",
+                  "role": "Vocal"
+                },
+                {
+                  "id": "vm11",
+                  "candidateId": "c13",
+                  "role": "Secretario/a"
+                },
+                {
+                  "id": "vm12",
+                  "candidateId": "c4",
+                  "role": "Suplente"
+                }
+              ]
+            }
+          ],
           "schedule": [
             {
               "dayId": "day3",
