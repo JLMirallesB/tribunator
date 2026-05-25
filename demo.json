@@ -1,0 +1,1251 @@
+{
+  "version": "0.2.0",
+  "settings": {
+    "language": "es",
+    "defaultMembersPerTribunal": 3
+  },
+  "campuses": [
+    {
+      "id": "demo_campus",
+      "name": "Conservatorio Demo",
+      "floors": [
+        {
+          "id": "demo_pb",
+          "name": "Planta Baja",
+          "gridCols": 18,
+          "gridRows": 8,
+          "rooms": [
+            {
+              "id": "ra1",
+              "name": "Aula 1",
+              "cells": [
+                {
+                  "col": 0,
+                  "row": 0
+                },
+                {
+                  "col": 1,
+                  "row": 0
+                },
+                {
+                  "col": 2,
+                  "row": 0
+                },
+                {
+                  "col": 0,
+                  "row": 1
+                },
+                {
+                  "col": 1,
+                  "row": 1
+                },
+                {
+                  "col": 2,
+                  "row": 1
+                }
+              ],
+              "color": "#5B9BD5",
+              "notes": "Sala grande. 2 pianos de cola.",
+              "customFields": {}
+            },
+            {
+              "id": "ra2",
+              "name": "Aula 2",
+              "cells": [
+                {
+                  "col": 4,
+                  "row": 0
+                },
+                {
+                  "col": 5,
+                  "row": 0
+                },
+                {
+                  "col": 4,
+                  "row": 1
+                },
+                {
+                  "col": 5,
+                  "row": 1
+                }
+              ],
+              "color": "#E8A838",
+              "notes": "1 piano vertical.",
+              "customFields": {}
+            },
+            {
+              "id": "ra3",
+              "name": "Aula 3",
+              "cells": [
+                {
+                  "col": 7,
+                  "row": 0
+                },
+                {
+                  "col": 8,
+                  "row": 0
+                },
+                {
+                  "col": 7,
+                  "row": 1
+                },
+                {
+                  "col": 8,
+                  "row": 1
+                }
+              ],
+              "color": "#E8A838",
+              "notes": "1 piano vertical. Acond. Acust.",
+              "customFields": {}
+            },
+            {
+              "id": "ra4",
+              "name": "Aula 4",
+              "cells": [
+                {
+                  "col": 10,
+                  "row": 0
+                },
+                {
+                  "col": 11,
+                  "row": 0
+                },
+                {
+                  "col": 10,
+                  "row": 1
+                },
+                {
+                  "col": 11,
+                  "row": 1
+                }
+              ],
+              "color": "#7DC47D",
+              "notes": "Sin piano.",
+              "customFields": {}
+            },
+            {
+              "id": "ra5",
+              "name": "Aula 5",
+              "cells": [
+                {
+                  "col": 13,
+                  "row": 0
+                },
+                {
+                  "col": 14,
+                  "row": 0
+                },
+                {
+                  "col": 15,
+                  "row": 0
+                },
+                {
+                  "col": 13,
+                  "row": 1
+                },
+                {
+                  "col": 14,
+                  "row": 1
+                },
+                {
+                  "col": 15,
+                  "row": 1
+                }
+              ],
+              "color": "#5B9BD5",
+              "notes": "Sala grande. 1 piano de cola.",
+              "customFields": {}
+            },
+            {
+              "id": "ra6",
+              "name": "Aula 6",
+              "cells": [
+                {
+                  "col": 0,
+                  "row": 4
+                },
+                {
+                  "col": 1,
+                  "row": 4
+                },
+                {
+                  "col": 0,
+                  "row": 5
+                },
+                {
+                  "col": 1,
+                  "row": 5
+                },
+                {
+                  "col": 2,
+                  "row": 4
+                },
+                {
+                  "col": 3,
+                  "row": 4
+                },
+                {
+                  "col": 2,
+                  "row": 5
+                },
+                {
+                  "col": 3,
+                  "row": 5
+                }
+              ],
+              "color": "#D46A6A",
+              "notes": "Aula doble. 2 pianos verticales.",
+              "customFields": {}
+            },
+            {
+              "id": "ra7",
+              "name": "Aula 7",
+              "cells": [
+                {
+                  "col": 5,
+                  "row": 4
+                },
+                {
+                  "col": 6,
+                  "row": 4
+                },
+                {
+                  "col": 5,
+                  "row": 5
+                },
+                {
+                  "col": 6,
+                  "row": 5
+                }
+              ],
+              "color": "#E8A838",
+              "notes": "1 piano vertical.",
+              "customFields": {}
+            },
+            {
+              "id": "ra8",
+              "name": "Aula 8",
+              "cells": [
+                {
+                  "col": 8,
+                  "row": 4
+                },
+                {
+                  "col": 9,
+                  "row": 4
+                },
+                {
+                  "col": 10,
+                  "row": 4
+                },
+                {
+                  "col": 8,
+                  "row": 5
+                },
+                {
+                  "col": 9,
+                  "row": 5
+                },
+                {
+                  "col": 10,
+                  "row": 5
+                }
+              ],
+              "color": "#9B7DC4",
+              "notes": "Sala mediana. Percusión.",
+              "customFields": {}
+            },
+            {
+              "id": "ra9",
+              "name": "Aula 9",
+              "cells": [
+                {
+                  "col": 12,
+                  "row": 4
+                },
+                {
+                  "col": 13,
+                  "row": 4
+                },
+                {
+                  "col": 12,
+                  "row": 5
+                },
+                {
+                  "col": 13,
+                  "row": 5
+                }
+              ],
+              "color": "#7DC47D",
+              "notes": "Sin piano.",
+              "customFields": {}
+            },
+            {
+              "id": "ra10",
+              "name": "Aula 10",
+              "cells": [
+                {
+                  "col": 15,
+                  "row": 4
+                },
+                {
+                  "col": 16,
+                  "row": 4
+                },
+                {
+                  "col": 17,
+                  "row": 4
+                },
+                {
+                  "col": 15,
+                  "row": 5
+                },
+                {
+                  "col": 16,
+                  "row": 5
+                },
+                {
+                  "col": 17,
+                  "row": 5
+                }
+              ],
+              "color": "#5B9BD5",
+              "notes": "Sala grande. 1 piano de cola + 1 vertical.",
+              "customFields": {}
+            },
+            {
+              "id": "demo_hall",
+              "name": "Hall",
+              "cells": [
+                {
+                  "col": 16,
+                  "row": 0
+                },
+                {
+                  "col": 17,
+                  "row": 0
+                },
+                {
+                  "col": 16,
+                  "row": 1
+                },
+                {
+                  "col": 17,
+                  "row": 1
+                },
+                {
+                  "col": 16,
+                  "row": 2
+                },
+                {
+                  "col": 17,
+                  "row": 2
+                },
+                {
+                  "col": 16,
+                  "row": 3
+                },
+                {
+                  "col": 17,
+                  "row": 3
+                }
+              ],
+              "color": "#AAAAAA",
+              "notes": "Espacio común.",
+              "customFields": {}
+            }
+          ]
+        },
+        {
+          "id": "demo_p1",
+          "name": "Primera Planta",
+          "gridCols": 14,
+          "gridRows": 8,
+          "rooms": [
+            {
+              "id": "rb1",
+              "name": "Aula 11",
+              "cells": [
+                {
+                  "col": 0,
+                  "row": 0
+                },
+                {
+                  "col": 1,
+                  "row": 0
+                },
+                {
+                  "col": 0,
+                  "row": 1
+                },
+                {
+                  "col": 1,
+                  "row": 1
+                }
+              ],
+              "color": "#E8A838",
+              "notes": "1 piano vertical.",
+              "customFields": {}
+            },
+            {
+              "id": "rb2",
+              "name": "Aula 12",
+              "cells": [
+                {
+                  "col": 3,
+                  "row": 0
+                },
+                {
+                  "col": 4,
+                  "row": 0
+                },
+                {
+                  "col": 3,
+                  "row": 1
+                },
+                {
+                  "col": 4,
+                  "row": 1
+                }
+              ],
+              "color": "#E8A838",
+              "notes": "1 piano vertical. Acond. Acust.",
+              "customFields": {}
+            },
+            {
+              "id": "rb3",
+              "name": "Aula 13",
+              "cells": [
+                {
+                  "col": 6,
+                  "row": 0
+                },
+                {
+                  "col": 7,
+                  "row": 0
+                },
+                {
+                  "col": 8,
+                  "row": 0
+                },
+                {
+                  "col": 6,
+                  "row": 1
+                },
+                {
+                  "col": 7,
+                  "row": 1
+                },
+                {
+                  "col": 8,
+                  "row": 1
+                }
+              ],
+              "color": "#9B7DC4",
+              "notes": "Sala mediana. Arpa.",
+              "customFields": {}
+            },
+            {
+              "id": "rb4",
+              "name": "Aula 14",
+              "cells": [
+                {
+                  "col": 10,
+                  "row": 0
+                },
+                {
+                  "col": 11,
+                  "row": 0
+                },
+                {
+                  "col": 10,
+                  "row": 1
+                },
+                {
+                  "col": 11,
+                  "row": 1
+                }
+              ],
+              "color": "#7DC47D",
+              "notes": "Sin piano.",
+              "customFields": {}
+            },
+            {
+              "id": "rb5",
+              "name": "Aula 15",
+              "cells": [
+                {
+                  "col": 0,
+                  "row": 4
+                },
+                {
+                  "col": 1,
+                  "row": 4
+                },
+                {
+                  "col": 0,
+                  "row": 5
+                },
+                {
+                  "col": 1,
+                  "row": 5
+                }
+              ],
+              "color": "#7DC47D",
+              "notes": "Sin piano.",
+              "customFields": {}
+            },
+            {
+              "id": "rb6",
+              "name": "Aula 16",
+              "cells": [
+                {
+                  "col": 3,
+                  "row": 4
+                },
+                {
+                  "col": 4,
+                  "row": 4
+                },
+                {
+                  "col": 5,
+                  "row": 4
+                },
+                {
+                  "col": 3,
+                  "row": 5
+                },
+                {
+                  "col": 4,
+                  "row": 5
+                },
+                {
+                  "col": 5,
+                  "row": 5
+                }
+              ],
+              "color": "#5B9BD5",
+              "notes": "Sala grande. Orquesta.",
+              "customFields": {}
+            },
+            {
+              "id": "rb7",
+              "name": "Sala Prof.",
+              "cells": [
+                {
+                  "col": 7,
+                  "row": 4
+                },
+                {
+                  "col": 8,
+                  "row": 4
+                },
+                {
+                  "col": 7,
+                  "row": 5
+                },
+                {
+                  "col": 8,
+                  "row": 5
+                }
+              ],
+              "color": "#AAAAAA",
+              "notes": "Sala de profesores.",
+              "customFields": {}
+            },
+            {
+              "id": "rb8",
+              "name": "Dep. Tecla",
+              "cells": [
+                {
+                  "col": 10,
+                  "row": 4
+                },
+                {
+                  "col": 11,
+                  "row": 4
+                },
+                {
+                  "col": 10,
+                  "row": 5
+                },
+                {
+                  "col": 11,
+                  "row": 5
+                }
+              ],
+              "color": "#8E99A4",
+              "notes": "Departamento de Tecla.",
+              "customFields": {}
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "customFieldDefs": [],
+  "groups": [
+    {
+      "id": "grp1",
+      "name": "Salas grandes",
+      "roomIds": [
+        "ra1",
+        "ra5",
+        "ra10",
+        "rb6"
+      ]
+    }
+  ],
+  "days": [
+    {
+      "id": "day1",
+      "date": "2026-06-15",
+      "startTime": "09:00",
+      "endTime": "14:00"
+    },
+    {
+      "id": "day2",
+      "date": "2026-06-16",
+      "startTime": "09:00",
+      "endTime": "14:00"
+    },
+    {
+      "id": "day3",
+      "date": "2026-06-17",
+      "startTime": "09:00",
+      "endTime": "14:00"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "c1",
+      "name": "Ana",
+      "surnames": "García López",
+      "specialty": "Piano",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c2",
+      "name": "Carlos",
+      "surnames": "Martínez Ruiz",
+      "specialty": "Piano",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c3",
+      "name": "Elena",
+      "surnames": "Fernández Gil",
+      "specialty": "Violín",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c4",
+      "name": "David",
+      "surnames": "López Navarro",
+      "specialty": "Violín",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c5",
+      "name": "Marta",
+      "surnames": "Sánchez Pla",
+      "specialty": "Flauta",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c6",
+      "name": "Pablo",
+      "surnames": "Ruiz Vidal",
+      "specialty": "Flauta",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c7",
+      "name": "Laura",
+      "surnames": "Torres Mas",
+      "specialty": "Clarinete",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c8",
+      "name": "Javier",
+      "surnames": "Moreno Soler",
+      "specialty": "Guitarra",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c9",
+      "name": "Sofía",
+      "surnames": "Díaz Blanco",
+      "specialty": "Canto",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c10",
+      "name": "Andrés",
+      "surnames": "Romero Peña",
+      "specialty": "Percusión",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c11",
+      "name": "Isabel",
+      "surnames": "Navarro Cruz",
+      "specialty": "Piano",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c12",
+      "name": "Miguel",
+      "surnames": "Herrero Sala",
+      "specialty": "Violonchelo",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c13",
+      "name": "Carmen",
+      "surnames": "Vega Roca",
+      "specialty": "Oboe",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c14",
+      "name": "Raúl",
+      "surnames": "Molina Puig",
+      "specialty": "Trompeta",
+      "titularName": "Pedro",
+      "titularSurnames": "Gómez Alonso",
+      "useTitular": false
+    },
+    {
+      "id": "c15",
+      "name": "Teresa",
+      "surnames": "Ibáñez Costa",
+      "specialty": "Viola",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    },
+    {
+      "id": "c16",
+      "name": "Sergio",
+      "surnames": "Campos Luna",
+      "specialty": "Saxofón",
+      "titularName": "",
+      "titularSurnames": "",
+      "useTitular": false
+    }
+  ],
+  "roleDefs": [
+    {
+      "name": "Presidente/a",
+      "counts": true
+    },
+    {
+      "name": "Vocal",
+      "counts": true
+    },
+    {
+      "name": "Secretario/a",
+      "counts": true
+    },
+    {
+      "name": "Suplente",
+      "counts": false,
+      "requireOne": true
+    },
+    {
+      "name": "Asesor/a",
+      "counts": false
+    },
+    {
+      "name": "Ayudante",
+      "counts": false
+    }
+  ],
+  "activityTemplates": null,
+  "solutions": [
+    {
+      "id": "sol1",
+      "name": "Propuesta junio 2026",
+      "active": true,
+      "tribunals": [
+        {
+          "id": "t1",
+          "name": "Piano — 1 EPM",
+          "members": [
+            {
+              "id": "m1",
+              "candidateId": "c1",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m2",
+              "candidateId": "c2",
+              "role": "Vocal"
+            },
+            {
+              "id": "m3",
+              "candidateId": "c11",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m4",
+              "candidateId": "c8",
+              "role": "Suplente"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day1",
+              "primaryRoomId": "ra1",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s1",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra1",
+                  "activity": "EPM 1r — Música — Parte A: Interpretación"
+                },
+                {
+                  "id": "s2",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "ra2",
+                  "activity": "EPM 1r — Música — Parte B: Lenguaje Musical"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "t2",
+          "name": "Violín — 3 EPM",
+          "members": [
+            {
+              "id": "m5",
+              "candidateId": "c3",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m6",
+              "candidateId": "c4",
+              "role": "Vocal"
+            },
+            {
+              "id": "m7",
+              "candidateId": "c15",
+              "role": "Secretario/a"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day1",
+              "primaryRoomId": "ra5",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s3",
+                  "startTime": "09:00",
+                  "endTime": "12:00",
+                  "roomId": "ra5",
+                  "activity": "EPM 3r — Música — Parte A"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "t3",
+          "name": "Flauta — 2 EPM",
+          "members": [
+            {
+              "id": "m8",
+              "candidateId": "c5",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m9",
+              "candidateId": "c6",
+              "role": "Vocal"
+            },
+            {
+              "id": "m10",
+              "candidateId": "c7",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m11",
+              "candidateId": "c13",
+              "role": "Suplente"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day2",
+              "primaryRoomId": "ra3",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s4",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra3",
+                  "activity": "EPM 2º — Música — Parte A: Interpretación"
+                },
+                {
+                  "id": "s5",
+                  "startTime": "11:00",
+                  "endTime": "11:30",
+                  "roomId": "ra3",
+                  "activity": "EPM 2º — Música — Parte A: Lectura a primera vista"
+                },
+                {
+                  "id": "s6",
+                  "startTime": "12:00",
+                  "endTime": "13:30",
+                  "roomId": "ra4",
+                  "activity": "EPM 2º — Música — Parte B: Lenguaje Musical"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "t4",
+          "name": "Clarinete — 1 EEM",
+          "members": [],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day2",
+              "primaryRoomId": "rb1",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s7",
+                  "startTime": "09:00",
+                  "endTime": "12:00",
+                  "roomId": "rb1",
+                  "activity": "EEM 1r — Música — Prueba de aptitud"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "t5",
+          "name": "Guitarra — 4 EPM",
+          "members": [
+            {
+              "id": "m12",
+              "candidateId": "c8",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m13",
+              "candidateId": "c12",
+              "role": "Vocal"
+            },
+            {
+              "id": "m14",
+              "candidateId": "c16",
+              "role": "Secretario/a"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day3",
+              "primaryRoomId": "ra10",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s8",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra10",
+                  "activity": "EPM 4º — Música — Parte A"
+                },
+                {
+                  "id": "s9",
+                  "startTime": "11:30",
+                  "endTime": "13:30",
+                  "roomId": "ra9",
+                  "activity": "EPM 4º — Música — Parte B"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "t6",
+          "name": "Canto — 2 EPM",
+          "members": [
+            {
+              "id": "m15",
+              "candidateId": "c9",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m16",
+              "candidateId": "c1",
+              "role": "Vocal"
+            },
+            {
+              "id": "m17",
+              "candidateId": "c11",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m18",
+              "candidateId": "c15",
+              "role": "Suplente"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day2",
+              "primaryRoomId": "ra5",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s10",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra5",
+                  "activity": "EPM 2º — Música — Parte A: Interpretación"
+                },
+                {
+                  "id": "s11",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "ra4",
+                  "activity": "EPM 2º — Música — Parte B: Lenguaje Musical"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "t7",
+          "name": "Percusión — 1 EEM",
+          "members": [
+            {
+              "id": "m19",
+              "candidateId": "c10",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m20",
+              "candidateId": "c6",
+              "role": "Vocal"
+            },
+            {
+              "id": "m21",
+              "candidateId": "c7",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m22",
+              "candidateId": "c16",
+              "role": "Suplente"
+            }
+          ],
+          "variations": [],
+          "schedule": []
+        },
+        {
+          "id": "t8",
+          "name": "Trompeta — 1 EPM",
+          "members": [
+            {
+              "id": "m23",
+              "candidateId": "c14",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m24",
+              "candidateId": "c10",
+              "role": "Vocal"
+            },
+            {
+              "id": "m25",
+              "candidateId": "c13",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m26",
+              "candidateId": "c4",
+              "role": "Suplente"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day3",
+              "primaryRoomId": "rb2",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s12",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "rb2",
+                  "activity": "EPM 1r — Música — Parte A: Interpretación"
+                },
+                {
+                  "id": "s13",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "rb4",
+                  "activity": "EPM 1r — Música — Parte B: Lenguaje Musical"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "t9",
+          "name": "Violonchelo — 5 EPM",
+          "members": [
+            {
+              "id": "m27",
+              "candidateId": "c12",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m28",
+              "candidateId": "c3",
+              "role": ""
+            },
+            {
+              "id": "m29",
+              "candidateId": "c15",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m30",
+              "candidateId": "c5",
+              "role": "Suplente"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day1",
+              "primaryRoomId": "rb3",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s14",
+                  "startTime": "09:00",
+                  "endTime": "11:30",
+                  "roomId": "rb3",
+                  "activity": "EPM 5º — Música — Parte A"
+                },
+                {
+                  "id": "s15",
+                  "startTime": "12:00",
+                  "endTime": "13:30",
+                  "roomId": "rb1",
+                  "activity": "EPM 5º — Música — Parte B"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "t10",
+          "name": "Oboe — 3 EEM",
+          "members": [
+            {
+              "id": "m31",
+              "candidateId": "c13",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m32",
+              "candidateId": "c16",
+              "role": "Vocal"
+            },
+            {
+              "id": "m33",
+              "candidateId": "c2",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m34",
+              "candidateId": "c9",
+              "role": "Suplente"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day3",
+              "primaryRoomId": "ra7",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s16",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra7",
+                  "activity": "EEM 2º-4º — Música — Parte A"
+                },
+                {
+                  "id": "s17",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "ra8",
+                  "activity": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -10,6 +10,9 @@ Tribunator.translations = {
       checkVersion: 'Versiones',
       currentVersion: 'Tu versión actual',
       checkLatest: 'Comprobar si hay una versión más reciente',
+      loadDemo: 'Cargar ejemplo',
+      demoWarning: 'Se borrarán todos los datos actuales. Si no has exportado tus datos, hazlo antes de continuar.',
+      demoDesc: 'Se cargará un centro de ejemplo con aulas, días, candidatos, tribunales y errores de prueba para explorar las funcionalidades.',
       language: 'Idioma',
       footer: {
         designedBy: 'está diseñada por',
@@ -324,6 +327,9 @@ Tribunator.translations = {
       checkVersion: 'Versions',
       currentVersion: 'La teua versió actual',
       checkLatest: 'Comprovar si hi ha una versió més recent',
+      loadDemo: 'Carregar exemple',
+      demoWarning: 'S\'esborraran totes les dades actuals. Si no has exportat les teues dades, fes-ho abans de continuar.',
+      demoDesc: 'Es carregarà un centre d\'exemple amb aules, dies, candidats, tribunals i errors de prova per a explorar les funcionalitats.',
       language: 'Idioma',
       footer: {
         designedBy: 'està dissenyada per',
@@ -638,6 +644,9 @@ Tribunator.translations = {
       checkVersion: 'Versions',
       currentVersion: 'Your current version',
       checkLatest: 'Check if a newer version is available',
+      loadDemo: 'Load example',
+      demoWarning: 'All current data will be deleted. If you haven\'t exported your data, do so before continuing.',
+      demoDesc: 'A sample center with rooms, days, candidates, tribunals and test errors will be loaded to explore the features.',
       language: 'Language',
       footer: {
         designedBy: 'is designed by',

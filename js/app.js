@@ -46,6 +46,14 @@ Tribunator.App = {
 
     var right = Tribunator.Utils.el('div', { className: 'app-header-right' });
 
+    // Load demo button
+    right.appendChild(Tribunator.Utils.el('button', {
+      className: 'btn btn-sm',
+      style: { color: 'rgba(255,255,255,0.7)', background: 'rgba(255,255,255,0.1)', border: 'none', fontSize: '11px' },
+      textContent: t('app.loadDemo'),
+      onClick: function() { self.loadDemo(); }
+    }));
+
     // Changelog button
     right.appendChild(Tribunator.Utils.el('button', {
       className: 'btn btn-sm',
@@ -149,6 +157,48 @@ Tribunator.App = {
       target: '_blank',
       textContent: '☕'
     }));
+  },
+
+  loadDemo: function() {
+    var self = this;
+    var el = Tribunator.Utils.el;
+    Tribunator.Utils.showModal({
+      title: t('app.loadDemo'),
+      body: el('div', {}, [
+        el('p', { style: { marginBottom: '12px', fontSize: '13px', fontWeight: '500', color: 'var(--danger)' }, textContent: t('app.demoWarning') }),
+        el('p', { style: { fontSize: '12px', color: 'var(--text-muted)' }, textContent: t('app.demoDesc') })
+      ]),
+      buttons: [
+        { text: t('common.cancel'), className: 'btn-secondary' },
+        { text: t('app.loadDemo'), className: 'btn-danger', close: false, action: function() {
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', 'demo.json', true);
+          xhr.onload = function() {
+            if (xhr.status === 200 || xhr.status === 0) {
+              var result = Tribunator.Store.importData(xhr.responseText, 'replace');
+              if (result.success) {
+                Tribunator.Utils.showToast(t('export.importSuccess'));
+                Tribunator.Space.currentCampusId = null;
+                Tribunator.Space.currentFloorId = null;
+                Tribunator.Tribunals.currentSolutionId = null;
+                Tribunator.Tribunals.currentTribunalId = null;
+                var active = Tribunator.Store.getActiveSolution();
+                if (active) Tribunator.Tribunals.currentSolutionId = active.id;
+                self.render();
+                self.renderCurrentPhase();
+              } else {
+                Tribunator.Utils.showToast(t('export.formatError'), 'error');
+              }
+            } else {
+              Tribunator.Utils.showToast(t('export.fileError'), 'error');
+            }
+            document.querySelector('.modal-overlay').remove();
+          };
+          xhr.onerror = function() { Tribunator.Utils.showToast(t('export.fileError'), 'error'); };
+          xhr.send();
+        }}
+      ]
+    });
   },
 
   setPhase: function(phase) {
