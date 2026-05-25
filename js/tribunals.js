@@ -71,21 +71,14 @@ Tribunator.Tribunals = {
             var def = store.data.settings.defaultMembersPerTribunal;
             tribunals.forEach(function(trib) {
               var mc = store.countTribunalMembers(sol.id, trib.id);
-              var totalMembers = trib.members.length;
-              var extras = totalMembers - mc;
               var tribWarnings = store.getTribunalWarnings(sol.id, trib.id);
-              var warn = mc < def ? ' ↓' : mc > def ? ' ↑' : '';
-              if (tribWarnings.length > 0) warn += ' ⚠';
-              var countText = mc + (extras > 0 ? '+' + extras : '') + warn;
-              var schedCount = (trib.schedule || []).length;
+              var hasIssue = mc !== def || tribWarnings.length > 0 || (trib.schedule || []).length === 0;
+              var badge = hasIssue ? ' ⚠' : '';
               solSection.appendChild(el('div', {
                 className: 'sidebar-item sidebar-indent' + (trib.id === self.currentTribunalId ? ' active' : ''),
                 onClick: function(e) { if (e.target.closest('.sidebar-item-actions')) return; self.currentTribunalId = trib.id; self.activeTab = 'tribunals'; self.renderSidebar(); self.renderMain(); }
               }, [
-                el('span', { className: 'sidebar-item-name' }, [
-                  document.createTextNode(trib.name),
-                  el('span', { style: { fontSize: '11px', color: 'var(--text-muted)', marginLeft: '6px' }, textContent: '(' + countText + ')' + (schedCount > 0 ? ' 📅' + schedCount : '') })
-                ]),
+                el('span', { className: 'sidebar-item-name', textContent: trib.name + badge }),
                 el('div', { className: 'sidebar-item-actions' }, [
                   el('button', { className: 'btn-icon btn-sm', textContent: '↑', title: t('common.moveUp'), onClick: function() { store.moveTribunal(sol.id, trib.id, 'up'); self.renderSidebar(); } }),
                   el('button', { className: 'btn-icon btn-sm', textContent: '↓', title: t('common.moveDown'), onClick: function() { store.moveTribunal(sol.id, trib.id, 'down'); self.renderSidebar(); } }),
@@ -112,38 +105,28 @@ Tribunator.Tribunals = {
     ].filter(Boolean)));
     sidebar.appendChild(candSection);
 
-    // Roles
-    var rolesSection = el('div', { className: 'sidebar-section' });
-    rolesSection.appendChild(el('div', { className: 'sidebar-header' }, [
-      t('tribunals.roles'),
-      el('button', { className: 'btn-icon', textContent: '+', onClick: function() { self.promptAddRole(); } })
-    ]));
-    store.getRoleDefs().forEach(function(role) {
-      var suffix = (role.counts ? '' : ' *') + (role.requireOne ? ' !' : '');
-      var label = role.name + suffix;
-      var labelStyle = role.counts ? {} : { fontStyle: 'italic', color: 'var(--text-muted)' };
-      rolesSection.appendChild(el('div', { className: 'sidebar-item' }, [
-        el('span', { className: 'sidebar-item-name', style: labelStyle, textContent: label }),
-        el('div', { className: 'sidebar-item-actions' }, [
-          el('button', { className: 'btn-icon btn-sm', textContent: '✎', title: t('common.edit'), onClick: function() { self.promptEditRole(role.name); } }),
-          el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { store.deleteRoleDef(role.name); self.renderSidebar(); } })
-        ])
-      ]));
-    });
-    var legend = [];
-    if (store.getRoleDefs().some(function(r) { return !r.counts; })) legend.push('* ' + t('tribunals.roleNoCount'));
-    if (store.getRoleDefs().some(function(r) { return r.requireOne; })) legend.push('! ' + t('tribunals.roleRequireOne'));
-    if (legend.length > 0) {
-      rolesSection.appendChild(el('div', { style: { padding: '2px 16px 6px', fontSize: '10px', color: 'var(--text-muted)', fontStyle: 'italic' }, innerHTML: legend.join('<br>') }));
-    }
-    sidebar.appendChild(rolesSection);
-
-    // Default members
-    var settingsSection = el('div', { className: 'sidebar-section' });
-    settingsSection.appendChild(el('div', { className: 'sidebar-header', textContent: t('tribunals.defaultMembers') }));
-    var memberInput = el('input', { className: 'form-input', type: 'number', min: '1', value: store.data.settings.defaultMembersPerTribunal, style: { margin: '0 16px 8px', width: 'calc(100% - 32px)' }, onChange: function() { store.data.settings.defaultMembersPerTribunal = parseInt(memberInput.value) || 5; store.save(); self.renderSidebar(); } });
-    settingsSection.appendChild(memberInput);
-    sidebar.appendChild(settingsSection);
+    // Roles (collapsible)
+    sidebar.appendChild(Tribunator.Utils.collapsibleSection('roles', t('tribunals.roles') + ' (' + store.getRoleDefs().length + ')',
+      el('button', { className: 'btn-icon', style: { color: 'inherit' }, textContent: '+', onClick: function(e) { e.stopPropagation(); self.promptAddRole(); } }),
+      function(body) {
+        store.getRoleDefs().forEach(function(role) {
+          var suffix = (role.counts ? '' : ' *') + (role.requireOne ? ' !' : '');
+          var labelStyle = role.counts ? {} : { fontStyle: 'italic', color: 'var(--text-muted)' };
+          body.appendChild(el('div', { className: 'sidebar-item' }, [
+            el('span', { className: 'sidebar-item-name', style: labelStyle, textContent: role.name + suffix }),
+            el('div', { className: 'sidebar-item-actions' }, [
+              el('button', { className: 'btn-icon btn-sm', textContent: '✎', onClick: function() { self.promptEditRole(role.name); } }),
+              el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { store.deleteRoleDef(role.name); self.renderSidebar(); } })
+            ])
+          ]));
+        });
+        // Default members inline
+        body.appendChild(el('div', { style: { padding: '6px 16px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: 'var(--text-muted)' } }, [
+          document.createTextNode(t('tribunals.defaultMembers') + ':'),
+          el('input', { className: 'form-input', type: 'number', min: '1', value: store.data.settings.defaultMembersPerTribunal, style: { width: '50px', padding: '2px 4px', fontSize: '11px' }, onChange: function(e) { store.data.settings.defaultMembersPerTribunal = parseInt(e.target.value) || 3; store.save(); self.renderSidebar(); } })
+        ]));
+      }
+    ));
 
     // PDF export
     var pdfSection = el('div', { className: 'sidebar-section' });

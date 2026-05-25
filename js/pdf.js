@@ -80,15 +80,13 @@ Tribunator.PDF = {
     }
   },
 
-  _addFooter: function(doc, solName) {
+  _addFooter: function(doc) {
     var pageCount = doc.getNumberOfPages();
     for (var i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       doc.setFontSize(8); doc.setFont(undefined, 'normal');
       doc.setTextColor(170);
-      doc.text(solName || 'Tribunator', this.MARGIN, 290);
-      doc.text(new Date().toLocaleDateString(), this.PAGE_W / 2, 290, { align: 'center' });
-      doc.text(i + ' / ' + pageCount, this.PAGE_W - this.MARGIN, 290, { align: 'right' });
+      doc.text(i + ' / ' + pageCount, this.PAGE_W / 2, 290, { align: 'center' });
       doc.setTextColor(0);
     }
   },
@@ -286,7 +284,7 @@ Tribunator.PDF = {
       state.y += 4;
     });
 
-    this._addFooter(doc, sol.name);
+    this._addFooter(doc);
     var suffix = options.membersOnly ? 'miembros' : 'completo';
     doc.save('tribunator-' + suffix + '-' + (sol.name || 'export').replace(/[^a-zA-Z0-9]/g, '_') + '.pdf');
     Tribunator.Utils.showToast(t('common.success'));

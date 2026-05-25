@@ -183,5 +183,32 @@ Tribunator.Utils = {
       clearTimeout(timer);
       timer = setTimeout(function() { fn.apply(context, args); }, delay);
     };
+  },
+
+  _collapsedSections: {},
+
+  collapsibleSection: function(id, title, rightEl, contentFn) {
+    var self = this;
+    var isCollapsed = this._collapsedSections[id] || false;
+    var section = this.el('div', { className: 'sidebar-section' });
+    var toggle = isCollapsed ? '▸' : '▾';
+    var header = this.el('div', {
+      className: 'sidebar-header collapsible',
+      onClick: function() {
+        self._collapsedSections[id] = !self._collapsedSections[id];
+        body.className = self._collapsedSections[id] ? 'sidebar-section-body collapsed' : 'sidebar-section-body';
+        toggleEl.textContent = self._collapsedSections[id] ? '▸' : '▾';
+      }
+    });
+    var toggleEl = this.el('span', { textContent: toggle, style: { marginRight: '6px', fontSize: '9px' } });
+    var titleEl = this.el('span', { textContent: title });
+    var leftGroup = this.el('span', { style: { display: 'flex', alignItems: 'center' } }, [toggleEl, titleEl]);
+    header.appendChild(leftGroup);
+    if (rightEl) header.appendChild(rightEl);
+    section.appendChild(header);
+    var body = this.el('div', { className: isCollapsed ? 'sidebar-section-body collapsed' : 'sidebar-section-body' });
+    contentFn(body);
+    section.appendChild(body);
+    return section;
   }
 };

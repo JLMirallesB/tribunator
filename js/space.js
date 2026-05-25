@@ -170,121 +170,68 @@ Tribunator.Space = {
     }
     sidebar.appendChild(campusSection);
 
-    // Groups section
-    var groupSection = Tribunator.Utils.el('div', { className: 'sidebar-section' });
-    groupSection.appendChild(Tribunator.Utils.el('div', { className: 'sidebar-header' }, [
-      t('space.groups'),
-      Tribunator.Utils.el('button', {
-        className: 'btn-icon',
-        textContent: '+',
-        title: t('space.addGroup'),
-        onClick: function() { self.promptAddGroup(); }
-      })
-    ]));
+    // Groups section (collapsible)
+    sidebar.appendChild(Tribunator.Utils.collapsibleSection('space_groups',
+      t('space.groups') + ' (' + store.getGroups().length + ')',
+      Tribunator.Utils.el('button', { className: 'btn-icon', style: { color: 'inherit' }, textContent: '+', onClick: function(e) { e.stopPropagation(); self.promptAddGroup(); } }),
+      function(body) {
+        var groups = store.getGroups();
+        if (groups.length === 0) {
+          body.appendChild(Tribunator.Utils.el('div', { className: 'sidebar-empty', textContent: t('space.noGroups') }));
+        } else {
+          groups.forEach(function(group) {
+            var warnings = store.getGroupWarnings(group.id);
+            var warningIcon = warnings.length > 0 ? ' ⚠' : '';
+            body.appendChild(Tribunator.Utils.el('div', {
+              className: 'sidebar-item',
+              onClick: function(e) { if (!e.target.closest('.sidebar-item-actions')) self.promptEditGroup(group.id); },
+              onMouseenter: function() { self.highlightGroup(group.id); },
+              onMouseleave: function() { self.highlightGroup(null); }
+            }, [
+              Tribunator.Utils.el('span', { className: 'sidebar-item-name', textContent: group.name + warningIcon }),
+              Tribunator.Utils.el('div', { className: 'sidebar-item-actions' }, [
+                Tribunator.Utils.el('button', { className: 'btn-icon btn-sm', textContent: '✎', onClick: function() { self.promptEditGroup(group.id); } }),
+                Tribunator.Utils.el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { self.promptDeleteGroup(group.id); } })
+              ])
+            ]));
+          });
+        }
+      }
+    ));
 
-    var groups = store.getGroups();
-    if (groups.length === 0) {
-      groupSection.appendChild(Tribunator.Utils.el('div', { className: 'sidebar-empty', textContent: t('space.noGroups') }));
-    } else {
-      groups.forEach(function(group) {
-        var warnings = store.getGroupWarnings(group.id);
-        var warningIcon = warnings.length > 0 ? ' ⚠' : '';
-        groupSection.appendChild(Tribunator.Utils.el('div', {
-          className: 'sidebar-item',
-          onClick: function(e) {
-            if (e.target.closest('.sidebar-item-actions')) return;
-            self.promptEditGroup(group.id);
-          },
-          onMouseenter: function() { self.highlightGroup(group.id); },
-          onMouseleave: function() { self.highlightGroup(null); }
-        }, [
-          Tribunator.Utils.el('span', { className: 'sidebar-item-name', textContent: group.name + warningIcon }),
-          Tribunator.Utils.el('div', { className: 'sidebar-item-actions' }, [
-            Tribunator.Utils.el('button', {
-              className: 'btn-icon btn-sm',
-              textContent: '✎',
-              title: t('common.edit'),
-              onClick: function() { self.promptEditGroup(group.id); }
-            }),
-            Tribunator.Utils.el('button', {
-              className: 'btn-icon btn-sm',
-              textContent: '×',
-              title: t('common.delete'),
-              onClick: function() { self.promptDeleteGroup(group.id); }
-            })
-          ])
-        ]));
-      });
-    }
-    sidebar.appendChild(groupSection);
+    // Custom fields section (collapsible)
+    sidebar.appendChild(Tribunator.Utils.collapsibleSection('space_fields',
+      t('space.customFields') + ' (' + store.getCustomFieldDefs().length + ')',
+      Tribunator.Utils.el('button', { className: 'btn-icon', style: { color: 'inherit' }, textContent: '+', onClick: function(e) { e.stopPropagation(); self.promptAddCustomField(); } }),
+      function(body) {
+        store.getCustomFieldDefs().forEach(function(field) {
+          body.appendChild(Tribunator.Utils.el('div', { className: 'sidebar-item' }, [
+            Tribunator.Utils.el('span', { className: 'sidebar-item-name' }, [
+              Tribunator.Utils.el('span', { textContent: field.name }),
+              Tribunator.Utils.el('span', { className: 'field-list-type', textContent: ' ' + t('common.' + field.type), style: { marginLeft: '6px' } })
+            ]),
+            Tribunator.Utils.el('div', { className: 'sidebar-item-actions' }, [
+              Tribunator.Utils.el('button', { className: 'btn-icon btn-sm', textContent: '✎', onClick: function() { self.promptEditCustomField(field.id); } }),
+              Tribunator.Utils.el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { self.promptDeleteCustomField(field.id); } })
+            ])
+          ]));
+        });
+      }
+    ));
 
-    // Custom fields section
-    var fieldsSection = Tribunator.Utils.el('div', { className: 'sidebar-section' });
-    fieldsSection.appendChild(Tribunator.Utils.el('div', { className: 'sidebar-header' }, [
-      t('space.customFields'),
-      Tribunator.Utils.el('button', {
-        className: 'btn-icon',
-        textContent: '+',
-        title: t('space.addField'),
-        onClick: function() { self.promptAddCustomField(); }
-      })
-    ]));
-
-    var fieldDefs = store.getCustomFieldDefs();
-    fieldDefs.forEach(function(field) {
-      fieldsSection.appendChild(Tribunator.Utils.el('div', { className: 'sidebar-item' }, [
-        Tribunator.Utils.el('span', { className: 'sidebar-item-name' }, [
-          Tribunator.Utils.el('span', { textContent: field.name }),
-          Tribunator.Utils.el('span', { className: 'field-list-type', textContent: ' ' + t('common.' + field.type), style: { marginLeft: '6px' } })
-        ]),
-        Tribunator.Utils.el('div', { className: 'sidebar-item-actions' }, [
-          Tribunator.Utils.el('button', {
-            className: 'btn-icon btn-sm',
-            textContent: '✎',
-            onClick: function() { self.promptEditCustomField(field.id); }
-          }),
-          Tribunator.Utils.el('button', {
-            className: 'btn-icon btn-sm',
-            textContent: '×',
-            onClick: function() { self.promptDeleteCustomField(field.id); }
-          })
-        ])
-      ]));
-    });
-    sidebar.appendChild(fieldsSection);
-
-    // Export/Import bar
-    var ioBar = Tribunator.Utils.el('div', { className: 'sidebar-section' });
-    ioBar.appendChild(Tribunator.Utils.el('div', { className: 'sidebar-header' }, [
-      t('common.export') + ' / ' + t('common.import')
-    ]));
-    var ioBody = Tribunator.Utils.el('div', { style: { padding: '8px 16px', display: 'flex', gap: '8px', flexWrap: 'wrap' } });
-    ioBody.appendChild(Tribunator.Utils.el('button', {
-      className: 'btn btn-sm',
-      textContent: t('export.exportSpaces'),
-      onClick: function() { self.exportSpaces(); }
-    }));
-    ioBody.appendChild(Tribunator.Utils.el('button', {
-      className: 'btn btn-sm',
-      textContent: t('export.exportAll'),
-      onClick: function() { self.exportAll(); }
-    }));
-
-    var fileInput = Tribunator.Utils.el('input', {
-      type: 'file',
-      accept: '.json',
-      className: 'file-input-hidden',
-      id: 'import-file-input',
-      onChange: function(e) { self.handleImport(e); }
-    });
-    ioBody.appendChild(fileInput);
-    ioBody.appendChild(Tribunator.Utils.el('button', {
-      className: 'btn btn-sm',
-      textContent: t('export.importData'),
-      onClick: function() { fileInput.click(); }
-    }));
-    ioBar.appendChild(ioBody);
-    sidebar.appendChild(ioBar);
+    // Export/Import bar (collapsible)
+    sidebar.appendChild(Tribunator.Utils.collapsibleSection('space_io',
+      t('common.export') + ' / ' + t('common.import'), null,
+      function(body) {
+        var ioBody = Tribunator.Utils.el('div', { style: { padding: '8px 16px', display: 'flex', gap: '8px', flexWrap: 'wrap' } });
+        ioBody.appendChild(Tribunator.Utils.el('button', { className: 'btn btn-sm', textContent: t('export.exportSpaces'), onClick: function() { self.exportSpaces(); } }));
+        ioBody.appendChild(Tribunator.Utils.el('button', { className: 'btn btn-sm', textContent: t('export.exportAll'), onClick: function() { self.exportAll(); } }));
+        var fileInput = Tribunator.Utils.el('input', { type: 'file', accept: '.json', className: 'file-input-hidden', onChange: function(e) { self.handleImport(e); } });
+        ioBody.appendChild(fileInput);
+        ioBody.appendChild(Tribunator.Utils.el('button', { className: 'btn btn-sm', textContent: t('export.importData'), onClick: function() { fileInput.click(); } }));
+        body.appendChild(ioBody);
+      }
+    ));
   },
 
   // --- MAIN AREA ---
