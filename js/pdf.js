@@ -4,13 +4,21 @@ Tribunator.PDF = {
   MARGIN: 15,
   PAGE_W: 210,
   CONTENT_W: 180,
-  PRIMARY: [37, 99, 235],
   DARK: [26, 26, 26],
   GRAY: [100, 100, 100],
-  LIGHT_BG: [247, 247, 248],
+  LIGHT_BG: [245, 245, 245],
   WHITE: [255, 255, 255],
-  TABLE_HEAD: [37, 99, 235],
-  TABLE_ALT: [245, 245, 250],
+  TABLE_ALT: [248, 248, 248],
+
+  _accent: function(options) {
+    if (options && options.accentColor) return options.accentColor;
+    return [60, 60, 60];
+  },
+
+  _hexToRgb: function(hex) {
+    hex = hex.replace('#', '');
+    return [parseInt(hex.substring(0,2),16), parseInt(hex.substring(2,4),16), parseInt(hex.substring(4,6),16)];
+  },
 
   _initDoc: function() {
     if (typeof jspdf === 'undefined' && typeof jsPDF === 'undefined' && typeof window.jspdf === 'undefined') {
@@ -85,10 +93,9 @@ Tribunator.PDF = {
     }
   },
 
-  _tribunalHeader: function(doc, name, state) {
+  _tribunalHeader: function(doc, name, state, options) {
     state.check(18);
-    // Color accent line
-    doc.setFillColor.apply(doc, this.PRIMARY);
+    doc.setFillColor.apply(doc, this._accent(options));
     doc.rect(this.MARGIN, state.y, this.CONTENT_W, 0.8, 'F');
     state.y += 4;
     // Tribunal name
@@ -99,16 +106,16 @@ Tribunator.PDF = {
     doc.setTextColor(0);
   },
 
-  _sectionLabel: function(doc, label, state) {
+  _sectionLabel: function(doc, label, state, options) {
     state.check(10);
     doc.setFontSize(10); doc.setFont(undefined, 'bold');
-    doc.setTextColor.apply(doc, this.PRIMARY);
+    doc.setTextColor.apply(doc, this._accent(options));
     doc.text(label, this.MARGIN, state.y + 4);
     state.y += 7;
     doc.setTextColor(0);
   },
 
-  _membersTable: function(doc, members, store, state, selectedRoles, showTitular) {
+  _membersTable: function(doc, members, store, state, selectedRoles, showTitular, options) {
     var filtered = members.filter(function(m) {
       if (selectedRoles && m.role && selectedRoles.indexOf(m.role) === -1) return false;
       return true;
@@ -140,7 +147,7 @@ Tribunator.PDF = {
       head: head,
       body: body,
       styles: { fontSize: 8, cellPadding: 2, lineColor: [220, 220, 220], lineWidth: 0.2 },
-      headStyles: { fillColor: self.TABLE_HEAD, textColor: self.WHITE, fontStyle: 'bold', fontSize: 8 },
+      headStyles: { fillColor: self._accent(options), textColor: self.WHITE, fontStyle: 'bold', fontSize: 8 },
       alternateRowStyles: { fillColor: self.TABLE_ALT },
       columnStyles: hasTitularNotes ? { 4: { fontStyle: 'italic', textColor: self.GRAY, fontSize: 7 } } : {},
       didParseCell: function(data) {
@@ -160,14 +167,13 @@ Tribunator.PDF = {
     state.y = doc.lastAutoTable.finalY + 4;
   },
 
-  _variationsBlock: function(doc, variations, store, state, selectedRoles, showTitular) {
+  _variationsBlock: function(doc, variations, store, state, selectedRoles, showTitular, options) {
     if (!variations || variations.length === 0) return;
     var self = this;
 
     variations.forEach(function(v) {
       state.check(15);
-      // Indented label with left border
-      doc.setFillColor(230, 230, 230);
+      doc.setFillColor(210, 210, 210);
       doc.rect(self.MARGIN + 2, state.y, 1, 6, 'F');
       doc.setFontSize(9); doc.setFont(undefined, 'bold');
       doc.setTextColor.apply(doc, self.GRAY);
@@ -175,7 +181,7 @@ Tribunator.PDF = {
       state.y += 7;
       doc.setTextColor(0);
 
-      self._membersTable(doc, v.members, store, state, selectedRoles, showTitular);
+      self._membersTable(doc, v.members, store, state, selectedRoles, showTitular, options);
     });
   },
 
@@ -238,22 +244,22 @@ Tribunator.PDF = {
     tribunals.forEach(function(trib, idx) {
       if (idx > 0) state.check(20);
 
-      self._tribunalHeader(doc, trib.name, state);
+      self._tribunalHeader(doc, trib.name, state, options);
 
       // Members
       if (trib.members.length > 0) {
-        self._sectionLabel(doc, t('tribunals.members'), state);
-        self._membersTable(doc, trib.members, store, state, options.selectedRoles, options.showTitular);
+        self._sectionLabel(doc, t('tribunals.members'), state, options);
+        self._membersTable(doc, trib.members, store, state, options.selectedRoles, options.showTitular, options);
       }
 
       // Variations
-      self._variationsBlock(doc, trib.variations, store, state, options.selectedRoles, options.showTitular);
+      self._variationsBlock(doc, trib.variations, store, state, options.selectedRoles, options.showTitular, options);
 
       // Schedule
       if (!options.membersOnly) {
         var schedule = trib.schedule || [];
         if (schedule.length > 0) {
-          self._sectionLabel(doc, t('tribunals.schedule'), state);
+          self._sectionLabel(doc, t('tribunals.schedule'), state, options);
           self._scheduleTable(doc, schedule, store, state);
         }
       }
@@ -279,10 +285,14 @@ Tribunator.PDF = {
     var activeSol = store.getActiveSolution();
     if (!activeSol) { Tribunator.Utils.showToast(t('tribunals.noSolutions'), 'warning'); return; }
 
+    var self = this;
     var headerInput = el('input', { className: 'form-input', type: 'text', placeholder: t('pdf.headerText') });
     var subHeaderInput = el('input', { className: 'form-input', type: 'text', placeholder: t('pdf.subHeaderText') });
     var customTextInput = el('textarea', { className: 'form-textarea', placeholder: t('pdf.customText') });
     var logoInput = el('input', { type: 'file', accept: 'image/*', className: 'form-input' });
+
+    // Accent color picker
+    var colorInput = el('input', { type: 'color', value: '#3c3c3c', style: { width: '40px', height: '28px', border: 'none', cursor: 'pointer', verticalAlign: 'middle' } });
 
     // Role checkboxes
     var roleDefs = store.getRoleDefs();
@@ -327,6 +337,7 @@ Tribunator.PDF = {
         tribunalIds: selectedIds,
         selectedRoles: selectedRoles.slice(),
         showTitular: showTitularCb.checked,
+        accentColor: self._hexToRgb(colorInput.value),
         headerText: headerInput.value,
         subHeaderText: subHeaderInput.value,
         customText: customTextInput.value
@@ -348,6 +359,13 @@ Tribunator.PDF = {
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.subHeaderText') }), subHeaderInput]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.customText') }), customTextInput]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.logo') }), logoInput]),
+        el('div', { className: 'form-group' }, [
+          el('label', { className: 'form-label', textContent: t('pdf.accentColor') }),
+          el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px' } }, [
+            colorInput,
+            el('span', { style: { fontSize: '11px', color: 'var(--text-muted)' }, textContent: t('pdf.accentHint') })
+          ])
+        ]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), roleList]),
         el('div', { className: 'form-group' }, [
           el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [
