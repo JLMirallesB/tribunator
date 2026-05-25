@@ -198,10 +198,18 @@ Tribunator.PDF = {
 
   _scheduleTable: function(doc, schedule, store, state) {
     var self = this;
-    schedule.forEach(function(sched) {
+    var sorted = schedule.slice().sort(function(a, b) {
+      var dayA = store.getDay(a.dayId);
+      var dayB = store.getDay(b.dayId);
+      if (!dayA || !dayB) return 0;
+      return dayA.date.localeCompare(dayB.date);
+    });
+    sorted.forEach(function(sched) {
       var day = store.getDay(sched.dayId);
       if (!day) return;
-      var slots = sched.slots || [];
+      var slots = (sched.slots || []).slice().sort(function(a, b) {
+        return a.startTime.localeCompare(b.startTime);
+      });
       if (slots.length === 0) return;
 
       state.check(15);
