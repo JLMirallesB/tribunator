@@ -5,7 +5,7 @@ Tribunator.translations = {
     app: {
       title: 'Tribunator',
       version: 'v0.3.1',
-      phases: { space: 'Espacio', time: 'Tiempo', templates: 'Plantillas', tribunals: 'Tribunales', verify: 'Verificación' },
+      phases: { dashboard: 'Inicio', space: 'Espacio', time: 'Tiempo', templates: 'Plantillas', tribunals: 'Tribunales', verify: 'Verificación' },
       changelog: 'Changelog',
       checkVersion: 'Versiones',
       currentVersion: 'Tu versión actual',
@@ -281,6 +281,16 @@ Tribunator.translations = {
       halfPage: 'Dos carteles por página',
       includeEmpty: 'Incluir aulas sin tribunal'
     },
+    dashboard: {
+      welcome: 'Bienvenido a Tribunator',
+      welcomeDesc: 'Herramienta para la gestión de tribunales, aulas y horarios en centros educativos. Empieza creando un centro o carga el ejemplo de demostración.',
+      startFresh: 'Empezar de cero',
+      upcomingDays: 'Días de pruebas',
+      topRooms: 'Aulas más usadas',
+      topMembers: 'Miembros con más carga',
+      pendingErrors: 'Errores pendientes',
+      more: 'más...'
+    },
     templates: {
       title: 'Plantillas de prueba',
       add: 'Nueva plantilla',
@@ -342,7 +352,7 @@ Tribunator.translations = {
     app: {
       title: 'Tribunator',
       version: 'v0.3.1',
-      phases: { space: 'Espai', time: 'Temps', templates: 'Plantilles', tribunals: 'Tribunals', verify: 'Verificació' },
+      phases: { dashboard: 'Inici', space: 'Espai', time: 'Temps', templates: 'Plantilles', tribunals: 'Tribunals', verify: 'Verificació' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
       currentVersion: 'La teua versió actual',
@@ -618,6 +628,16 @@ Tribunator.translations = {
       halfPage: 'Dos cartells per pàgina',
       includeEmpty: 'Incloure aules sense tribunal'
     },
+    dashboard: {
+      welcome: 'Benvingut a Tribunator',
+      welcomeDesc: 'Eina per a la gestió de tribunals, aules i horaris en centres educatius. Comença creant un centre o carrega l\'exemple de demostració.',
+      startFresh: 'Començar de zero',
+      upcomingDays: 'Dies de proves',
+      topRooms: 'Aules més usades',
+      topMembers: 'Membres amb més càrrega',
+      pendingErrors: 'Errors pendents',
+      more: 'més...'
+    },
     templates: {
       title: 'Plantilles de prova',
       add: 'Nova plantilla',
@@ -679,7 +699,7 @@ Tribunator.translations = {
     app: {
       title: 'Tribunator',
       version: 'v0.3.1',
-      phases: { space: 'Space', time: 'Time', templates: 'Templates', tribunals: 'Tribunals', verify: 'Verification' },
+      phases: { dashboard: 'Home', space: 'Space', time: 'Time', templates: 'Templates', tribunals: 'Tribunals', verify: 'Verification' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
       currentVersion: 'Your current version',
@@ -954,6 +974,16 @@ Tribunator.translations = {
       noDay: 'No day',
       halfPage: 'Two signs per page',
       includeEmpty: 'Include rooms without tribunal'
+    },
+    dashboard: {
+      welcome: 'Welcome to Tribunator',
+      welcomeDesc: 'Tool for managing tribunals, rooms and schedules in educational centers. Start by creating a center or load the demo example.',
+      startFresh: 'Start from scratch',
+      upcomingDays: 'Exam days',
+      topRooms: 'Most used rooms',
+      topMembers: 'Members with highest load',
+      pendingErrors: 'Pending errors',
+      more: 'more...'
     },
     templates: {
       title: 'Exam templates',

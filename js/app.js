@@ -1,7 +1,7 @@
 window.Tribunator = window.Tribunator || {};
 
 Tribunator.App = {
-  currentPhase: 'space',
+  currentPhase: 'dashboard',
 
   init: function() {
     Tribunator.i18n.init();
@@ -73,7 +73,7 @@ Tribunator.App = {
 
     // Phase nav
     var nav = Tribunator.Utils.el('div', { className: 'phase-nav' });
-    var phases = ['space', 'time', 'templates', 'tribunals', 'verify'];
+    var phases = ['dashboard', 'space', 'time', 'templates', 'tribunals', 'verify'];
     phases.forEach(function(phase) {
       nav.appendChild(Tribunator.Utils.el('button', {
         className: 'phase-btn' + (self.currentPhase === phase ? ' active' : ''),
@@ -146,6 +146,10 @@ Tribunator.App = {
     var body = document.getElementById('app-body');
     Tribunator.Utils.clearElement(body);
 
+    var dashContainer = Tribunator.Utils.el('div', {
+      id: 'phase-dashboard',
+      className: 'phase-content' + (this.currentPhase === 'dashboard' ? ' active' : '')
+    });
     var spaceContainer = Tribunator.Utils.el('div', {
       id: 'phase-space',
       className: 'phase-content' + (this.currentPhase === 'space' ? ' active' : '')
@@ -168,6 +172,7 @@ Tribunator.App = {
       className: 'phase-content' + (this.currentPhase === 'verify' ? ' active' : '')
     });
 
+    body.appendChild(dashContainer);
     body.appendChild(spaceContainer);
     body.appendChild(timeContainer);
     body.appendChild(templatesContainer);
@@ -178,7 +183,9 @@ Tribunator.App = {
   },
 
   renderCurrentPhase: function() {
-    if (this.currentPhase === 'space') {
+    if (this.currentPhase === 'dashboard') {
+      Tribunator.Dashboard.render();
+    } else if (this.currentPhase === 'space') {
       Tribunator.Space.render();
     } else if (this.currentPhase === 'time') {
       Tribunator.Time.render();
