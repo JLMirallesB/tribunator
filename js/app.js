@@ -27,7 +27,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v0.1.0' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v0.1.1' })
     ]));
 
     // Phase nav
@@ -151,6 +151,51 @@ Tribunator.App = {
 
   showChangelog: function() {
     var entries = [
+      {
+        version: '0.1.1',
+        date: '2026-05-25',
+        changes: {
+          es: [
+            'Gestión de sustitutos y titulares: los candidatos pueden tener un titular asociado',
+            'Mutación sustituto/titular: cambia quién actúa en el tribunal con un click',
+            'Excel con 5 columnas: Apellidos, Nombre, Especialidad, Apellidos Titular, Nombre Titular',
+            'Plantilla CSV descargable con las cabeceras correctas',
+            'Pestaña de Verificación: auditoría completa de la solución activa',
+            'Protección al borrar: aviso si un día, aula o candidato tiene referencias en tribunales',
+            'Limpieza automática de referencias al borrar (slots, miembros)',
+            'Validación de conflictos al editar franjas inline',
+            'Aviso de conflicto de miembros al crear franjas y al añadir miembros',
+            'Logo y favicon de la aplicación',
+            'README con manual de uso completo'
+          ],
+          va: [
+            'Gestió de substituts i titulars: els candidats poden tindre un titular associat',
+            'Mutació substitut/titular: canvia qui actua en el tribunal amb un click',
+            'Excel amb 5 columnes: Cognoms, Nom, Especialitat, Cognoms Titular, Nom Titular',
+            'Plantilla CSV descarregable amb les capçaleres correctes',
+            'Pestanya de Verificació: auditoria completa de la solució activa',
+            'Protecció al esborrar: avís si un dia, aula o candidat té referències en tribunals',
+            'Neteja automàtica de referències al esborrar (slots, membres)',
+            'Validació de conflictes al editar franges inline',
+            'Avís de conflicte de membres al crear franges i al afegir membres',
+            'Logo i favicon de l\'aplicació',
+            'README amb manual d\'ús complet'
+          ],
+          en: [
+            'Substitute/titular management: candidates can have an associated titular',
+            'Substitute/titular toggle: switch who acts in the tribunal with one click',
+            'Excel with 5 columns: Surnames, Name, Specialty, Titular Surnames, Titular Name',
+            'Downloadable CSV template with correct headers',
+            'Verification tab: full audit of the active solution',
+            'Delete protection: warning if a day, room or candidate has tribunal references',
+            'Automatic reference cleanup on delete (slots, members)',
+            'Conflict validation when editing slots inline',
+            'Member conflict warning when creating slots and adding members',
+            'App logo and favicon',
+            'README with complete user manual'
+          ]
+        }
+      },
       {
         version: '0.1.0',
         date: '2026-05-24',

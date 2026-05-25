@@ -235,9 +235,16 @@ Tribunator.Tribunals = {
     var tbody = el('tbody');
     trib.members.forEach(function(member) {
       var c = store.getCandidate(member.candidateId);
-      var tr = el('tr');
-      tr.appendChild(el('td', { style: { fontWeight: '500' }, textContent: c ? c.surnames : '—' }));
-      tr.appendChild(el('td', { textContent: c ? c.name : '—' }));
+      var isSub = store.isSubstitute(member.candidateId);
+      var isMutated = c && c.useTitular;
+      var rowStyle = isMutated ? { background: 'var(--warning-light)' } : isSub ? { background: '#eef6ff' } : {};
+      var tr = el('tr', { style: rowStyle });
+      var displayName = c ? (c.useTitular ? c.titularSurnames : c.surnames) : '—';
+      var displayFirst = c ? (c.useTitular ? c.titularName : c.name) : '—';
+      var nameStyle = { fontWeight: '500' };
+      if (isSub) nameStyle.fontStyle = 'italic';
+      tr.appendChild(el('td', { style: nameStyle, textContent: displayName }));
+      tr.appendChild(el('td', { style: isSub ? { fontStyle: 'italic' } : {}, textContent: displayFirst }));
       tr.appendChild(el('td', { textContent: c ? c.specialty : '' }));
       var roleCell = el('td');
       var roleInput = el('input', { className: 'form-input', type: 'text', value: member.role || '', list: 'role-dl', style: { width: '140px', padding: '4px 6px', fontSize: '12px' }, onChange: function() { store.updateTribunalMember(self.currentSolutionId, self.currentTribunalId, member.id, { role: roleInput.value }); } });
@@ -919,9 +926,31 @@ Tribunator.Tribunals = {
     var self = this; var store = Tribunator.Store; var candidates = store.getCandidates();
     if (candidates.length === 0) { Tribunator.Utils.showToast(t('tribunals.noCandidates'), 'warning'); return; }
     var el = Tribunator.Utils.el;
+
+    // Specialty filter
+    var specialties = {};
+    candidates.forEach(function(c) { if (c.specialty) specialties[c.specialty] = true; });
+    var specFilter = el('select', { className: 'filter-select', style: { marginBottom: '8px' } });
+    specFilter.appendChild(el('option', { value: '', textContent: t('common.all') + ' ' + t('tribunals.candidateSpecialty').toLowerCase() }));
+    Object.keys(specialties).sort().forEach(function(s) { specFilter.appendChild(el('option', { value: s, textContent: s })); });
+
+    // Candidate select
     var sel = el('select', { className: 'form-select' });
-    sel.appendChild(el('option', { value: '', textContent: '— ' + t('tribunals.selectCandidate') + ' —' }));
-    candidates.forEach(function(c) { sel.appendChild(el('option', { value: c.id, textContent: c.surnames + ', ' + c.name + (c.specialty ? ' (' + c.specialty + ')' : '') })); });
+
+    var rebuildCandidates = function() {
+      var prev = sel.value;
+      while (sel.firstChild) sel.removeChild(sel.firstChild);
+      sel.appendChild(el('option', { value: '', textContent: '— ' + t('tribunals.selectCandidate') + ' —' }));
+      var filter = specFilter.value;
+      candidates.forEach(function(c) {
+        if (filter && c.specialty !== filter) return;
+        sel.appendChild(el('option', { value: c.id, textContent: c.surnames + ', ' + c.name + (c.specialty ? ' (' + c.specialty + ')' : '') }));
+      });
+      if (prev) sel.value = prev;
+    };
+    specFilter.addEventListener('change', rebuildCandidates);
+    rebuildCandidates();
+
     var roleInput = el('input', { className: 'form-input', type: 'text', placeholder: t('tribunals.role'), list: 'add-role-dl' });
     var dl = el('datalist', { id: 'add-role-dl' });
     store.getRoleDefs().forEach(function(r) { dl.appendChild(el('option', { value: r.name })); });
@@ -947,6 +976,7 @@ Tribunator.Tribunals = {
     Tribunator.Utils.showModal({
       title: t('tribunals.addMember'),
       body: el('div', {}, [
+        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateSpecialty') }), specFilter]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidate') }), sel]),
         conflictInfo,
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.role') }), roleInput, dl])
