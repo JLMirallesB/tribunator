@@ -929,14 +929,14 @@
                   "startTime": "09:00",
                   "endTime": "11:00",
                   "roomId": "ra1",
-                  "activity": "EPM 1r — Parte A: Interpretación"
+                  "activity": "1 EPM — Parte A: Interpretación"
                 },
                 {
                   "id": "s2",
                   "startTime": "11:30",
                   "endTime": "13:00",
                   "roomId": "ra2",
-                  "activity": "EPM 1r — Parte B: Lenguaje Musical"
+                  "activity": "1 EPM — Parte B: Lenguaje Musical"
                 }
               ]
             },
@@ -951,7 +951,7 @@
                   "startTime": "09:00",
                   "endTime": "10:30",
                   "roomId": "ra1",
-                  "activity": "EPM 1r — Parte A: Lectura a primera vista"
+                  "activity": "1 EPM — Parte A: Lectura a primera vista"
                 }
               ]
             }
@@ -990,7 +990,7 @@
                   "startTime": "09:00",
                   "endTime": "12:00",
                   "roomId": "ra5",
-                  "activity": "EPM 3r — Parte A"
+                  "activity": "3 EPM — Parte A"
                 }
               ]
             }
@@ -1071,21 +1071,21 @@
                   "startTime": "09:00",
                   "endTime": "11:00",
                   "roomId": "ra3",
-                  "activity": "EPM 2º — Parte A: Interpretación"
+                  "activity": "2 EPM — Parte A: Interpretación"
                 },
                 {
                   "id": "s5",
                   "startTime": "11:00",
                   "endTime": "11:30",
                   "roomId": "ra3",
-                  "activity": "EPM 2º — Parte A: Lectura a primera vista"
+                  "activity": "2 EPM — Parte A: Lectura a primera vista"
                 },
                 {
                   "id": "s6",
                   "startTime": "12:00",
                   "endTime": "13:30",
                   "roomId": "ra4",
-                  "activity": "EPM 2º — Parte B: Lenguaje Musical"
+                  "activity": "2 EPM — Parte B: Lenguaje Musical"
                 }
               ]
             },
@@ -1100,14 +1100,14 @@
                   "startTime": "09:00",
                   "endTime": "11:00",
                   "roomId": "ra3",
-                  "activity": "EPM 2º — Parte A: Interpretación"
+                  "activity": "2 EPM — Parte A: Interpretación"
                 },
                 {
                   "id": "s22",
                   "startTime": "11:30",
                   "endTime": "13:00",
                   "roomId": "ra4",
-                  "activity": "EPM 2º — Parte B: Lenguaje Musical"
+                  "activity": "2 EPM — Parte B: Lenguaje Musical"
                 }
               ]
             }
@@ -1130,7 +1130,7 @@
                   "startTime": "09:00",
                   "endTime": "12:00",
                   "roomId": "rb1",
-                  "activity": "EEM 1r — Prueba de aptitud"
+                  "activity": "1 EEM — Prueba de aptitud"
                 }
               ]
             }
@@ -1169,14 +1169,14 @@
                   "startTime": "09:00",
                   "endTime": "11:00",
                   "roomId": "ra10",
-                  "activity": "EPM 4º — Parte A"
+                  "activity": "4 EPM — Parte A"
                 },
                 {
                   "id": "s9",
                   "startTime": "11:30",
                   "endTime": "13:30",
                   "roomId": "ra9",
-                  "activity": "EPM 4º — Parte B"
+                  "activity": "4 EPM — Parte B"
                 }
               ]
             }
@@ -1220,14 +1220,14 @@
                   "startTime": "09:00",
                   "endTime": "11:00",
                   "roomId": "ra5",
-                  "activity": "EPM 2º — Parte A: Interpretación"
+                  "activity": "2 EPM — Parte A: Interpretación"
                 },
                 {
                   "id": "s11",
                   "startTime": "11:30",
                   "endTime": "13:00",
                   "roomId": "ra4",
-                  "activity": "EPM 2º — Parte B: Lenguaje Musical"
+                  "activity": "2 EPM — Parte B: Lenguaje Musical"
                 }
               ]
             },
@@ -1242,14 +1242,14 @@
                   "startTime": "09:00",
                   "endTime": "11:00",
                   "roomId": "rb3",
-                  "activity": "EPM 2º — Parte A: Interpretación"
+                  "activity": "2 EPM — Parte A: Interpretación"
                 },
                 {
                   "id": "s24",
                   "startTime": "11:30",
                   "endTime": "13:00",
                   "roomId": "rb4",
-                  "activity": "EPM 2º — Parte B: Lenguaje Musical"
+                  "activity": "2 EPM — Parte B: Lenguaje Musical"
                 }
               ]
             }
@@ -1358,14 +1358,14 @@
                   "startTime": "09:00",
                   "endTime": "11:00",
                   "roomId": "rb2",
-                  "activity": "EPM 1r — Parte A: Interpretación"
+                  "activity": "1 EPM — Parte A: Interpretación"
                 },
                 {
                   "id": "s13",
                   "startTime": "11:30",
                   "endTime": "13:00",
                   "roomId": "rb4",
-                  "activity": "EPM 1r — Parte B: Lenguaje Musical"
+                  "activity": "1 EPM — Parte B: Lenguaje Musical"
                 }
               ]
             },
@@ -1380,7 +1380,7 @@
                   "startTime": "12:00",
                   "endTime": "13:30",
                   "roomId": "rb2",
-                  "activity": "EPM 1r — Parte B: Lenguaje Musical"
+                  "activity": "1 EPM — Parte B: Lenguaje Musical"
                 }
               ]
             }
@@ -1424,14 +1424,14 @@
                   "startTime": "09:00",
                   "endTime": "11:30",
                   "roomId": "rb3",
-                  "activity": "EPM 5º — Parte A"
+                  "activity": "5 EPM — Parte A"
                 },
                 {
                   "id": "s15",
                   "startTime": "12:00",
                   "endTime": "13:30",
                   "roomId": "rb1",
-                  "activity": "EPM 5º — Parte B"
+                  "activity": "5 EPM — Parte B"
                 }
               ]
             }
@@ -1480,7 +1480,7 @@
                   "startTime": "09:00",
                   "endTime": "11:00",
                   "roomId": "ra7",
-                  "activity": "EEM 2º-4º — Parte A"
+                  "activity": "2-4 EEM — Parte A"
                 },
                 {
                   "id": "s17",
