@@ -1075,6 +1075,27 @@ Tribunator.Store = {
     }
   },
 
+  moveTribunal: function(solutionId, tribunalId, direction) {
+    var sol = this.getSolution(solutionId);
+    if (!sol) return;
+    var idx = -1;
+    sol.tribunals.forEach(function(t, i) { if (t.id === tribunalId) idx = i; });
+    if (idx === -1) return;
+    var newIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (newIdx < 0 || newIdx >= sol.tribunals.length) return;
+    var temp = sol.tribunals[idx];
+    sol.tribunals[idx] = sol.tribunals[newIdx];
+    sol.tribunals[newIdx] = temp;
+    this.save();
+  },
+
+  sortTribunals: function(solutionId) {
+    var sol = this.getSolution(solutionId);
+    if (!sol) return;
+    sol.tribunals.sort(function(a, b) { return a.name.localeCompare(b.name); });
+    this.save();
+  },
+
   addTribunalMember: function(solutionId, tribunalId, candidateId, role) {
     var trib = this.getTribunal(solutionId, tribunalId);
     if (!trib) return null;

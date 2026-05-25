@@ -60,7 +60,10 @@ Tribunator.Tribunals = {
           var tribunals = store.getTribunals(sol.id);
           solSection.appendChild(el('div', { className: 'sidebar-header sidebar-indent', style: { paddingTop: '4px', paddingBottom: '4px' } }, [
             t('tribunals.tribunals'),
-            el('button', { className: 'btn-icon', textContent: '+', onClick: function() { self.promptAddTribunal(); } })
+            el('div', { style: { display: 'flex', gap: '2px' } }, [
+              el('button', { className: 'btn-icon', textContent: 'A↓', title: t('tribunals.sortAlpha'), style: { fontSize: '10px' }, onClick: function() { store.sortTribunals(sol.id); self.renderSidebar(); } }),
+              el('button', { className: 'btn-icon', textContent: '+', onClick: function() { self.promptAddTribunal(); } })
+            ])
           ]));
           if (tribunals.length === 0) {
             solSection.appendChild(el('div', { className: 'sidebar-empty sidebar-indent', textContent: t('tribunals.noTribunals') }));
@@ -77,13 +80,15 @@ Tribunator.Tribunals = {
               var schedCount = (trib.schedule || []).length;
               solSection.appendChild(el('div', {
                 className: 'sidebar-item sidebar-indent' + (trib.id === self.currentTribunalId ? ' active' : ''),
-                onClick: function(e) { if (!e.target.closest('.sidebar-item-actions')) { self.currentTribunalId = trib.id; self.activeTab = 'tribunals'; self.renderSidebar(); self.renderMain(); } }
+                onClick: function(e) { if (e.target.closest('.sidebar-item-actions')) return; self.currentTribunalId = trib.id; self.activeTab = 'tribunals'; self.renderSidebar(); self.renderMain(); }
               }, [
                 el('span', { className: 'sidebar-item-name' }, [
                   document.createTextNode(trib.name),
                   el('span', { style: { fontSize: '11px', color: 'var(--text-muted)', marginLeft: '6px' }, textContent: '(' + countText + ')' + (schedCount > 0 ? ' 📅' + schedCount : '') })
                 ]),
                 el('div', { className: 'sidebar-item-actions' }, [
+                  el('button', { className: 'btn-icon btn-sm', textContent: '↑', title: t('common.moveUp'), onClick: function() { store.moveTribunal(sol.id, trib.id, 'up'); self.renderSidebar(); } }),
+                  el('button', { className: 'btn-icon btn-sm', textContent: '↓', title: t('common.moveDown'), onClick: function() { store.moveTribunal(sol.id, trib.id, 'down'); self.renderSidebar(); } }),
                   el('button', { className: 'btn-icon btn-sm', textContent: '✎', onClick: function() { self.promptEditTribunal(trib.id); } }),
                   el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { self.promptDeleteTribunal(trib.id); } })
                 ])
