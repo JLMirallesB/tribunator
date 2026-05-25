@@ -31,14 +31,14 @@ Tribunator.Store = {
 
   defaultActivityTemplates: function() {
     return [
-      { id: 'eem1_mus', label: 'EEM 1r — Música', enabled: true, levels: ['1 EEM'], requiredParts: ['Prueba de aptitud'], children: [
+      { id: 'eem1_mus', label: 'EEM 1r', enabled: true, levels: ['1 EEM'], requiredParts: ['Prueba de aptitud'], children: [
         { label: 'Prueba de aptitud', children: [
           { label: 'Capacidad rítmica' },
           { label: 'Capacidad auditiva' },
           { label: 'Capacidad melódica y vocal' }
         ]}
       ]},
-      { id: 'eem24_mus', label: 'EEM 2º-4º — Música', enabled: true, levels: ['2 EEM','3 EEM','4 EEM'], requiredParts: ['Parte A', 'Parte B'], children: [
+      { id: 'eem24_mus', label: 'EEM 2º-4º', enabled: true, levels: ['2 EEM','3 EEM','4 EEM'], requiredParts: ['Parte A', 'Parte B'], children: [
         { label: 'Parte A', children: [
           { label: 'Interpretación' },
           { label: 'Lectura a primera vista' }
@@ -47,7 +47,7 @@ Tribunator.Store = {
           { label: 'Lenguaje Musical' }
         ]}
       ]},
-      { id: 'epm1_mus', label: 'EPM 1r — Música', enabled: true, levels: ['1 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+      { id: 'epm1_mus', label: 'EPM 1r', enabled: true, levels: ['1 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
         { label: 'Parte A', children: [
           { label: 'Interpretación' },
           { label: 'Lectura a primera vista', excludeFor: ['Canto','Guitarra eléctrica','Bajo eléctrico'] }
@@ -56,7 +56,7 @@ Tribunator.Store = {
           { label: 'Lenguaje Musical' }
         ]}
       ]},
-      { id: 'epm2_mus', label: 'EPM 2º — Música', enabled: true, levels: ['2 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+      { id: 'epm2_mus', label: 'EPM 2º', enabled: true, levels: ['2 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
         { label: 'Parte A', children: [
           { label: 'Interpretación' },
           { label: 'Lectura a primera vista' }
@@ -68,7 +68,7 @@ Tribunator.Store = {
           { label: 'Tabalet', onlyFor: ['Dulzaina'] }
         ]}
       ]},
-      { id: 'epm3_mus', label: 'EPM 3r — Música', enabled: true, levels: ['3 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+      { id: 'epm3_mus', label: 'EPM 3r', enabled: true, levels: ['3 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
         { label: 'Parte A', children: [
           { label: 'Interpretación' },
           { label: 'Lectura a primera vista' }
@@ -81,7 +81,7 @@ Tribunator.Store = {
           { label: 'Tabalet', onlyFor: ['Dulzaina'] }
         ]}
       ]},
-      { id: 'epm4_mus', label: 'EPM 4º — Música', enabled: true, levels: ['4 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+      { id: 'epm4_mus', label: 'EPM 4º', enabled: true, levels: ['4 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
         { label: 'Parte A', children: [
           { label: 'Interpretación' },
           { label: 'Lectura a primera vista' }
@@ -94,7 +94,7 @@ Tribunator.Store = {
           { label: 'Tabalet', onlyFor: ['Dulzaina'] }
         ]}
       ]},
-      { id: 'epm5_mus', label: 'EPM 5º — Música', enabled: true, levels: ['5 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+      { id: 'epm5_mus', label: 'EPM 5º', enabled: true, levels: ['5 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
         { label: 'Parte A', children: [
           { label: 'Interpretación' },
           { label: 'Lectura a primera vista' }
@@ -107,7 +107,7 @@ Tribunator.Store = {
           { label: 'Tabalet', onlyFor: ['Dulzaina'] }
         ]}
       ]},
-      { id: 'epm6_mus', label: 'EPM 6º — Música', enabled: true, levels: ['6 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+      { id: 'epm6_mus', label: 'EPM 6º', enabled: true, levels: ['6 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
         { label: 'Parte A', children: [
           { label: 'Interpretación' },
           { label: 'Lectura a primera vista' }
