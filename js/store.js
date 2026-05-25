@@ -286,6 +286,10 @@ Tribunator.Store = {
   },
 
   data: null,
+  _undoStack: [],
+  _redoStack: [],
+  _maxUndo: 40,
+  _skipSnapshot: false,
 
   init: function() {
     var saved = localStorage.getItem(this.STORAGE_KEY);
@@ -310,12 +314,46 @@ Tribunator.Store = {
   },
 
   save: function() {
+    if (!this._skipSnapshot) {
+      this._pushUndo();
+    }
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.data));
     } catch (e) {
       console.error('Error saving data:', e);
     }
   },
+
+  _pushUndo: function() {
+    var snapshot = JSON.stringify(this.data);
+    if (this._undoStack.length > 0 && this._undoStack[this._undoStack.length - 1] === snapshot) return;
+    this._undoStack.push(snapshot);
+    if (this._undoStack.length > this._maxUndo) this._undoStack.shift();
+    this._redoStack = [];
+  },
+
+  undo: function() {
+    if (this._undoStack.length === 0) return false;
+    this._redoStack.push(JSON.stringify(this.data));
+    this.data = JSON.parse(this._undoStack.pop());
+    this._skipSnapshot = true;
+    this.save();
+    this._skipSnapshot = false;
+    return true;
+  },
+
+  redo: function() {
+    if (this._redoStack.length === 0) return false;
+    this._undoStack.push(JSON.stringify(this.data));
+    this.data = JSON.parse(this._redoStack.pop());
+    this._skipSnapshot = true;
+    this.save();
+    this._skipSnapshot = false;
+    return true;
+  },
+
+  canUndo: function() { return this._undoStack.length > 0; },
+  canRedo: function() { return this._redoStack.length > 0; },
 
   generateId: function() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);

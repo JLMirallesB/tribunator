@@ -11,6 +11,46 @@ Tribunator.App = {
     Tribunator.Templates.init();
     Tribunator.Tribunals.init();
     this.render();
+    this._initUndoRedo();
+  },
+
+  _initUndoRedo: function() {
+    var self = this;
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        self.doUndo();
+      } else if ((e.ctrlKey || e.metaKey) && (e.key === 'Z' || (e.key === 'z' && e.shiftKey))) {
+        e.preventDefault();
+        self.doRedo();
+      }
+    });
+  },
+
+  doUndo: function() {
+    if (Tribunator.Store.undo()) {
+      Tribunator.Utils.showToast('Undo', 'success');
+      this._refreshAfterUndoRedo();
+    }
+  },
+
+  doRedo: function() {
+    if (Tribunator.Store.redo()) {
+      Tribunator.Utils.showToast('Redo', 'success');
+      this._refreshAfterUndoRedo();
+    }
+  },
+
+  _refreshAfterUndoRedo: function() {
+    Tribunator.Space.currentCampusId = null;
+    Tribunator.Space.currentFloorId = null;
+    Tribunator.Space.editingRoomId = null;
+    Tribunator.Space.selectedCells = [];
+    var active = Tribunator.Store.getActiveSolution();
+    if (active) Tribunator.Tribunals.currentSolutionId = active.id;
+    else { Tribunator.Tribunals.currentSolutionId = null; Tribunator.Tribunals.currentTribunalId = null; }
+    this.render();
+    this.renderCurrentPhase();
   },
 
   render: function() {
@@ -45,6 +85,22 @@ Tribunator.App = {
     header.appendChild(left);
 
     var right = Tribunator.Utils.el('div', { className: 'app-header-right' });
+
+    // Undo/Redo
+    right.appendChild(Tribunator.Utils.el('button', {
+      className: 'btn-icon',
+      style: { color: Tribunator.Store.canUndo() ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.2)', fontSize: '14px' },
+      title: 'Undo (Ctrl+Z)',
+      textContent: '↶',
+      onClick: function() { self.doUndo(); }
+    }));
+    right.appendChild(Tribunator.Utils.el('button', {
+      className: 'btn-icon',
+      style: { color: Tribunator.Store.canRedo() ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.2)', fontSize: '14px' },
+      title: 'Redo (Ctrl+Shift+Z)',
+      textContent: '↷',
+      onClick: function() { self.doRedo(); }
+    }));
 
     // Load demo button
     right.appendChild(Tribunator.Utils.el('button', {
