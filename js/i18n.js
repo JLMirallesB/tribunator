@@ -17,7 +17,8 @@ Tribunator.translations = {
       footer: {
         designedBy: 'está diseñada por',
         withHelp: 'con ayuda de Claude.',
-        coffee: 'Si te resulta útil, puedes invitarme a una horchata'
+        coffee: 'Si te resulta útil, puedes invitarme a una horchata',
+        contact: 'Errores y sugerencias'
       }
     },
     common: {
@@ -337,7 +338,8 @@ Tribunator.translations = {
       footer: {
         designedBy: 'està dissenyada per',
         withHelp: 'amb ajuda de Claude.',
-        coffee: 'Si et resulta útil, pots convidar-me a una orxata'
+        coffee: 'Si et resulta útil, pots convidar-me a una orxata',
+        contact: 'Errors i suggeriments'
       }
     },
     common: {
@@ -657,7 +659,8 @@ Tribunator.translations = {
       footer: {
         designedBy: 'is designed by',
         withHelp: 'with the help of Claude.',
-        coffee: 'If you find it useful, you can buy me a horchata'
+        coffee: 'If you find it useful, you can buy me a horchata',
+        contact: 'Bugs & suggestions'
       }
     },
     common: {

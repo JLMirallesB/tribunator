@@ -157,6 +157,11 @@ Tribunator.App = {
       target: '_blank',
       textContent: '☕'
     }));
+    footer.appendChild(document.createTextNode(' · '));
+    footer.appendChild(Tribunator.Utils.el('a', {
+      href: 'mailto:joseluismirallesbono@gmail.com',
+      textContent: t('app.footer.contact')
+    }));
   },
 
   loadDemo: function() {
@@ -211,6 +216,42 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '0.2.2',
+        date: '2026-05-25',
+        changes: {
+          es: [
+            'PDF: selección de roles a imprimir con checkboxes',
+            'PDF: opción de mostrar titular entre paréntesis para sustitutos',
+            'PDF: dos modos de exportación (completo y solo miembros)',
+            'PDF: variaciones de tribunal incluidas en ambos modos',
+            'Presidente/a, Vocal y Secretario/a ahora son roles requeridos (aviso si faltan)',
+            'Demo: roles de Asesor/a y Ayudante en tribunales de ejemplo',
+            'Demo: planos en forma de L y variaciones de tribunal',
+            'Enlace de contacto para errores y sugerencias en el footer'
+          ],
+          va: [
+            'PDF: selecció de rols a imprimir amb checkboxes',
+            'PDF: opció de mostrar titular entre parèntesi per a substituts',
+            'PDF: dos modes d\'exportació (complet i només membres)',
+            'PDF: variacions de tribunal incloses en ambdós modes',
+            'President/a, Vocal i Secretari/a ara són rols requerits (avís si falten)',
+            'Demo: rols d\'Assessor/a i Ajudant en tribunals d\'exemple',
+            'Demo: plànols en forma de L i variacions de tribunal',
+            'Enllaç de contacte per a errors i suggeriments al footer'
+          ],
+          en: [
+            'PDF: role selection with checkboxes for printing',
+            'PDF: option to show titular in parentheses for substitutes',
+            'PDF: two export modes (full and members only)',
+            'PDF: tribunal variations included in both modes',
+            'President, Member and Secretary are now required roles (warning if missing)',
+            'Demo: Advisor and Assistant roles in sample tribunals',
+            'Demo: L-shaped floor plans and tribunal variations',
+            'Contact link for bugs and suggestions in footer'
+          ]
+        }
+      },
       {
         version: '0.2.0',
         date: '2026-05-25',
