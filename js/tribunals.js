@@ -58,36 +58,38 @@ Tribunator.Tribunals = {
 
         if (isActive) {
           var tribunals = store.getTribunals(sol.id);
-          solSection.appendChild(el('div', { className: 'sidebar-header sidebar-indent', style: { paddingTop: '4px', paddingBottom: '4px' } }, [
-            t('tribunals.tribunals'),
+          solSection.appendChild(Tribunator.Utils.collapsibleSection('tribunals_list',
+            t('tribunals.tribunals') + ' (' + tribunals.length + ')',
             el('div', { style: { display: 'flex', gap: '2px' } }, [
-              el('button', { className: 'btn-icon', textContent: 'A↓', title: t('tribunals.sortAlpha'), style: { fontSize: '10px' }, onClick: function() { store.sortTribunals(sol.id); self.renderSidebar(); } }),
-              el('button', { className: 'btn-icon', textContent: '+', onClick: function() { self.promptAddTribunal(); } })
-            ])
-          ]));
-          if (tribunals.length === 0) {
-            solSection.appendChild(el('div', { className: 'sidebar-empty sidebar-indent', textContent: t('tribunals.noTribunals') }));
-          } else {
-            var def = store.data.settings.defaultMembersPerTribunal;
-            tribunals.forEach(function(trib) {
-              var mc = store.countTribunalMembers(sol.id, trib.id);
-              var tribWarnings = store.getTribunalWarnings(sol.id, trib.id);
-              var hasIssue = mc !== def || tribWarnings.length > 0 || (trib.schedule || []).length === 0;
-              var badge = hasIssue ? ' ⚠' : '';
-              solSection.appendChild(el('div', {
-                className: 'sidebar-item sidebar-indent' + (trib.id === self.currentTribunalId ? ' active' : ''),
-                onClick: function(e) { if (e.target.closest('.sidebar-item-actions')) return; self.currentTribunalId = trib.id; self.activeTab = 'tribunals'; self.renderSidebar(); self.renderMain(); }
-              }, [
-                el('span', { className: 'sidebar-item-name', textContent: trib.name + badge }),
-                el('div', { className: 'sidebar-item-actions' }, [
-                  el('button', { className: 'btn-icon btn-sm', textContent: '↑', title: t('common.moveUp'), onClick: function() { store.moveTribunal(sol.id, trib.id, 'up'); self.renderSidebar(); } }),
-                  el('button', { className: 'btn-icon btn-sm', textContent: '↓', title: t('common.moveDown'), onClick: function() { store.moveTribunal(sol.id, trib.id, 'down'); self.renderSidebar(); } }),
-                  el('button', { className: 'btn-icon btn-sm', textContent: '✎', onClick: function() { self.promptEditTribunal(trib.id); } }),
-                  el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { self.promptDeleteTribunal(trib.id); } })
-                ])
-              ]));
-            });
-          }
+              el('button', { className: 'btn-icon', style: { color: 'inherit', fontSize: '10px' }, textContent: 'A↓', title: t('tribunals.sortAlpha'), onClick: function(e) { e.stopPropagation(); store.sortTribunals(sol.id); self.renderSidebar(); } }),
+              el('button', { className: 'btn-icon', style: { color: 'inherit' }, textContent: '+', onClick: function(e) { e.stopPropagation(); self.promptAddTribunal(); } })
+            ]),
+            function(body) {
+              if (tribunals.length === 0) {
+                body.appendChild(el('div', { className: 'sidebar-empty', textContent: t('tribunals.noTribunals') }));
+              } else {
+                var def = store.data.settings.defaultMembersPerTribunal;
+                tribunals.forEach(function(trib) {
+                  var mc = store.countTribunalMembers(sol.id, trib.id);
+                  var tribWarnings = store.getTribunalWarnings(sol.id, trib.id);
+                  var hasIssue = mc !== def || tribWarnings.length > 0 || (trib.schedule || []).length === 0;
+                  var badge = hasIssue ? ' ⚠' : '';
+                  body.appendChild(el('div', {
+                    className: 'sidebar-item' + (trib.id === self.currentTribunalId ? ' active' : ''),
+                    onClick: function(e) { if (e.target.closest('.sidebar-item-actions')) return; self.currentTribunalId = trib.id; self.activeTab = 'tribunals'; self.renderSidebar(); self.renderMain(); }
+                  }, [
+                    el('span', { className: 'sidebar-item-name', textContent: trib.name + badge }),
+                    el('div', { className: 'sidebar-item-actions' }, [
+                      el('button', { className: 'btn-icon btn-sm', textContent: '↑', title: t('common.moveUp'), onClick: function() { store.moveTribunal(sol.id, trib.id, 'up'); self.renderSidebar(); } }),
+                      el('button', { className: 'btn-icon btn-sm', textContent: '↓', title: t('common.moveDown'), onClick: function() { store.moveTribunal(sol.id, trib.id, 'down'); self.renderSidebar(); } }),
+                      el('button', { className: 'btn-icon btn-sm', textContent: '✎', onClick: function() { self.promptEditTribunal(trib.id); } }),
+                      el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { self.promptDeleteTribunal(trib.id); } })
+                    ])
+                  ]));
+                });
+              }
+            }
+          ));
         }
       });
     }
