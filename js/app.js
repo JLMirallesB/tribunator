@@ -27,7 +27,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v0.1.1' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v0.1.2' })
     ]));
 
     // Phase nav
@@ -151,6 +151,30 @@ Tribunator.App = {
 
   showChangelog: function() {
     var entries = [
+      {
+        version: '0.1.2',
+        date: '2026-05-25',
+        changes: {
+          es: [
+            'Orden de tabs: Horario primero, luego Miembros, luego Variaciones',
+            'Filtro por especialidad al añadir miembros a tribunales',
+            'Colores visuales para sustitutos (azul) y mutados a titular (amarillo) en tablas',
+            'Descripción del aula visible al seleccionarla en el modal de asignación'
+          ],
+          va: [
+            'Ordre de pestanyes: Horari primer, després Membres, després Variacions',
+            'Filtre per especialitat al afegir membres a tribunals',
+            'Colors visuals per a substituts (blau) i mutats a titular (groc) en taules',
+            'Descripció de l\'aula visible al seleccionar-la al modal d\'assignació'
+          ],
+          en: [
+            'Tab order: Schedule first, then Members, then Variations',
+            'Specialty filter when adding tribunal members',
+            'Visual colors for substitutes (blue) and titular-switched (yellow) in tables',
+            'Room description visible when selecting in the assignment modal'
+          ]
+        }
+      },
       {
         version: '0.1.1',
         date: '2026-05-25',

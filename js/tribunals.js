@@ -4,7 +4,7 @@ Tribunator.Tribunals = {
   currentSolutionId: null,
   currentTribunalId: null,
   activeTab: 'tribunals',
-  tribunalTab: 'members',
+  tribunalTab: 'schedule',
 
   init: function() {
     var active = Tribunator.Store.getActiveSolution();
@@ -182,7 +182,7 @@ Tribunator.Tribunals = {
 
     // Tabs
     var tabs = el('div', { className: 'tabs' });
-    ['members', 'schedule', 'variations'].forEach(function(tab) {
+    ['schedule', 'members', 'variations'].forEach(function(tab) {
       var labels = { members: t('tribunals.members'), schedule: t('tribunals.schedule'), variations: t('tribunals.variations') };
       tabs.appendChild(el('button', {
         className: 'tab' + (self.tribunalTab === tab ? ' active' : ''),
@@ -506,6 +506,21 @@ Tribunator.Tribunals = {
 
     var selectedRoomId = null;
     var selectedLabel = el('div', { style: { padding: '8px 0', fontSize: '13px', fontWeight: '500', color: 'var(--text-muted)' }, textContent: '— ' + t('tribunals.pickRoomHint') + ' —' });
+    var selectedDesc = el('div', { style: { fontSize: '12px', color: 'var(--text-secondary)', padding: '0 0 4px', display: 'none' } });
+
+    var updateSelectedInfo = function(roomId) {
+      var found = store.getRoom(roomId);
+      if (found) {
+        selectedLabel.textContent = found.room.name + ' (' + found.campus.name + ' / ' + found.floor.name + ')';
+        selectedLabel.style.color = 'var(--primary)';
+        if (found.room.notes && found.room.notes.trim()) {
+          selectedDesc.textContent = found.room.notes;
+          selectedDesc.style.display = 'block';
+        } else {
+          selectedDesc.style.display = 'none';
+        }
+      }
+    };
 
     // Tab: plan vs list
     var mode = 'plan';
@@ -556,8 +571,7 @@ Tribunator.Tribunals = {
           style: { display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', cursor: 'pointer', borderBottom: '1px solid var(--border)', fontSize: '13px', opacity: isOccupied ? '0.5' : '1', background: selectedRoomId === item.room.id ? 'var(--primary-light)' : '' },
           onClick: function() {
             selectedRoomId = item.room.id;
-            selectedLabel.textContent = item.room.name + ' (' + item.campus.name + ' / ' + item.floor.name + ')';
-            selectedLabel.style.color = 'var(--primary)';
+            updateSelectedInfo(item.room.id);
             renderContent();
           }
         }, [
@@ -629,8 +643,8 @@ Tribunator.Tribunals = {
               cellEl.addEventListener('click', function() {
                 selectedRoomId = r.id;
                 var found = store.getRoom(r.id);
-                selectedLabel.textContent = r.name + (found ? ' (' + found.campus.name + ' / ' + found.floor.name + ')' : '');
-                selectedLabel.style.color = isOccupied ? 'var(--danger)' : 'var(--primary)';
+                updateSelectedInfo(r.id);
+                if (isOccupied) selectedLabel.style.color = 'var(--danger)';
                 renderContent();
               });
             })(room);
@@ -647,7 +661,7 @@ Tribunator.Tribunals = {
     modeToggle.appendChild(el('button', { className: 'btn btn-sm active', id: 'pick-plan-btn', textContent: t('space.viewPlan'), onClick: function() { mode = 'plan'; document.getElementById('pick-plan-btn').classList.add('active'); document.getElementById('pick-list-btn').classList.remove('active'); renderContent(); } }));
     modeToggle.appendChild(el('button', { className: 'btn btn-sm', id: 'pick-list-btn', textContent: t('space.viewList'), onClick: function() { mode = 'list'; document.getElementById('pick-list-btn').classList.add('active'); document.getElementById('pick-plan-btn').classList.remove('active'); renderContent(); } }));
 
-    var modalBody = el('div', {}, [modeToggle, contentArea, selectedLabel]);
+    var modalBody = el('div', {}, [modeToggle, contentArea, selectedLabel, selectedDesc]);
 
     var pickerOverlay = Tribunator.Utils.showModal({
       title: t('space.room'),
@@ -899,7 +913,7 @@ Tribunator.Tribunals = {
         ]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('common.name') }), input])
       ]),
-      buttons: [{ text: t('common.cancel'), className: 'btn-secondary' }, { text: t('common.create'), className: 'btn-primary', action: function() { var n = input.value.trim(); if (n) { var tr = Tribunator.Store.addTribunal(self.currentSolutionId, n); self.currentTribunalId = tr.id; self.tribunalTab = 'members'; self.renderSidebar(); self.renderMain(); } } }]
+      buttons: [{ text: t('common.cancel'), className: 'btn-secondary' }, { text: t('common.create'), className: 'btn-primary', action: function() { var n = input.value.trim(); if (n) { var tr = Tribunator.Store.addTribunal(self.currentSolutionId, n); self.currentTribunalId = tr.id; self.tribunalTab = 'schedule'; self.renderSidebar(); self.renderMain(); } } }]
     });
     setTimeout(function() { specSelect.focus(); }, 100);
   },

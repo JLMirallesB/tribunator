@@ -2,7 +2,7 @@
   <img src="logo.svg" alt="Tribunator" width="128" height="128">
 </p>
 
-<h1 align="center">Tribunator <sub>v0.1.0</sub></h1>
+<h1 align="center">Tribunator <sub>v0.1.2</sub></h1>
 
 <p align="center">
   Herramienta para la gestion de tribunales, aulas y horarios en centros educativos.
@@ -97,9 +97,17 @@ Aqui gestionas todo lo relacionado con los tribunales.
 - Cada solucion tiene sus propios tribunales independientes
 
 **Candidatos:**
-- Anade candidatos manualmente (nombre, apellidos, especialidad)
-- O sube un Excel/CSV con 3 columnas: Nombre, Apellidos, Especialidad
+- Anade candidatos manualmente (apellidos, nombre, especialidad)
+- O sube un Excel/CSV con 5 columnas: Apellidos, Nombre, Especialidad, Apellidos Titular, Nombre Titular
+- Las columnas 4 y 5 son opcionales: solo para sustitutos que tienen un titular de la plaza
+- Puedes descargar una plantilla CSV con las cabeceras correctas desde el boton "Descargar plantilla CSV"
 - Los candidatos son compartidos entre soluciones
+
+**Sustitutos y titulares:**
+- Si un candidato tiene titular asociado, aparece marcado en azul claro
+- El boton "Mutar a titular" cambia quien actua en el tribunal: se reemplaza el nombre del sustituto por el del titular
+- El boton "Revertir a sustituto" deshace el cambio
+- Los mutados a titular aparecen en amarillo para distinguirlos visualmente
 
 **Roles:**
 - Roles predefinidos: Presidente/a, Vocal, Secretario/a (computan), Suplente (no computa, requerido), Asesor/a, Ayudante (no computan)
