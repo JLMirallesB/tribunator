@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v0.3.1' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.0.0' })
     ]));
 
     // Phase nav
@@ -280,7 +280,64 @@ Tribunator.App = {
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
       {
-        version: '0.3.1',
+        version: '1.0.0',
+        date: '2026-05-25',
+        changes: {
+          es: [
+            'Dashboard de inicio con tarjetas resumen y estadísticas',
+            'Aulas más usadas y miembros con más carga',
+            'Errores pendientes con acceso directo a Verificación',
+            'Pantalla de bienvenida para usuarios nuevos',
+            'Undo/Redo con Ctrl+Z / Ctrl+Shift+Z y botones en el header',
+            'PDF: 4 tipos — Tribunales, Planning diario, Planos, Cartelería',
+            'PDF: planning diario con agenda por día ordenada cronológicamente',
+            'PDF: planos con rejilla, bordes, ocupación y leyenda',
+            'PDF: cartelería para puertas de aula (página completa o media)',
+            'PDF: diálogo unificado con pestañas por tipo',
+            'PDF: nombre de archivo personalizable',
+            'PDF: sustitutos con asterisco y nota al pie sobre titulares',
+            'Tribunales colapsables en sidebar',
+            'Etiquetas de plantilla con curso primero (1 EPM en vez de EPM 1r)',
+            'Secciones colapsables en sidebars con cabeceras oscuras'
+          ],
+          va: [
+            'Dashboard d\'inici amb targetes resum i estadístiques',
+            'Aules més usades i membres amb més càrrega',
+            'Errors pendents amb accés directe a Verificació',
+            'Pantalla de benvinguda per a usuaris nous',
+            'Undo/Redo amb Ctrl+Z / Ctrl+Shift+Z i botons al header',
+            'PDF: 4 tipus — Tribunals, Planning diari, Plànols, Cartelleria',
+            'PDF: planning diari amb agenda per dia ordenada cronològicament',
+            'PDF: plànols amb graella, vores, ocupació i llegenda',
+            'PDF: cartelleria per a portes d\'aula (pàgina completa o mitja)',
+            'PDF: diàleg unificat amb pestanyes per tipus',
+            'PDF: nom d\'arxiu personalitzable',
+            'PDF: substituts amb asterisc i nota al peu sobre titulars',
+            'Tribunals col·lapsables al sidebar',
+            'Etiquetes de plantilla amb curs primer (1 EPM en lloc d\'EPM 1r)',
+            'Seccions col·lapsables en sidebars amb capçaleres fosques'
+          ],
+          en: [
+            'Dashboard with summary cards and statistics',
+            'Most used rooms and members with highest load',
+            'Pending errors with direct link to Verification',
+            'Welcome screen for new users',
+            'Undo/Redo with Ctrl+Z / Ctrl+Shift+Z and header buttons',
+            'PDF: 4 types — Tribunals, Daily planning, Floor plans, Room signs',
+            'PDF: daily planning with chronological agenda per day',
+            'PDF: floor plans with grid, borders, occupation and legend',
+            'PDF: room signs for doors (full page or half page)',
+            'PDF: unified dialog with tabs per type',
+            'PDF: customizable file name',
+            'PDF: substitutes with asterisk and footnote about titulars',
+            'Tribunals collapsible in sidebar',
+            'Template labels with course first (1 EPM instead of EPM 1r)',
+            'Collapsible sections in sidebars with dark headers'
+          ]
+        }
+      },
+      {
+        version: '0.3.0',
         date: '2026-05-25',
         changes: {
           es: [

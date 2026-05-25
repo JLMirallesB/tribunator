@@ -2,7 +2,7 @@
   <img src="logo.svg" alt="Tribunator" width="128" height="128">
 </p>
 
-<h1 align="center">Tribunator <sub>v0.3.1</sub></h1>
+<h1 align="center">Tribunator <sub>v1.0.0</sub></h1>
 
 <p align="center">
   Herramienta para la gestion de tribunales, aulas y horarios en centros educativos.
@@ -26,7 +26,7 @@ Tribunator es una aplicacion web que funciona directamente en el navegador, sin 
 - Planificar dias y franjas horarias con deteccion de conflictos
 - Asignar aulas a tribunales con selector visual de planos
 - Verificar la solucion completa con auditoria automatica
-- Generar PDFs para publicar
+- Generar 4 tipos de PDF: tribunales, planning diario, planos y carteleria
 - Comparar diferentes soluciones de asignacion
 
 ## Como usarla
@@ -49,6 +49,17 @@ Puedes usar la version online en: `https://JLMirallesB.github.io/tribunator/`
 > **Nota**: La carga de archivos Excel y la generacion de PDF requieren conexion a internet para las librerias SheetJS y jsPDF via CDN. El resto funciona offline.
 
 ## Fases de uso
+
+### Inicio (Dashboard)
+
+Pantalla principal al abrir la app. Muestra de un vistazo:
+
+- Tarjetas resumen: aulas, dias, tribunales, errores (clicables para navegar)
+- Solucion activa con dias de pruebas y estadisticas
+- Aulas mas usadas y miembros con mas carga
+- Errores pendientes con acceso directo a Verificacion
+- Acciones rapidas: exportar todo, cargar demo
+- Pantalla de bienvenida si no hay datos
 
 ### 1. Espacio
 
@@ -75,16 +86,12 @@ Configura los dias de las pruebas.
 
 Gestiona las estructuras de prueba por curso y nivel.
 
-- Plantillas precargadas para EEM y EPM de Musica (8 plantillas)
+- 8 plantillas precargadas basadas en la [Orden 8/2026](https://jlmirallesb.github.io/legis_cpmdem/es/ley/orden-8-2026/) de la Comunitat Valenciana
 - Activar/desactivar plantillas segun las necesidades del centro
 - Reglas por especialidad: subapartados que aplican o se excluyen segun instrumento
-  - Canto: anade "Idiomas Aplicados al Canto"
-  - Canto valenciano: anade "Fundamentos del Cant Valencia"
-  - Dulzaina: anade "Tabalet"
-  - Piano/Clavecin/Organo/Arpa: excluye "Piano Complementario"
-  - EPM 1r Canto/Guitarra electrica/Bajo electrico: sin lectura a primera vista
 - Preview filtrada por especialidad
-- Crear, editar o eliminar plantillas. Resetear a valores por defecto
+- Crear, editar, eliminar plantillas. Exportar/importar colecciones JSON
+- Resetear a valores por defecto (Orden 8/2026)
 
 ### 4. Tribunales
 
@@ -94,66 +101,53 @@ Gestiona soluciones, candidatos, roles y tribunales.
 
 **Candidatos**:
 - Subir Excel/CSV con 5 columnas: Apellidos, Nombre, Especialidad, Apellidos Titular, Nombre Titular
-- Las columnas 4 y 5 son opcionales: solo para sustitutos con titular de plaza
 - Plantilla CSV descargable con las cabeceras correctas
-- Mutacion sustituto/titular con un click (azul = sustituto, amarillo = mostrando titular)
+- Gestion sustituto/titular: mutacion con un click, indicadores visuales (azul/amarillo)
 
-**Roles predefinidos**: Presidente/a, Vocal, Secretario/a (computan), Suplente (no computa, al menos 1 requerido), Asesor/a, Ayudante (no computan). Editables.
+**Roles predefinidos**: Presidente/a, Vocal, Secretario/a (computan y requeridos), Suplente (no computa, requerido), Asesor/a, Ayudante (no computan). Editables.
 
 **Tribunales**:
 - Generador de nombre por especialidad + curso/nivel
-- Al crear un tribunal, la plantilla de prueba se asocia automaticamente
-- Filtro por especialidad al anadir miembros
-- Tab Horario (primero): franjas con aula + actividad obligatorias
-  - Selector visual de aulas: navega por planos o lista, con indicador de conflictos
-  - Selector de actividad: muestra la plantilla del tribunal filtrada por especialidad
-  - Aviso si se elige actividad fuera de la plantilla
-  - Deteccion de conflictos de aula y miembros en tiempo real
-- Tab Miembros: con aviso si faltan o sobran
-- Tab Variaciones: composiciones alternativas
+- Plantilla de prueba asociada automaticamente
+- Ordenacion manual y alfabetica
+- Tab Horario: franjas con aula + actividad obligatorias, selector visual de aulas y actividades
+- Tab Miembros: filtro por especialidad, deteccion de conflictos
+- Tab Variaciones: composiciones alternativas para conflicto de alumnos
 
 ### 5. Verificacion
 
-Auditoria automatica de la solucion activa. Detecta:
+Auditoria automatica de la solucion activa:
 
-- **Errores**: tribunales sin miembros/horario, franjas sin aula, conflictos de aula/miembro, partes de prueba faltantes
-- **Avisos**: miembros de mas/menos, roles requeridos faltantes, subapartados incompletos, subapartados de especialidad faltantes
-- Proteccion al borrar dias, aulas o candidatos con referencias en tribunales
+- Errores: tribunales sin miembros/horario, conflictos de aula/miembro, partes de prueba faltantes
+- Avisos: roles requeridos faltantes, subapartados incompletos, miembros sin rol
+- Validacion en 3 niveles: partes, subapartados, especialidad
+- Proteccion al borrar dias, aulas o candidatos con referencias
 
 ### Exportacion e importacion
 
-- Exportar todo / espacios / tiempo / solucion individual
+- Exportar todo / espacios / tiempo / solucion / plantillas
 - Importar con opcion de reemplazar o combinar
-- Los datos se guardan en LocalStorage automaticamente
+- Persistencia automatica en LocalStorage
 
-### PDF
+### PDF (4 tipos)
 
-PDF profesional con tablas reales (jsPDF-AutoTable):
-- Franja negra con nombre del tribunal en blanco
-- Tablas de miembros con cabeceras coloreadas y filas alternas
-- Sustitutos marcados con asterisco y nota al pie sobre titulares
-- Color principal configurable (escala de grises por defecto)
-- Seleccion de roles a imprimir (por defecto los obligatorios)
-- Opcion de mostrar titular entre parentesis para sustitutos
-- Dos modos: PDF completo (con horarios) y solo miembros
-- Variaciones de tribunal incluidas
-- Horario ordenado cronologicamente
+Dialogo unificado con pestanas:
+
+- **Tribunales**: miembros con roles en tabla, variaciones, horarios ordenados. Modo "solo miembros" disponible. Sustitutos con asterisco y nota al pie sobre titulares
+- **Planning diario**: agenda por dia con todos los tribunales, ordenada cronologicamente
+- **Planos**: rejilla por planta con aulas coloreadas (libre/ocupada), bordes y leyenda
+- **Carteleria**: un cartel por aula para colgar en la puerta, con tribunal, miembros y horario. Opcion de media pagina
+
+Opciones comunes: nombre de archivo, cabecera con logo, color principal configurable, seleccion de roles a imprimir.
 
 ### Interfaz
 
-- Sidebars con cabeceras oscuras para distinguir secciones
-- Secciones colapsables (Agrupaciones, Campos, Roles, Exportar/Importar)
-- Tribunales ordenables manualmente (arriba/abajo) y alfabeticamente
-- Demo cargable con datos de ejemplo
-- Enlace de contacto para errores y sugerencias
-
-### Idiomas
-
-Espanol, Valenciano, Ingles.
-
-### Comprobar actualizaciones
-
-Pulsa el boton "Versiones" en la esquina superior derecha para ver tu version actual y comprobar si hay una mas reciente.
+- Dashboard con estadisticas al abrir la app
+- Undo/Redo con Ctrl+Z / Ctrl+Shift+Z y botones en el header
+- Sidebars con cabeceras oscuras y secciones colapsables
+- Demo cargable con datos de ejemplo (10 tribunales con errores intencionados)
+- Idiomas: Espanol, Valenciano, Ingles
+- Boton "Versiones" para comprobar actualizaciones
 
 ---
 
@@ -162,6 +156,8 @@ Pulsa el boton "Versiones" en la esquina superior derecha para ver tu version ac
 **Tribunator** esta disenada por [Jose Luis Miralles](https://www.jlmirall.es) con ayuda de Claude.
 
 Si te resulta util, puedes invitarme a una horchata: [ko-fi.com/miralles](https://ko-fi.com/miralles)
+
+Errores y sugerencias: [joseluismirallesbono@gmail.com](mailto:joseluismirallesbono@gmail.com)
 
 ## Licencia
 

@@ -2,7 +2,7 @@ window.Tribunator = window.Tribunator || {};
 
 Tribunator.Store = {
   STORAGE_KEY: 'tribunator_data',
-  VERSION: '0.3.1',
+  VERSION: '1.0.0',
 
   defaultData: function() {
     return {
