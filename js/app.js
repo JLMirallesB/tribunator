@@ -28,7 +28,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v0.2.2' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v0.2.3' })
     ]));
 
     // Phase nav
@@ -217,7 +217,7 @@ Tribunator.App = {
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
       {
-        version: '0.2.2',
+        version: '0.2.3',
         date: '2026-05-25',
         changes: {
           es: [

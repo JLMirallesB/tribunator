@@ -4,7 +4,7 @@ Tribunator.translations = {
   es: {
     app: {
       title: 'Tribunator',
-      version: 'v0.2.2',
+      version: 'v0.2.3',
       phases: { space: 'Espacio', time: 'Tiempo', templates: 'Plantillas', tribunals: 'Tribunales', verify: 'Verificación' },
       changelog: 'Changelog',
       checkVersion: 'Versiones',
@@ -328,7 +328,7 @@ Tribunator.translations = {
   va: {
     app: {
       title: 'Tribunator',
-      version: 'v0.2.2',
+      version: 'v0.2.3',
       phases: { space: 'Espai', time: 'Temps', templates: 'Plantilles', tribunals: 'Tribunals', verify: 'Verificació' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
@@ -652,7 +652,7 @@ Tribunator.translations = {
   en: {
     app: {
       title: 'Tribunator',
-      version: 'v0.2.2',
+      version: 'v0.2.3',
       phases: { space: 'Space', time: 'Time', templates: 'Templates', tribunals: 'Tribunals', verify: 'Verification' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
