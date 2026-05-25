@@ -939,6 +939,21 @@
                   "activity": "EPM 1r — Música — Parte B: Lenguaje Musical"
                 }
               ]
+            },
+            {
+              "dayId": "day2",
+              "primaryRoomId": "ra1",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s20",
+                  "startTime": "09:00",
+                  "endTime": "10:30",
+                  "roomId": "ra1",
+                  "activity": "EPM 1r — Música — Parte A: Lectura a primera vista"
+                }
+              ]
             }
           ]
         },
@@ -1073,6 +1088,28 @@
                   "activity": "EPM 2º — Música — Parte B: Lenguaje Musical"
                 }
               ]
+            },
+            {
+              "dayId": "day3",
+              "primaryRoomId": "ra3",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s21",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra3",
+                  "activity": "EPM 2º — Música — Parte A: Interpretación"
+                },
+                {
+                  "id": "s22",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "ra4",
+                  "activity": "EPM 2º — Música — Parte B: Lenguaje Musical"
+                }
+              ]
             }
           ]
         },
@@ -1193,6 +1230,28 @@
                   "activity": "EPM 2º — Música — Parte B: Lenguaje Musical"
                 }
               ]
+            },
+            {
+              "dayId": "day3",
+              "primaryRoomId": "rb3",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s23",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "rb3",
+                  "activity": "EPM 2º — Música — Parte A: Interpretación"
+                },
+                {
+                  "id": "s24",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "rb4",
+                  "activity": "EPM 2º — Música — Parte B: Lenguaje Musical"
+                }
+              ]
             }
           ]
         },
@@ -1306,6 +1365,21 @@
                   "startTime": "11:30",
                   "endTime": "13:00",
                   "roomId": "rb4",
+                  "activity": "EPM 1r — Música — Parte B: Lenguaje Musical"
+                }
+              ]
+            },
+            {
+              "dayId": "day1",
+              "primaryRoomId": "rb2",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s25",
+                  "startTime": "12:00",
+                  "endTime": "13:30",
+                  "roomId": "rb2",
                   "activity": "EPM 1r — Música — Parte B: Lenguaje Musical"
                 }
               ]
