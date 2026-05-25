@@ -2,7 +2,7 @@ window.Tribunator = window.Tribunator || {};
 
 Tribunator.Store = {
   STORAGE_KEY: 'tribunator_data',
-  VERSION: '0.1.2',
+  VERSION: '0.2.0',
 
   defaultData: function() {
     return {
@@ -24,8 +24,265 @@ Tribunator.Store = {
         { name: 'Asesor/a', counts: false },
         { name: 'Ayudante', counts: false }
       ],
+      activityTemplates: null,
       solutions: []
     };
+  },
+
+  defaultActivityTemplates: function() {
+    return [
+      { id: 'eem1_mus', label: 'EEM 1r — Música', enabled: true, levels: ['1 EEM'], requiredParts: ['Prueba de aptitud'], children: [
+        { label: 'Prueba de aptitud', children: [
+          { label: 'Capacidad rítmica' },
+          { label: 'Capacidad auditiva' },
+          { label: 'Capacidad melódica y vocal' }
+        ]}
+      ]},
+      { id: 'eem24_mus', label: 'EEM 2º-4º — Música', enabled: true, levels: ['2 EEM','3 EEM','4 EEM'], requiredParts: ['Parte A', 'Parte B'], children: [
+        { label: 'Parte A', children: [
+          { label: 'Interpretación' },
+          { label: 'Lectura a primera vista' }
+        ]},
+        { label: 'Parte B', children: [
+          { label: 'Lenguaje Musical' }
+        ]}
+      ]},
+      { id: 'epm1_mus', label: 'EPM 1r — Música', enabled: true, levels: ['1 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+        { label: 'Parte A', children: [
+          { label: 'Interpretación' },
+          { label: 'Lectura a primera vista', excludeFor: ['Canto','Guitarra eléctrica','Bajo eléctrico'] }
+        ]},
+        { label: 'Parte B', children: [
+          { label: 'Lenguaje Musical' }
+        ]}
+      ]},
+      { id: 'epm2_mus', label: 'EPM 2º — Música', enabled: true, levels: ['2 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+        { label: 'Parte A', children: [
+          { label: 'Interpretación' },
+          { label: 'Lectura a primera vista' }
+        ]},
+        { label: 'Parte B', children: [
+          { label: 'Lenguaje Musical' },
+          { label: 'Idiomas Aplicados al Canto', onlyFor: ['Canto'] },
+          { label: 'Fundamentos del Cant Valencià', onlyFor: ['Canto valenciano'] },
+          { label: 'Tabalet', onlyFor: ['Dulzaina'] }
+        ]}
+      ]},
+      { id: 'epm3_mus', label: 'EPM 3r — Música', enabled: true, levels: ['3 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+        { label: 'Parte A', children: [
+          { label: 'Interpretación' },
+          { label: 'Lectura a primera vista' }
+        ]},
+        { label: 'Parte B', children: [
+          { label: 'Lenguaje Musical' },
+          { label: 'Piano/Clave/Guitarra Complementario/a', excludeFor: ['Piano','Clavecín','Arpa','Órgano'] },
+          { label: 'Idiomas Aplicados al Canto', onlyFor: ['Canto'] },
+          { label: 'Fundamentos del Cant Valencià', onlyFor: ['Canto valenciano'] },
+          { label: 'Tabalet', onlyFor: ['Dulzaina'] }
+        ]}
+      ]},
+      { id: 'epm4_mus', label: 'EPM 4º — Música', enabled: true, levels: ['4 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+        { label: 'Parte A', children: [
+          { label: 'Interpretación' },
+          { label: 'Lectura a primera vista' }
+        ]},
+        { label: 'Parte B', children: [
+          { label: 'Armonía' },
+          { label: 'Piano/Clave/Guitarra Complementario/a', excludeFor: ['Piano','Clavecín','Arpa','Órgano'] },
+          { label: 'Idiomas Aplicados al Canto', onlyFor: ['Canto'] },
+          { label: 'Fundamentos del Cant Valencià', onlyFor: ['Canto valenciano'] },
+          { label: 'Tabalet', onlyFor: ['Dulzaina'] }
+        ]}
+      ]},
+      { id: 'epm5_mus', label: 'EPM 5º — Música', enabled: true, levels: ['5 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+        { label: 'Parte A', children: [
+          { label: 'Interpretación' },
+          { label: 'Lectura a primera vista' }
+        ]},
+        { label: 'Parte B', children: [
+          { label: 'Armonía' },
+          { label: 'Piano/Clave/Guitarra Complementario/a', excludeFor: ['Piano','Clavecín','Arpa','Órgano'] },
+          { label: 'Idiomas Aplicados al Canto', onlyFor: ['Canto'] },
+          { label: 'Fundamentos del Cant Valencià', onlyFor: ['Canto valenciano'] },
+          { label: 'Tabalet', onlyFor: ['Dulzaina'] }
+        ]}
+      ]},
+      { id: 'epm6_mus', label: 'EPM 6º — Música', enabled: true, levels: ['6 EPM'], requiredParts: ['Parte A', 'Parte B'], children: [
+        { label: 'Parte A', children: [
+          { label: 'Interpretación' },
+          { label: 'Lectura a primera vista' }
+        ]},
+        { label: 'Parte B', children: [
+          { label: 'Análisis' },
+          { label: 'Historia de la Música' },
+          { label: 'Piano/Clave/Guitarra Complementario/a', excludeFor: ['Piano','Clavecín','Arpa','Órgano'] },
+          { label: 'Idiomas Aplicados al Canto', onlyFor: ['Canto'] },
+          { label: 'Fundamentos del Cant Valencià', onlyFor: ['Canto valenciano'] },
+          { label: 'Acompañamiento', onlyFor: ['Piano','Clavecín','Órgano','Guitarra','Guitarra eléctrica','Bajo eléctrico'] },
+          { label: 'Introducción a la Etnomusicología', onlyFor: ['Canto valenciano'] },
+          { label: 'Tabalet', onlyFor: ['Dulzaina'] }
+        ]}
+      ]}
+    ];
+  },
+
+  getActivityTemplates: function() {
+    if (!this.data.activityTemplates) {
+      this.data.activityTemplates = this.defaultActivityTemplates();
+      this.save();
+    }
+    return this.data.activityTemplates;
+  },
+
+  getEnabledTemplates: function() {
+    return this.getActivityTemplates().filter(function(t) { return t.enabled; });
+  },
+
+  toggleTemplate: function(id) {
+    var templates = this.getActivityTemplates();
+    var tmpl = templates.find(function(t) { return t.id === id; });
+    if (tmpl) { tmpl.enabled = !tmpl.enabled; this.save(); }
+  },
+
+  setActivityTemplates: function(templates) {
+    this.data.activityTemplates = templates;
+    this.save();
+  },
+
+  findTemplateForTribunal: function(tribunalName) {
+    var templates = this.getEnabledTemplates();
+    for (var i = 0; i < templates.length; i++) {
+      var tmpl = templates[i];
+      if (!tmpl.levels) continue;
+      for (var j = 0; j < tmpl.levels.length; j++) {
+        if (tribunalName.indexOf(tmpl.levels[j]) !== -1) return tmpl;
+      }
+    }
+    return null;
+  },
+
+  filterTemplateForSpecialty: function(template, specialty) {
+    if (!template || !specialty) return template;
+    var specLower = specialty.toLowerCase();
+    var filterChildren = function(children) {
+      if (!children) return children;
+      return children.filter(function(child) {
+        if (child.onlyFor) {
+          var match = child.onlyFor.some(function(s) { return s.toLowerCase() === specLower; });
+          if (!match) return false;
+        }
+        if (child.excludeFor) {
+          var excluded = child.excludeFor.some(function(s) { return s.toLowerCase() === specLower; });
+          if (excluded) return false;
+        }
+        return true;
+      }).map(function(child) {
+        if (child.children) return { label: child.label, children: filterChildren(child.children), onlyFor: child.onlyFor, excludeFor: child.excludeFor };
+        return child;
+      });
+    };
+    return {
+      id: template.id, label: template.label, enabled: template.enabled, levels: template.levels,
+      requiredParts: template.requiredParts,
+      children: filterChildren(template.children)
+    };
+  },
+
+  resetActivityTemplates: function() {
+    this.data.activityTemplates = this.defaultActivityTemplates();
+    this.save();
+  },
+
+  // Build text from tree path: "EPM 3r — Parte B: Armonía"
+  buildActivityText: function(templateLabel, path) {
+    var parts = [templateLabel];
+    path.forEach(function(p, i) {
+      if (i === 0) parts.push(p);
+      else parts[parts.length - 1] += ': ' + p;
+    });
+    return parts.join(' — ');
+  },
+
+  // Check activity coverage at 3 levels
+  checkActivityCoverage: function(solutionId, tribunalId) {
+    var trib = this.getTribunal(solutionId, tribunalId);
+    if (!trib) return [];
+    var self = this;
+    var allActivities = [];
+    (trib.schedule || []).forEach(function(sched) {
+      (sched.slots || []).forEach(function(slot) {
+        if (slot.activity) allActivities.push(slot.activity);
+      });
+    });
+    if (allActivities.length === 0) return [];
+
+    // Find which template this tribunal uses
+    var matchedTemplate = this.findTemplateForTribunal(trib.name);
+    if (!matchedTemplate) return [];
+
+    var prefix = matchedTemplate.label;
+    var matchingActivities = allActivities.filter(function(a) { return a.indexOf(prefix) === 0; });
+    if (matchingActivities.length === 0) return [];
+
+    // Detect specialty from tribunal name
+    var specialty = null;
+    if (typeof Tribunator !== 'undefined' && Tribunator.Tribunals && Tribunator.Tribunals._specialties) {
+      Tribunator.Tribunals._specialties.forEach(function(s) { if (trib.name.indexOf(s) !== -1) specialty = s; });
+    }
+
+    // Filter template for specialty
+    var filtered = specialty ? this.filterTemplateForSpecialty(matchedTemplate, specialty) : matchedTemplate;
+
+    var issues = [];
+
+    // Level 1: Required parts (Parte A, Parte B, etc.)
+    if (filtered.requiredParts) {
+      filtered.requiredParts.forEach(function(req) {
+        var covered = matchingActivities.some(function(a) { return a.indexOf(req) !== -1; });
+        if (!covered) {
+          issues.push({ template: prefix, missingPart: req, level: 'part' });
+        }
+      });
+    }
+
+    // Level 2: If user used sub-level for a part, check all subs are covered
+    if (filtered.children) {
+      filtered.children.forEach(function(part) {
+        if (!part.children || part.children.length === 0) return;
+        // Check if user used sub-level notation for this part (e.g. "Parte A: Interpretación")
+        var subPrefix = prefix + ' — ' + part.label + ': ';
+        var usedSubs = matchingActivities.filter(function(a) { return a.indexOf(subPrefix) === 0; });
+        if (usedSubs.length === 0) return; // User put "Parte A" generic or didn't use it — skip sub-check
+
+        // User descended to sub-level: check each sub-item is covered
+        part.children.forEach(function(sub) {
+          var subText = subPrefix + sub.label;
+          var subCovered = matchingActivities.some(function(a) { return a.indexOf(sub.label) !== -1 && a.indexOf(part.label) !== -1; });
+          if (!subCovered) {
+            issues.push({ template: prefix, missingPart: part.label + ': ' + sub.label, level: 'sub' });
+          }
+        });
+      });
+    }
+
+    // Level 3: Specialty-specific required subs (onlyFor items that should be present)
+    if (specialty && matchedTemplate.children) {
+      matchedTemplate.children.forEach(function(part) {
+        if (!part.children) return;
+        part.children.forEach(function(sub) {
+          if (!sub.onlyFor) return;
+          var applies = sub.onlyFor.some(function(s) { return s.toLowerCase() === specialty.toLowerCase(); });
+          if (!applies) return;
+          // This sub is required for this specialty — check if covered
+          var covered = matchingActivities.some(function(a) { return a.indexOf(sub.label) !== -1; });
+          if (!covered) {
+            issues.push({ template: prefix, missingPart: part.label + ': ' + sub.label + ' (' + specialty + ')', level: 'specialty' });
+          }
+        });
+      });
+    }
+
+    return issues;
   },
 
   data: null,
@@ -42,6 +299,7 @@ Tribunator.Store = {
         if (!this.data.customFieldDefs) this.data.customFieldDefs = [];
         if (!this.data.groups) this.data.groups = [];
         if (!this.data.settings) this.data.settings = { language: 'es', defaultMembersPerTribunal: 3 };
+        if (!this.data.activityTemplates) this.data.activityTemplates = this.defaultActivityTemplates();
       } catch (e) {
         console.error('Error loading saved data:', e);
         this.data = this.defaultData();
@@ -1158,8 +1416,12 @@ Tribunator.Store = {
           this.data = imported;
           if (!this.data.days) this.data.days = [];
           if (!this.data.candidates) this.data.candidates = [];
-          if (!this.data.roleDefs) this.data.roleDefs = [];
+          if (!this.data.roleDefs || this.data.roleDefs.length === 0) this.data.roleDefs = this.defaultData().roleDefs;
           if (!this.data.solutions) this.data.solutions = [];
+          if (!this.data.activityTemplates) this.data.activityTemplates = this.defaultActivityTemplates();
+          if (!this.data.customFieldDefs) this.data.customFieldDefs = [];
+          if (!this.data.groups) this.data.groups = [];
+          if (!this.data.settings) this.data.settings = { language: 'es', defaultMembersPerTribunal: 3 };
         }
       } else if (mode === 'merge') {
         if (imported.campuses) {
@@ -1193,6 +1455,20 @@ Tribunator.Store = {
           imported.solution.active = false;
           if (!Tribunator.Store.data.solutions) Tribunator.Store.data.solutions = [];
           Tribunator.Store.data.solutions.push(imported.solution);
+        }
+        if (imported.roleDefs) {
+          imported.roleDefs.forEach(function(r) {
+            var name = typeof r === 'string' ? r : r.name;
+            var exists = Tribunator.Store.data.roleDefs.find(function(er) { return (typeof er === 'string' ? er : er.name) === name; });
+            if (!exists) Tribunator.Store.data.roleDefs.push(r);
+          });
+        }
+        if (imported.activityTemplates) {
+          if (!Tribunator.Store.data.activityTemplates) Tribunator.Store.data.activityTemplates = [];
+          imported.activityTemplates.forEach(function(tmpl) {
+            var exists = Tribunator.Store.data.activityTemplates.find(function(et) { return et.id === tmpl.id || et.label === tmpl.label; });
+            if (!exists) Tribunator.Store.data.activityTemplates.push(tmpl);
+          });
         }
       }
 

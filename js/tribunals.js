@@ -331,8 +331,13 @@ Tribunator.Tribunals = {
 
           // Activity
           var missingAct = !slot.activity || !slot.activity.trim();
-          var actIn = el('input', { className: 'form-input', type: 'text', value: slot.activity || '', placeholder: t('tribunals.slotActivity') + ' *', style: { padding: '2px 4px', fontSize: '12px', borderColor: missingAct ? 'var(--danger)' : '' }, onChange: function() { store.updateTimeSlot(self.currentSolutionId, self.currentTribunalId, day.id, slot.id, { activity: actIn.value }); if (actIn.value.trim()) { actIn.style.borderColor = ''; } else { actIn.style.borderColor = 'var(--danger)'; } } });
-          tr.appendChild(el('td', {}, [actIn]));
+          var actIn = el('input', { className: 'form-input', type: 'text', value: slot.activity || '', placeholder: t('tribunals.slotActivity') + ' *', style: { padding: '2px 4px', fontSize: '12px', flex: '1', borderColor: missingAct ? 'var(--danger)' : '' }, onChange: function() { store.updateTimeSlot(self.currentSolutionId, self.currentTribunalId, day.id, slot.id, { activity: actIn.value }); if (actIn.value.trim()) { actIn.style.borderColor = ''; } else { actIn.style.borderColor = 'var(--danger)'; } } });
+          (function(input, slotRef) {
+            var pickBtn = el('button', { className: 'btn-icon btn-sm', textContent: '☰', title: t('tribunals.pickActivityHint'), onClick: function() {
+              self.promptPickActivity(function(text) { input.value = text; store.updateTimeSlot(self.currentSolutionId, self.currentTribunalId, day.id, slotRef.id, { activity: text }); input.style.borderColor = ''; });
+            }});
+            tr.appendChild(el('td', {}, [el('div', { style: { display: 'flex', gap: '2px', alignItems: 'center' } }, [input, pickBtn])]));
+          })(actIn, slot);
 
           tr.appendChild(el('td', {}, [el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { store.removeTimeSlot(self.currentSolutionId, self.currentTribunalId, day.id, slot.id); self.renderMain(); } })]));
 
@@ -358,6 +363,17 @@ Tribunator.Tribunals = {
       panel.appendChild(body);
       main.appendChild(panel);
     });
+
+    // Coverage summary
+    var coverage = store.checkActivityCoverage(self.currentSolutionId, self.currentTribunalId);
+    if (coverage.length > 0) {
+      var covDiv = el('div', { style: { marginTop: '16px', padding: '10px', background: 'var(--warning-light)', borderRadius: 'var(--radius)', fontSize: '12px' } });
+      covDiv.appendChild(el('div', { style: { fontWeight: '600', marginBottom: '4px' }, textContent: '⚠ ' + t('verify.missingPart') }));
+      coverage.forEach(function(c) {
+        covDiv.appendChild(el('div', { textContent: c.template + ': ' + c.missingPart }));
+      });
+      main.appendChild(covDiv);
+    }
   },
 
   // --- VARIATIONS TAB ---
@@ -472,6 +488,144 @@ Tribunator.Tribunals = {
     };
     searchInput.addEventListener('input', Tribunator.Utils.debounce(function() { render(searchInput.value); }, 200));
     render('');
+  },
+
+  // --- ACTIVITY PICKER ---
+  promptPickActivity: function(onSelect) {
+    var self = this;
+    var store = Tribunator.Store;
+    var el = Tribunator.Utils.el;
+    var allTemplates = store.getEnabledTemplates();
+
+    // Find tribunal's template based on name
+    var trib = store.getTribunal(this.currentSolutionId, this.currentTribunalId);
+    var tribunalTemplate = trib ? store.findTemplateForTribunal(trib.name) : null;
+    var tribunalSpecialty = null;
+    if (trib) {
+      self._specialties.forEach(function(s) { if (trib.name.indexOf(s) !== -1) tribunalSpecialty = s; });
+    }
+    if (tribunalTemplate && tribunalSpecialty) {
+      tribunalTemplate = store.filterTemplateForSpecialty(tribunalTemplate, tribunalSpecialty);
+    }
+
+    var contentArea = el('div', { style: { maxHeight: '350px', overflowY: 'auto' } });
+    var resultLabel = el('div', { style: { padding: '8px 0', fontSize: '13px', fontWeight: '500', color: 'var(--text-muted)' }, textContent: '— ' + t('tribunals.pickActivityHint') + ' —' });
+    var warningLabel = el('div', { style: { fontSize: '11px', color: 'var(--warning)', display: 'none' } });
+    var currentPath = [];
+    var currentText = '';
+    var isFromTribunalTemplate = true;
+
+    var renderLevel = function(nodes, parentLabel) {
+      Tribunator.Utils.clearElement(contentArea);
+      if (parentLabel) {
+        contentArea.appendChild(el('button', { className: 'btn btn-sm', style: { marginBottom: '8px' }, textContent: '← ' + t('common.back'), onClick: function() {
+          currentPath.pop();
+          if (currentPath.length === 0) renderRoot();
+          else {
+            var source = isFromTribunalTemplate && tribunalTemplate ? [tribunalTemplate] : allTemplates;
+            var node = source.find(function(t) { return t.label === currentPath[0]; });
+            for (var i = 1; i < currentPath.length && node; i++) {
+              node = (node.children || []).find(function(c) { return c.label === currentPath[i]; });
+            }
+            if (node && node.children) renderLevel(node.children, currentPath[currentPath.length - 1]);
+            else renderRoot();
+          }
+        }}));
+      }
+      nodes.forEach(function(node) {
+        var hasChildren = node.children && node.children.length > 0;
+        var itemEl = el('div', {
+          style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', borderBottom: '1px solid var(--border)', cursor: 'pointer', fontSize: '13px' },
+          onClick: function() {
+            currentPath.push(node.label);
+            currentText = currentPath.join(' — ');
+            resultLabel.textContent = currentText;
+            resultLabel.style.color = 'var(--primary)';
+            warningLabel.style.display = isFromTribunalTemplate ? 'none' : 'block';
+            warningLabel.textContent = isFromTribunalTemplate ? '' : '⚠ ' + t('templates.notFromTemplate');
+            if (hasChildren) renderLevel(node.children, node.label);
+          }
+        }, [
+          el('span', { textContent: node.label }),
+          hasChildren ? el('span', { style: { color: 'var(--text-muted)', fontSize: '11px' }, textContent: '▸' }) : null
+        ].filter(Boolean));
+        contentArea.appendChild(itemEl);
+      });
+    };
+
+    var renderRoot = function() {
+      currentPath = [];
+      currentText = '';
+      resultLabel.textContent = '— ' + t('tribunals.pickActivityHint') + ' —';
+      resultLabel.style.color = 'var(--text-muted)';
+      warningLabel.style.display = 'none';
+      Tribunator.Utils.clearElement(contentArea);
+
+      // Show tribunal template first if available
+      if (tribunalTemplate) {
+        contentArea.appendChild(el('div', { style: { fontSize: '11px', color: 'var(--success)', fontWeight: '600', padding: '4px 12px', background: 'var(--success-light)', marginBottom: '4px', borderRadius: '4px' } }, [
+          document.createTextNode(t('templates.appliesTo') + ': ' + tribunalTemplate.label + (tribunalSpecialty ? ' — ' + tribunalSpecialty : ''))
+        ]));
+        var tmplNode = { label: tribunalTemplate.label, children: tribunalTemplate.children };
+        var tmplEl = el('div', {
+          style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderBottom: '2px solid var(--primary)', cursor: 'pointer', fontSize: '13px', fontWeight: '600', background: 'var(--primary-light)' },
+          onClick: function() {
+            isFromTribunalTemplate = true;
+            currentPath.push(tmplNode.label);
+            currentText = tmplNode.label;
+            resultLabel.textContent = currentText;
+            resultLabel.style.color = 'var(--primary)';
+            if (tmplNode.children) renderLevel(tmplNode.children, tmplNode.label);
+          }
+        }, [
+          el('span', { textContent: tribunalTemplate.label }),
+          el('span', { style: { color: 'var(--primary)', fontSize: '11px' }, textContent: '▸' })
+        ]);
+        contentArea.appendChild(tmplEl);
+        contentArea.appendChild(el('div', { style: { height: '8px' } }));
+      }
+
+      // Show all other enabled templates
+      var otherTemplates = allTemplates.filter(function(t) { return !tribunalTemplate || t.id !== tribunalTemplate.id; });
+      if (otherTemplates.length > 0) {
+        if (tribunalTemplate) {
+          contentArea.appendChild(el('div', { style: { fontSize: '10px', color: 'var(--text-muted)', padding: '4px 12px', textTransform: 'uppercase', letterSpacing: '0.5px' }, textContent: t('templates.title') }));
+        }
+        otherTemplates.forEach(function(tmpl) {
+          contentArea.appendChild(el('div', {
+            style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', borderBottom: '1px solid var(--border)', cursor: 'pointer', fontSize: '13px', opacity: '0.7' },
+            onClick: function() {
+              isFromTribunalTemplate = false;
+              currentPath.push(tmpl.label);
+              currentText = tmpl.label;
+              resultLabel.textContent = currentText;
+              resultLabel.style.color = 'var(--primary)';
+              warningLabel.textContent = '⚠ ' + t('templates.notFromTemplate');
+              warningLabel.style.display = 'block';
+              if (tmpl.children) renderLevel(tmpl.children, tmpl.label);
+            }
+          }, [
+            el('span', { textContent: tmpl.label }),
+            el('span', { style: { color: 'var(--text-muted)', fontSize: '11px' }, textContent: '▸' })
+          ]));
+        });
+      }
+    };
+
+    renderRoot();
+
+    var pickerOverlay = Tribunator.Utils.showModal({
+      title: t('tribunals.slotActivity'),
+      body: el('div', {}, [contentArea, resultLabel, warningLabel]),
+      buttons: [
+        { text: t('common.cancel'), className: 'btn-secondary' },
+        { text: t('common.confirm'), className: 'btn-primary', close: false, action: function() {
+          if (!currentText) { resultLabel.textContent = '⚠ ' + t('tribunals.pickActivityHint'); resultLabel.style.color = 'var(--danger)'; return; }
+          onSelect(currentText);
+          pickerOverlay.remove();
+        }}
+      ]
+    });
   },
 
   // --- SCHEDULE PROMPTS ---
@@ -704,7 +858,11 @@ Tribunator.Tribunals = {
       }, day.id, startSel.value, endSel.value);
     });
 
-    var actInput = el('input', { className: 'form-input', type: 'text', placeholder: t('tribunals.slotActivity') });
+    var actInput = el('input', { className: 'form-input', type: 'text', placeholder: t('tribunals.slotActivity'), style: { flex: '1' } });
+    var actPickBtn = el('button', { className: 'btn btn-sm', textContent: '☰', title: t('tribunals.pickActivityHint'), style: { flexShrink: '0' }, onClick: function() {
+      self.promptPickActivity(function(text) { actInput.value = text; });
+    }});
+    var actRow = el('div', { style: { display: 'flex', gap: '6px', alignItems: 'center' } }, [actInput, actPickBtn]);
     var errorMsg = el('div', { style: { color: 'var(--danger)', fontSize: '12px', marginTop: '8px', display: 'none' } });
     var memberWarnings = el('div', { id: 'slot-member-warnings', style: { marginTop: '8px' } });
 
@@ -736,7 +894,7 @@ Tribunator.Tribunals = {
         ]),
         memberWarnings,
         el('div', { className: 'form-group', style: { marginTop: '12px' } }, [el('label', { className: 'form-label', textContent: t('space.room') + ' *' }), roomLabel]),
-        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.slotActivity') + ' *' }), actInput]),
+        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.slotActivity') + ' *' }), actRow]),
         errorMsg
       ]),
       buttons: [

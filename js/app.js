@@ -8,6 +8,7 @@ Tribunator.App = {
     Tribunator.Store.init();
     Tribunator.Space.init();
     Tribunator.Time.init();
+    Tribunator.Templates.init();
     Tribunator.Tribunals.init();
     this.render();
   },
@@ -27,12 +28,12 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v0.1.2' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v0.2.0' })
     ]));
 
     // Phase nav
     var nav = Tribunator.Utils.el('div', { className: 'phase-nav' });
-    var phases = ['space', 'time', 'tribunals', 'verify'];
+    var phases = ['space', 'time', 'templates', 'tribunals', 'verify'];
     phases.forEach(function(phase) {
       nav.appendChild(Tribunator.Utils.el('button', {
         className: 'phase-btn' + (self.currentPhase === phase ? ' active' : ''),
@@ -47,10 +48,10 @@ Tribunator.App = {
 
     // Changelog button
     right.appendChild(Tribunator.Utils.el('button', {
-      className: 'btn-icon',
-      style: { color: 'rgba(255,255,255,0.6)' },
+      className: 'btn btn-sm',
+      style: { color: 'rgba(255,255,255,0.7)', background: 'rgba(255,255,255,0.1)', border: 'none', fontSize: '11px' },
       title: t('app.changelog'),
-      textContent: '⟳',
+      textContent: t('app.checkVersion'),
       onClick: function() { self.showChangelog(); }
     }));
 
@@ -89,6 +90,10 @@ Tribunator.App = {
       id: 'phase-time',
       className: 'phase-content' + (this.currentPhase === 'time' ? ' active' : '')
     });
+    var templatesContainer = Tribunator.Utils.el('div', {
+      id: 'phase-templates',
+      className: 'phase-content' + (this.currentPhase === 'templates' ? ' active' : '')
+    });
     var tribunalsContainer = Tribunator.Utils.el('div', {
       id: 'phase-tribunals',
       className: 'phase-content' + (this.currentPhase === 'tribunals' ? ' active' : '')
@@ -101,6 +106,7 @@ Tribunator.App = {
 
     body.appendChild(spaceContainer);
     body.appendChild(timeContainer);
+    body.appendChild(templatesContainer);
     body.appendChild(tribunalsContainer);
     body.appendChild(verifyContainer);
 
@@ -112,6 +118,8 @@ Tribunator.App = {
       Tribunator.Space.render();
     } else if (this.currentPhase === 'time') {
       Tribunator.Time.render();
+    } else if (this.currentPhase === 'templates') {
+      Tribunator.Templates.render();
     } else if (this.currentPhase === 'tribunals') {
       Tribunator.Tribunals.render();
     } else if (this.currentPhase === 'verify') {
@@ -150,10 +158,49 @@ Tribunator.App = {
   },
 
   showChangelog: function() {
+    var el = Tribunator.Utils.el;
+    var currentVersion = Tribunator.Store.VERSION;
     var entries = [
       {
-        version: '0.1.2',
+        version: '0.2.0',
         date: '2026-05-25',
+        changes: {
+          es: [
+            'Nueva fase Plantillas: gestión de estructuras de prueba entre Tiempo y Tribunales',
+            'Plantillas de prueba precargadas para EEM y EPM de Música (8 plantillas)',
+            'Activar/desactivar plantillas según las necesidades del centro',
+            'Reglas por especialidad: subapartados que aplican o se excluyen según instrumento',
+            'Selector de actividad con plantilla del tribunal priorizada y aviso si se sale',
+            'Preview de plantilla filtrada por especialidad',
+            'Validación de cobertura en 3 niveles: partes, subapartados y especialidad',
+            'EPM 1r: Canto, Guitarra eléctrica y Bajo eléctrico sin lectura a primera vista',
+            'Indicador de versión con enlace a comprobar actualizaciones'
+          ],
+          va: [
+            'Nova fase Plantilles: gestió d\'estructures de prova entre Temps i Tribunals',
+            'Plantilles de prova precargades per a EEM i EPM de Música (8 plantilles)',
+            'Activar/desactivar plantilles segons les necessitats del centre',
+            'Regles per especialitat: subapartats que apliquen o s\'excloguen segons instrument',
+            'Selector d\'activitat amb plantilla del tribunal prioritzada i avís si se\'n ix',
+            'Preview de plantilla filtrada per especialitat',
+            'Validació de cobertura en 3 nivells: parts, subapartats i especialitat',
+            'EPM 1r: Cant, Guitarra elèctrica i Baix elèctric sense lectura a primera vista',
+            'Indicador de versió amb enllaç a comprovar actualitzacions'
+          ],
+          en: [
+            'New Templates phase: exam structure management between Time and Tribunals',
+            'Pre-loaded exam templates for EEM and EPM Music (8 templates)',
+            'Enable/disable templates based on center needs',
+            'Specialty rules: sub-sections that apply or are excluded per instrument',
+            'Activity picker with tribunal template prioritized and warning if deviating',
+            'Template preview filtered by specialty',
+            'Coverage validation at 3 levels: parts, sub-sections and specialty',
+            'EPM 1st: Canto, Electric Guitar and Electric Bass without sight-reading',
+            'Version indicator with link to check for updates'
+          ]
+        }
+      },
+      {
         changes: {
           es: [
             'Orden de tabs: Horario primero, luego Miembros, luego Variaciones',
@@ -343,7 +390,20 @@ Tribunator.App = {
     ];
 
     var lang = Tribunator.i18n.currentLang;
-    var content = Tribunator.Utils.el('div', { className: 'changelog-container' });
+    var content = el('div', { className: 'changelog-container' });
+
+    // Version header with link to latest release
+    var versionHeader = el('div', { style: { textAlign: 'center', padding: '16px 0 24px', borderBottom: '1px solid var(--border)', marginBottom: '24px' } }, [
+      el('div', { style: { fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '4px' }, textContent: t('app.currentVersion') }),
+      el('div', { style: { fontSize: '24px', fontWeight: '700', marginBottom: '12px' }, textContent: 'v' + currentVersion }),
+      el('a', {
+        href: 'https://github.com/JLMirallesB/tribunator/releases/latest',
+        target: '_blank',
+        style: { display: 'inline-block', padding: '6px 16px', background: 'var(--primary)', color: 'white', borderRadius: 'var(--radius)', fontSize: '13px', textDecoration: 'none', fontWeight: '500' },
+        textContent: t('app.checkLatest')
+      })
+    ]);
+    content.appendChild(versionHeader);
 
     entries.forEach(function(entry) {
       var entryEl = Tribunator.Utils.el('div', { className: 'changelog-entry' });

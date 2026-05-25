@@ -204,6 +204,21 @@ Tribunator.Verify = {
       }
     });
 
+    // --- Activity coverage check (3 levels) ---
+    sol.tribunals.forEach(function(trib) {
+      var coverage = store.checkActivityCoverage(sol.id, trib.id);
+      coverage.forEach(function(issue) {
+        var severity = issue.level === 'part' ? 'error' : 'warning';
+        var msgKey = issue.level === 'part' ? 'verify.missingPart' : issue.level === 'specialty' ? 'verify.missingSpecialtySub' : 'verify.missingSub';
+        errors.push({
+          severity: severity,
+          category: 'coverage',
+          message: t(msgKey) + ': ' + issue.missingPart,
+          detail: trib.name + ' (' + issue.template + ')'
+        });
+      });
+    });
+
     // --- Rooms without assignment (info) ---
     var assignedRoomIds = {};
     sol.tribunals.forEach(function(trib) {

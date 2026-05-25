@@ -2,12 +2,12 @@
   <img src="logo.svg" alt="Tribunator" width="128" height="128">
 </p>
 
-<h1 align="center">Tribunator <sub>v0.1.2</sub></h1>
+<h1 align="center">Tribunator <sub>v0.2.0</sub></h1>
 
 <p align="center">
   Herramienta para la gestion de tribunales, aulas y horarios en centros educativos.
   <br>
-  <em>Zero-install. Abre el HTML y listo.</em>
+  <em>Zero-install. Descarga, abre el HTML y listo.</em>
 </p>
 
 <p align="center">
@@ -21,150 +21,122 @@
 Tribunator es una aplicacion web que funciona directamente en el navegador, sin necesidad de instalacion, servidores ni bases de datos. Esta pensada para coordinadores de oposiciones y examenes que necesitan:
 
 - Disenar planos de sedes con aulas
-- Crear tribunales y asignar miembros con roles
-- Planificar dias y franjas horarias
-- Asignar aulas a tribunales detectando conflictos
+- Gestionar plantillas de estructura de pruebas por curso y especialidad
+- Crear tribunales y asignar miembros con roles (incluyendo sustitutos/titulares)
+- Planificar dias y franjas horarias con deteccion de conflictos
+- Asignar aulas a tribunales con selector visual de planos
+- Verificar la solucion completa con auditoria automatica
 - Generar PDFs para publicar
 - Comparar diferentes soluciones de asignacion
 
 ## Como usarla
 
-### Opcion 1: GitHub Pages
+### Opcion 1: Descarga local (recomendada)
 
-Abre directamente: `https://JLMirallesB.github.io/tribunator/`
-
-### Opcion 2: Descarga local
-
-1. Descarga el ZIP desde [Releases](https://github.com/JLMirallesB/tribunator/releases/latest) o clona el repositorio
-2. Descomprime
+1. Ve a [Releases](https://github.com/JLMirallesB/tribunator/releases/latest) y descarga el ZIP de la ultima version
+2. Descomprime en cualquier carpeta
 3. Abre `index.html` en tu navegador
-4. Listo. No necesitas instalar nada
+4. Listo. Tus datos se guardan en el navegador (LocalStorage)
 
-> **Nota:** La carga de archivos Excel y la generacion de PDF requieren conexion a internet (la primera vez) para cargar las librerias SheetJS y jsPDF desde CDN. El resto funciona offline.
+> **Recomendado**: usar la version descargada en local garantiza que tus datos no se pierdan por una actualizacion. Exporta tus datos regularmente como JSON por seguridad.
 
-## Manual de uso
+### Opcion 2: GitHub Pages
 
-### Fase 1: Espacio
+Puedes usar la version online en: `https://JLMirallesB.github.io/tribunator/`
 
-Aqui defines la estructura fisica del centro.
+> **Aviso**: esta version se actualiza automaticamente. Tras una actualizacion, los datos guardados en LocalStorage podrian no ser compatibles. Exporta tus datos antes de actualizar.
 
-**Sedes y plantas:**
-- Crea una o mas sedes (edificios/campus)
-- Dentro de cada sede, crea plantas con nombres libres
-- Las plantas se pueden reordenar con las flechas del sidebar
-- Puedes duplicar una planta para usarla como base
+> **Nota**: La carga de archivos Excel y la generacion de PDF requieren conexion a internet para las librerias SheetJS y jsPDF via CDN. El resto funciona offline.
 
-**Rejilla y aulas:**
-- Cada planta tiene una rejilla donde dibujas las aulas
-- Haz click en celdas vacias para seleccionarlas (puedes arrastrar)
-- Con celdas seleccionadas, pulsa "Crear aula" y dale un nombre
-- Las aulas pueden tener formas irregulares (celdas contiguas)
-- Para ampliar un aula existente: clicka el aula, luego "Ampliar aula", selecciona celdas y "Aplicar"
-- Usa los botones `+` / `-` en los bordes de la rejilla para anadir o quitar filas/columnas
-- Zoom: controles `+` / `-` en la barra de herramientas (50% a 300%)
+## Fases de uso
 
-**Campos personalizados:**
-- En el sidebar, crea campos como "Capacidad" (numero), "Proyector" (si/no), "Tipo" (desplegable)
-- Los campos se aplican a todas las aulas
+### 1. Espacio
 
-**Agrupaciones:**
-- Agrupa aulas bajo un nombre (ej. "Bloque A")
-- Si la agrupacion cruza sedes o plantas, se muestra un aviso
+Define la estructura fisica del centro: sedes, plantas y aulas.
 
-**Vistas:**
-- **Plano**: ve las aulas coloreadas en la rejilla con bordes delimitados. Hover para ver detalles
-- **Lista**: tabla filtrable por sede, planta, estado (libre/asignada) y busqueda
+- Crea sedes y plantas con nombres libres (reordenables)
+- Dibuja aulas en la rejilla seleccionando celdas contiguas
+- Amplia aulas existentes con "Ampliar aula"
+- Zoom del plano (50%-300%) y redimensionado de rejilla en cualquier direccion
+- Campos personalizados para aulas (texto, numero, si/no, desplegable)
+- Agrupaciones de aulas con avisos de cruce entre sedes/plantas
+- Vista plano (con bordes y colores de ocupacion) y vista lista (filtrable)
+- Selector de dia para ver ocupacion en tiempo real
 
-**Vista de ocupacion:**
-- Selecciona un dia en el desplegable del header para ver que aulas estan ocupadas (borde rojo) o libres (borde verde) segun los tribunales asignados
+### 2. Tiempo
 
-### Fase 2: Tiempo
+Configura los dias de las pruebas.
 
-Define los dias de las pruebas.
+- Cada dia tiene fecha, hora de inicio y hora de fin configurables
+- Las franjas horarias (30 min) se definen al asignar tribunales
+- Exportacion/importacion independiente de dias
 
-- Pulsa "Anadir dia" y selecciona fecha, hora de inicio y hora de fin
-- Cada dia tiene su propio rango horario configurable
-- Las franjas dentro de cada dia se definen con granularidad de 30 minutos al asignar tribunales
-- Puedes exportar/importar los dias de forma independiente
+### 3. Plantillas
 
-### Fase 3: Tribunales
+Gestiona las estructuras de prueba por curso y nivel.
 
-Aqui gestionas todo lo relacionado con los tribunales.
+- Plantillas precargadas para EEM y EPM de Musica (8 plantillas)
+- Activar/desactivar plantillas segun las necesidades del centro
+- Reglas por especialidad: subapartados que aplican o se excluyen segun instrumento
+  - Canto: anade "Idiomas Aplicados al Canto"
+  - Canto valenciano: anade "Fundamentos del Cant Valencia"
+  - Dulzaina: anade "Tabalet"
+  - Piano/Clavecin/Organo/Arpa: excluye "Piano Complementario"
+  - EPM 1r Canto/Guitarra electrica/Bajo electrico: sin lectura a primera vista
+- Preview filtrada por especialidad
+- Crear, editar o eliminar plantillas. Resetear a valores por defecto
 
-**Soluciones:**
-- Crea multiples soluciones para comparar diferentes asignaciones sobre el mismo plano
-- Solo una solucion esta "activa" (marcada con `●`)
-- Cada solucion tiene sus propios tribunales independientes
+### 4. Tribunales
 
-**Candidatos:**
-- Anade candidatos manualmente (apellidos, nombre, especialidad)
-- O sube un Excel/CSV con 5 columnas: Apellidos, Nombre, Especialidad, Apellidos Titular, Nombre Titular
-- Las columnas 4 y 5 son opcionales: solo para sustitutos que tienen un titular de la plaza
-- Puedes descargar una plantilla CSV con las cabeceras correctas desde el boton "Descargar plantilla CSV"
-- Los candidatos son compartidos entre soluciones
+Gestiona soluciones, candidatos, roles y tribunales.
 
-**Sustitutos y titulares:**
-- Si un candidato tiene titular asociado, aparece marcado en azul claro
-- El boton "Mutar a titular" cambia quien actua en el tribunal: se reemplaza el nombre del sustituto por el del titular
-- El boton "Revertir a sustituto" deshace el cambio
-- Los mutados a titular aparecen en amarillo para distinguirlos visualmente
+**Soluciones**: multiples soluciones para comparar asignaciones sobre el mismo plano.
 
-**Roles:**
-- Roles predefinidos: Presidente/a, Vocal, Secretario/a (computan), Suplente (no computa, requerido), Asesor/a, Ayudante (no computan)
-- Los roles que computan cuentan para el numero de miembros del tribunal
-- El Suplente tiene el flag "al menos uno requerido": si un tribunal no tiene suplente, se muestra aviso
-- Puedes crear, editar o eliminar roles
-- Los nuevos roles escritos al asignar miembros se guardan automaticamente
+**Candidatos**:
+- Subir Excel/CSV con 5 columnas: Apellidos, Nombre, Especialidad, Apellidos Titular, Nombre Titular
+- Las columnas 4 y 5 son opcionales: solo para sustitutos con titular de plaza
+- Plantilla CSV descargable con las cabeceras correctas
+- Mutacion sustituto/titular con un click (azul = sustituto, amarillo = mostrando titular)
 
-**Tribunales:**
-- Al crear un tribunal, selecciona especialidad y curso/nivel para generar el nombre automaticamente
-- Anade miembros seleccionando candidatos y asignando roles
-- Al anadir un miembro, se comprueba si ya esta en otro tribunal en los mismos dias
+**Roles predefinidos**: Presidente/a, Vocal, Secretario/a (computan), Suplente (no computa, al menos 1 requerido), Asesor/a, Ayudante (no computan). Editables.
 
-**Horarios (tab Horario del tribunal):**
-- Asigna el tribunal a un dia configurado
-- Anade franjas horarias con los 3 campos obligatorios: hora, aula, actividad
-- Al elegir aula, se abre un selector visual donde puedes navegar por los planos o usar la lista
-- Las aulas ocupadas se muestran semi-transparentes con aviso de conflicto
-- Se detectan auto-solapamientos (misma aula en franjas que se cruzan)
+**Tribunales**:
+- Generador de nombre por especialidad + curso/nivel
+- Al crear un tribunal, la plantilla de prueba se asocia automaticamente
+- Filtro por especialidad al anadir miembros
+- Tab Horario (primero): franjas con aula + actividad obligatorias
+  - Selector visual de aulas: navega por planos o lista, con indicador de conflictos
+  - Selector de actividad: muestra la plantilla del tribunal filtrada por especialidad
+  - Aviso si se elige actividad fuera de la plantilla
+  - Deteccion de conflictos de aula y miembros en tiempo real
+- Tab Miembros: con aviso si faltan o sobran
+- Tab Variaciones: composiciones alternativas
 
-**Variaciones (tab Variaciones):**
-- Crea composiciones alternativas del tribunal (misma estructura, diferentes miembros)
-- Util para gestionar suplencias o turnos
+### 5. Verificacion
 
-### Fase 4: Verificacion
+Auditoria automatica de la solucion activa. Detecta:
 
-Auditoria automatica de toda la solucion activa. Detecta:
-
-- **Errores** (rojo): tribunales sin miembros, sin horario, franjas sin aula, conflictos de aula o miembro
-- **Avisos** (naranja): miembros de mas/menos, roles requeridos que faltan, miembros sin rol, franjas sin actividad
-- Agrupados por categoria: Tiempo, Tribunales, Miembros, Horarios, Conflictos
+- **Errores**: tribunales sin miembros/horario, franjas sin aula, conflictos de aula/miembro, partes de prueba faltantes
+- **Avisos**: miembros de mas/menos, roles requeridos faltantes, subapartados incompletos, subapartados de especialidad faltantes
+- Proteccion al borrar dias, aulas o candidatos con referencias en tribunales
 
 ### Exportacion e importacion
 
-- **Exportar todo**: un JSON con todos los datos
-- **Exportar espacios**: solo sedes, plantas, aulas, agrupaciones
-- **Exportar tiempo**: solo los dias configurados
-- **Exportar solucion**: la solucion con sus tribunales + dias + candidatos + roles
-- **Importar**: si ya hay datos, elige entre reemplazar o combinar
+- Exportar todo / espacios / tiempo / solucion individual
+- Importar con opcion de reemplazar o combinar
+- Los datos se guardan en LocalStorage automaticamente
 
-Al borrar un dia, aula o candidato que tenga referencias en tribunales, se muestra aviso con los tribunales afectados.
+### PDF
 
-### Generacion de PDF
-
-Desde el sidebar de Tribunales, pulsa "Generar PDF":
-- Escribe titulo, subtitulo y texto adicional
-- Sube un logo (imagen)
-- Selecciona que tribunales incluir
-- El PDF incluye miembros con roles, horarios por dia, aulas y actividades
+Logo, cabecera, texto libre personalizables. Seleccion de tribunales a incluir.
 
 ### Idiomas
 
-Selector en la esquina superior derecha: Espanol, Valenciano, Ingles.
+Espanol, Valenciano, Ingles.
 
-### Persistencia
+### Comprobar actualizaciones
 
-Los datos se guardan automaticamente en el LocalStorage del navegador. Para compartir datos entre equipos, usa la exportacion/importacion de JSON.
+Pulsa el boton "Versiones" en la esquina superior derecha para ver tu version actual y comprobar si hay una mas reciente.
 
 ---
 
