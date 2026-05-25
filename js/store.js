@@ -17,9 +17,9 @@ Tribunator.Store = {
       days: [],
       candidates: [],
       roleDefs: [
-        { name: 'Presidente/a', counts: true },
-        { name: 'Vocal', counts: true },
-        { name: 'Secretario/a', counts: true },
+        { name: 'Presidente/a', counts: true, requireOne: true },
+        { name: 'Vocal', counts: true, requireOne: true },
+        { name: 'Secretario/a', counts: true, requireOne: true },
         { name: 'Suplente', counts: false, requireOne: true },
         { name: 'Asesor/a', counts: false },
         { name: 'Ayudante', counts: false }

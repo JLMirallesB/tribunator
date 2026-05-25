@@ -261,7 +261,8 @@ Tribunator.translations = {
       logo: 'Logo (imagen)',
       selectTribunals: 'Seleccionar tribunales',
       full: 'PDF completo',
-      membersOnly: 'Solo miembros'
+      membersOnly: 'Solo miembros',
+      showTitular: 'Mostrar titular entre paréntesis cuando el miembro es sustituto'
     },
     templates: {
       title: 'Plantillas de prueba',
@@ -580,7 +581,8 @@ Tribunator.translations = {
       logo: 'Logo (imatge)',
       selectTribunals: 'Seleccionar tribunals',
       full: 'PDF complet',
-      membersOnly: 'Només membres'
+      membersOnly: 'Només membres',
+      showTitular: 'Mostrar titular entre parèntesi quan el membre és substitut'
     },
     templates: {
       title: 'Plantilles de prova',
@@ -899,7 +901,8 @@ Tribunator.translations = {
       logo: 'Logo (image)',
       selectTribunals: 'Select tribunals',
       full: 'Full PDF',
-      membersOnly: 'Members only'
+      membersOnly: 'Members only',
+      showTitular: 'Show titular in parentheses when member is a substitute'
     },
     templates: {
       title: 'Exam templates',

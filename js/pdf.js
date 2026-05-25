@@ -59,15 +59,18 @@ Tribunator.PDF = {
     }
   },
 
-  _printMembers: function(doc, members, store, state, indent) {
+  _printMembers: function(doc, members, store, state, indent, selectedRoles, showTitular) {
     doc.setFontSize(9); doc.setFont(undefined, 'normal');
     members.forEach(function(m) {
+      if (selectedRoles && m.role && selectedRoles.indexOf(m.role) === -1) return;
       var c = store.getCandidate(m.candidateId);
       var displayName = c ? (c.useTitular && c.titularSurnames ? c.titularSurnames + ', ' + c.titularName : c.surnames + ', ' + c.name) : '—';
       var text = displayName;
       if (m.role) text += ' — ' + m.role;
       if (c && c.specialty) text += ' (' + c.specialty + ')';
-      if (c && store.isSubstitute(c.id)) text += c.useTitular ? ' [titular]' : ' [sustituto]';
+      if (c && store.isSubstitute(c.id) && !c.useTitular && showTitular) {
+        text += ' (titular: ' + c.titularSurnames + ', ' + c.titularName + ')';
+      }
       state.check(5);
       doc.text(indent + text, 15, state.y + 3);
       state.y += 5;
@@ -99,7 +102,7 @@ Tribunator.PDF = {
       if (trib.members.length > 0) {
         doc.setFontSize(11); doc.setFont(undefined, 'bold');
         doc.text(t('tribunals.members'), margin, state.y + 4); state.y += 7;
-        Tribunator.PDF._printMembers(doc, trib.members, store, state, '  ');
+        Tribunator.PDF._printMembers(doc, trib.members, store, state, '  ', options.selectedRoles, options.showTitular);
         state.y += 2;
       }
 
@@ -110,7 +113,7 @@ Tribunator.PDF = {
           state.check(15);
           doc.setFontSize(10); doc.setFont(undefined, 'bold');
           doc.text(t('tribunals.variations') + ': ' + v.name, margin + 3, state.y + 4); state.y += 6;
-          Tribunator.PDF._printMembers(doc, v.members, store, state, '    ');
+          Tribunator.PDF._printMembers(doc, v.members, store, state, '    ', options.selectedRoles, options.showTitular);
           state.y += 2;
         });
       }
@@ -166,8 +169,27 @@ Tribunator.PDF = {
     var customTextInput = el('textarea', { className: 'form-textarea', placeholder: t('pdf.customText') });
     var logoInput = el('input', { type: 'file', accept: 'image/*', className: 'form-input' });
 
+    // Role checkboxes
+    var roleDefs = store.getRoleDefs();
+    var selectedRoles = roleDefs.filter(function(r) { return r.requireOne || r.counts; }).map(function(r) { return r.name; });
+    var roleList = el('div', { style: { display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '4px' } });
+    roleDefs.forEach(function(role) {
+      var isDefault = role.requireOne || role.counts;
+      var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', cursor: 'pointer' } });
+      var cb = el('input', { type: 'checkbox' });
+      cb.checked = isDefault;
+      cb.addEventListener('change', function() {
+        if (cb.checked) { if (selectedRoles.indexOf(role.name) === -1) selectedRoles.push(role.name); }
+        else { selectedRoles = selectedRoles.filter(function(r) { return r !== role.name; }); }
+      });
+      lbl.appendChild(cb);
+      lbl.appendChild(document.createTextNode(role.name));
+      roleList.appendChild(lbl);
+    });
+
+    // Tribunal checkboxes
     var selectedIds = activeSol.tribunals.map(function(tr) { return tr.id; });
-    var tribunalList = el('div', { style: { maxHeight: '200px', overflowY: 'auto', marginTop: '8px' } });
+    var tribunalList = el('div', { style: { maxHeight: '150px', overflowY: 'auto', marginTop: '4px' } });
     activeSol.tribunals.forEach(function(trib) {
       var label = el('label', { style: { display: 'flex', alignItems: 'center', gap: '8px', padding: '3px 0', cursor: 'pointer', fontSize: '13px' } });
       var cb = el('input', { type: 'checkbox' });
@@ -184,6 +206,8 @@ Tribunator.PDF = {
       var opts = {
         solutionId: activeSol.id,
         tribunalIds: selectedIds,
+        selectedRoles: selectedRoles.slice(),
+        showTitular: showTitularCb.checked,
         headerText: headerInput.value,
         subHeaderText: subHeaderInput.value,
         customText: customTextInput.value
@@ -198,6 +222,10 @@ Tribunator.PDF = {
       }
     };
 
+    // Show titular option
+    var showTitularCb = el('input', { type: 'checkbox' });
+    showTitularCb.checked = true;
+
     Tribunator.Utils.showModal({
       title: t('tribunals.pdf'),
       body: el('div', {}, [
@@ -205,6 +233,12 @@ Tribunator.PDF = {
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.subHeaderText') }), subHeaderInput]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.customText') }), customTextInput]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.logo') }), logoInput]),
+        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), roleList]),
+        el('div', { className: 'form-group' }, [
+          el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [
+            showTitularCb, document.createTextNode(t('pdf.showTitular'))
+          ])
+        ]),
         el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.tribunals') }), tribunalList])
       ]),
       buttons: [
