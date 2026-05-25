@@ -425,15 +425,30 @@ Tribunator.Tribunals = {
       var table = el('table', { className: 'room-list-table' });
       var thead = el('thead');
       var hr = el('tr');
-      [t('tribunals.candidateSurnames'), t('tribunals.candidateName'), t('tribunals.candidateSpecialty'), t('common.actions')].forEach(function(h) { hr.appendChild(el('th', { textContent: h })); });
+      [t('tribunals.candidateSurnames'), t('tribunals.candidateName'), t('tribunals.candidateSpecialty'), t('tribunals.titular'), t('common.actions')].forEach(function(h) { hr.appendChild(el('th', { textContent: h })); });
       thead.appendChild(hr);
       table.appendChild(thead);
       var tbody = el('tbody');
       filtered.forEach(function(c) {
-        var tr = el('tr');
-        tr.appendChild(el('td', { style: { fontWeight: '500' }, textContent: c.surnames }));
-        tr.appendChild(el('td', { textContent: c.name }));
+        var isSub = store.isSubstitute(c.id);
+        var tr = el('tr', isSub ? { style: { background: c.useTitular ? 'var(--warning-light)' : '' } } : {});
+        tr.appendChild(el('td', { style: { fontWeight: '500' }, textContent: c.useTitular ? c.titularSurnames : c.surnames }));
+        tr.appendChild(el('td', { textContent: c.useTitular ? c.titularName : c.name }));
         tr.appendChild(el('td', { textContent: c.specialty }));
+        // Titular column
+        var titCell = el('td');
+        if (isSub) {
+          if (c.useTitular) {
+            titCell.appendChild(el('span', { style: { fontSize: '11px' }, textContent: t('tribunals.showingTitular') }));
+            titCell.appendChild(el('button', { className: 'btn btn-sm', style: { marginLeft: '4px', fontSize: '11px' }, textContent: t('tribunals.revertToSub'), onClick: function() { store.toggleTitular(c.id); render(filter); } }));
+          } else {
+            titCell.appendChild(el('span', { style: { fontSize: '11px', color: 'var(--text-muted)' }, textContent: c.titularSurnames + ', ' + c.titularName }));
+            titCell.appendChild(el('button', { className: 'btn btn-sm', style: { marginLeft: '4px', fontSize: '11px' }, textContent: t('tribunals.mutateToTitular'), onClick: function() { store.toggleTitular(c.id); render(filter); } }));
+          }
+        } else {
+          titCell.appendChild(el('span', { style: { fontSize: '11px', color: 'var(--text-muted)' }, textContent: '—' }));
+        }
+        tr.appendChild(titCell);
         tr.appendChild(el('td', {}, [
           el('button', { className: 'btn btn-sm', textContent: t('common.edit'), style: { marginRight: '4px' }, onClick: function() { self.promptEditCandidate(c.id); } }),
           el('button', { className: 'btn btn-sm', textContent: t('common.delete'), onClick: function() {
@@ -941,46 +956,93 @@ Tribunator.Tribunals = {
   },
   promptAddCandidate: function() {
     var self = this; var el = Tribunator.Utils.el;
-    var nameIn = el('input', { className: 'form-input', type: 'text', placeholder: t('tribunals.candidateName') });
     var surnIn = el('input', { className: 'form-input', type: 'text', placeholder: t('tribunals.candidateSurnames') });
+    var nameIn = el('input', { className: 'form-input', type: 'text', placeholder: t('tribunals.candidateName') });
     var specIn = el('input', { className: 'form-input', type: 'text', placeholder: t('tribunals.candidateSpecialty') });
+    var titSurnIn = el('input', { className: 'form-input', type: 'text', placeholder: t('tribunals.titularSurnames') });
+    var titNameIn = el('input', { className: 'form-input', type: 'text', placeholder: t('tribunals.titularName') });
     Tribunator.Utils.showModal({
       title: t('tribunals.addCandidate'),
-      body: el('div', {}, [el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateName') }), nameIn]), el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateSurnames') }), surnIn]), el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateSpecialty') }), specIn])]),
-      buttons: [{ text: t('common.cancel'), className: 'btn-secondary' }, { text: t('common.create'), className: 'btn-primary', action: function() { if (nameIn.value.trim() || surnIn.value.trim()) { Tribunator.Store.addCandidate({ name: nameIn.value.trim(), surnames: surnIn.value.trim(), specialty: specIn.value.trim() }); self.renderSidebar(); if (self.activeTab === 'candidates') self.renderMain(); } } }]
+      body: el('div', {}, [
+        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateSurnames') }), surnIn]),
+        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateName') }), nameIn]),
+        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateSpecialty') }), specIn]),
+        el('div', { style: { borderTop: '1px solid var(--border)', marginTop: '12px', paddingTop: '12px' } }, [
+          el('label', { className: 'form-label', style: { color: 'var(--text-muted)', marginBottom: '8px' }, textContent: t('tribunals.titularSection') }),
+          el('div', { className: 'form-inline' }, [
+            el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.titularSurnames') }), titSurnIn]),
+            el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.titularName') }), titNameIn])
+          ])
+        ])
+      ]),
+      buttons: [{ text: t('common.cancel'), className: 'btn-secondary' }, { text: t('common.create'), className: 'btn-primary', action: function() {
+        if (nameIn.value.trim() || surnIn.value.trim()) {
+          Tribunator.Store.addCandidate({ name: nameIn.value.trim(), surnames: surnIn.value.trim(), specialty: specIn.value.trim(), titularName: titNameIn.value.trim(), titularSurnames: titSurnIn.value.trim() });
+          self.renderSidebar(); if (self.activeTab === 'candidates') self.renderMain();
+        }
+      } }]
     });
     setTimeout(function() { surnIn.focus(); }, 100);
   },
   promptEditCandidate: function(id) {
     var self = this; var c = Tribunator.Store.getCandidate(id); if (!c) return; var el = Tribunator.Utils.el;
-    var nameIn = el('input', { className: 'form-input', type: 'text', value: c.name });
     var surnIn = el('input', { className: 'form-input', type: 'text', value: c.surnames });
+    var nameIn = el('input', { className: 'form-input', type: 'text', value: c.name });
     var specIn = el('input', { className: 'form-input', type: 'text', value: c.specialty });
+    var titSurnIn = el('input', { className: 'form-input', type: 'text', value: c.titularSurnames || '' });
+    var titNameIn = el('input', { className: 'form-input', type: 'text', value: c.titularName || '' });
     Tribunator.Utils.showModal({
       title: t('tribunals.editCandidate'),
-      body: el('div', {}, [el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateName') }), nameIn]), el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateSurnames') }), surnIn]), el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateSpecialty') }), specIn])]),
-      buttons: [{ text: t('common.cancel'), className: 'btn-secondary' }, { text: t('common.save'), className: 'btn-primary', action: function() { Tribunator.Store.updateCandidate(id, { name: nameIn.value.trim(), surnames: surnIn.value.trim(), specialty: specIn.value.trim() }); self.renderMain(); self.renderSidebar(); } }]
+      body: el('div', {}, [
+        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateSurnames') }), surnIn]),
+        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateName') }), nameIn]),
+        el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.candidateSpecialty') }), specIn]),
+        el('div', { style: { borderTop: '1px solid var(--border)', marginTop: '12px', paddingTop: '12px' } }, [
+          el('label', { className: 'form-label', style: { color: 'var(--text-muted)', marginBottom: '8px' }, textContent: t('tribunals.titularSection') }),
+          el('div', { className: 'form-inline' }, [
+            el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.titularSurnames') }), titSurnIn]),
+            el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.titularName') }), titNameIn])
+          ])
+        ])
+      ]),
+      buttons: [{ text: t('common.cancel'), className: 'btn-secondary' }, { text: t('common.save'), className: 'btn-primary', action: function() { Tribunator.Store.updateCandidate(id, { name: nameIn.value.trim(), surnames: surnIn.value.trim(), specialty: specIn.value.trim(), titularName: titNameIn.value.trim(), titularSurnames: titSurnIn.value.trim() }); self.renderMain(); self.renderSidebar(); } }]
     });
   },
+  downloadTemplate: function() {
+    var csv = 'Apellidos;Nombre;Especialidad;Apellidos Titular;Nombre Titular\n';
+    Tribunator.Utils.downloadFile(csv, 'tribunator-plantilla-candidatos.csv', 'text/csv');
+  },
+
   promptUploadCandidates: function() {
     var self = this; var el = Tribunator.Utils.el;
     var fileInput = el('input', { type: 'file', accept: '.xlsx,.xls,.csv', className: 'form-input' });
     Tribunator.Utils.showModal({
       title: t('tribunals.uploadCandidates'),
       body: el('div', {}, [
-        el('p', { style: { marginBottom: '12px', fontSize: '13px' }, textContent: 'Excel: Nombre, Apellidos, Especialidad (3 primeras columnas, fila 1 = cabecera)' }),
-        el('div', { className: 'form-group' }, [fileInput])
+        el('p', { style: { marginBottom: '8px', fontSize: '13px' }, textContent: t('tribunals.excelFormat') }),
+        el('p', { style: { marginBottom: '12px', fontSize: '11px', color: 'var(--text-muted)' }, textContent: t('tribunals.excelHint') }),
+        el('div', { className: 'form-group' }, [fileInput]),
+        el('button', { className: 'btn btn-sm', style: { marginTop: '8px' }, textContent: t('tribunals.downloadTemplate'), onClick: function() { self.downloadTemplate(); } })
       ]),
       buttons: [{ text: t('common.cancel'), className: 'btn-secondary' }, { text: t('common.import'), className: 'btn-primary', action: function() { if (fileInput.files[0]) self.processExcelFile(fileInput.files[0]); }, close: true }]
     });
   },
   processExcelFile: function(file) {
     var self = this;
+    var parseLine = function(cols) {
+      return {
+        surnames: (cols[0]||'').trim(),
+        name: (cols[1]||'').trim(),
+        specialty: (cols[2]||'').trim(),
+        titularSurnames: (cols[3]||'').trim(),
+        titularName: (cols[4]||'').trim()
+      };
+    };
     if (file.name.endsWith('.csv')) {
       Tribunator.Utils.readFile(file, function(err, content) {
         if (err) { Tribunator.Utils.showToast(err, 'error'); return; }
         var lines = content.split('\n'); var cands = [];
-        for (var i = 1; i < lines.length; i++) { var cols = lines[i].split(/[,;\t]/); if (cols[0] && cols[0].trim()) cands.push({ name: (cols[0]||'').trim(), surnames: (cols[1]||'').trim(), specialty: (cols[2]||'').trim() }); }
+        for (var i = 1; i < lines.length; i++) { var cols = lines[i].split(/[,;\t]/); if (cols[0] && cols[0].trim()) cands.push(parseLine(cols)); }
         var added = Tribunator.Store.importCandidates(cands);
         Tribunator.Utils.showToast(added + ' ' + t('tribunals.candidatesImported'));
         self.renderSidebar(); if (self.activeTab === 'candidates') self.renderMain();
@@ -991,7 +1053,7 @@ Tribunator.Tribunals = {
       reader.onload = function(e) {
         try {
           var wb = XLSX.read(e.target.result, { type: 'array' }); var data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 }); var cands = [];
-          for (var i = 1; i < data.length; i++) { var r = data[i]; if (r && r[0]) cands.push({ name: String(r[0]||'').trim(), surnames: String(r[1]||'').trim(), specialty: String(r[2]||'').trim() }); }
+          for (var i = 1; i < data.length; i++) { var r = data[i]; if (r && r[0]) cands.push(parseLine(r.map(function(x) { return String(x||''); }))); }
           var added = Tribunator.Store.importCandidates(cands);
           Tribunator.Utils.showToast(added + ' ' + t('tribunals.candidatesImported'));
           self.renderSidebar(); if (self.activeTab === 'candidates') self.renderMain();

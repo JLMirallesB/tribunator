@@ -562,11 +562,37 @@ Tribunator.Store = {
       id: this.generateId(),
       name: candidate.name || '',
       surnames: candidate.surnames || '',
-      specialty: candidate.specialty || ''
+      specialty: candidate.specialty || '',
+      titularName: candidate.titularName || '',
+      titularSurnames: candidate.titularSurnames || '',
+      useTitular: false
     };
     this.data.candidates.push(c);
     this.save();
     return c;
+  },
+
+  isSubstitute: function(candidateId) {
+    var c = this.getCandidate(candidateId);
+    return c && c.titularSurnames && c.titularSurnames.trim() !== '';
+  },
+
+  toggleTitular: function(candidateId) {
+    var c = this.getCandidate(candidateId);
+    if (c && this.isSubstitute(candidateId)) {
+      c.useTitular = !c.useTitular;
+      this.save();
+    }
+    return c;
+  },
+
+  getCandidateDisplayName: function(candidateId) {
+    var c = this.getCandidate(candidateId);
+    if (!c) return '?';
+    if (c.useTitular && c.titularSurnames) {
+      return c.titularSurnames + ', ' + c.titularName;
+    }
+    return c.surnames + ', ' + c.name;
   },
 
   updateCandidate: function(id, updates) {
@@ -612,7 +638,10 @@ Tribunator.Store = {
           id: self.generateId(),
           name: item.name || '',
           surnames: item.surnames || '',
-          specialty: item.specialty || ''
+          specialty: item.specialty || '',
+          titularName: item.titularName || '',
+          titularSurnames: item.titularSurnames || '',
+          useTitular: false
         });
         added++;
       }
