@@ -74,18 +74,31 @@ Tribunator.Tribunals = {
                   var tribWarnings = store.getTribunalWarnings(sol.id, trib.id);
                   var hasIssue = mc !== def || tribWarnings.length > 0 || (trib.schedule || []).length === 0;
                   var badge = hasIssue ? ' ⚠' : '';
-                  body.appendChild(el('div', {
-                    className: 'sidebar-item' + (trib.id === self.currentTribunalId ? ' active' : ''),
-                    onClick: function(e) { if (e.target.closest('.sidebar-item-actions')) return; self.currentTribunalId = trib.id; self.activeTab = 'tribunals'; self.renderSidebar(); self.renderMain(); }
-                  }, [
-                    el('span', { className: 'sidebar-item-name', textContent: trib.name + badge }),
-                    el('div', { className: 'sidebar-item-actions' }, [
-                      el('button', { className: 'btn-icon btn-sm', textContent: '↑', title: t('common.moveUp'), onClick: function() { store.moveTribunal(sol.id, trib.id, 'up'); self.renderSidebar(); } }),
-                      el('button', { className: 'btn-icon btn-sm', textContent: '↓', title: t('common.moveDown'), onClick: function() { store.moveTribunal(sol.id, trib.id, 'down'); self.renderSidebar(); } }),
-                      el('button', { className: 'btn-icon btn-sm', textContent: '✎', onClick: function() { self.promptEditTribunal(trib.id); } }),
-                      el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { self.promptDeleteTribunal(trib.id); } })
-                    ])
-                  ]));
+                  (function(tribRef, solRef) {
+                    var menuBtn = el('button', { className: 'btn-icon btn-sm sidebar-context-btn', textContent: '⋯', onClick: function(e) {
+                      e.stopPropagation();
+                      // Remove any existing context menu
+                      var old = document.querySelector('.sidebar-context-menu');
+                      if (old) old.remove();
+                      var menu = el('div', { className: 'sidebar-context-menu' }, [
+                        el('div', { className: 'sidebar-context-item', textContent: t('common.moveUp'), onClick: function() { store.moveTribunal(solRef.id, tribRef.id, 'up'); menu.remove(); self.renderSidebar(); } }),
+                        el('div', { className: 'sidebar-context-item', textContent: t('common.moveDown'), onClick: function() { store.moveTribunal(solRef.id, tribRef.id, 'down'); menu.remove(); self.renderSidebar(); } }),
+                        el('div', { className: 'sidebar-context-item', textContent: t('common.duplicate'), onClick: function() { var c = store.duplicateTribunal(solRef.id, tribRef.id); menu.remove(); if (c) { self.currentTribunalId = c.id; self.renderSidebar(); self.renderMain(); } } }),
+                        el('div', { className: 'sidebar-context-item', textContent: t('common.edit'), onClick: function() { menu.remove(); self.promptEditTribunal(tribRef.id); } }),
+                        el('div', { className: 'sidebar-context-item sidebar-context-danger', textContent: t('common.delete'), onClick: function() { menu.remove(); self.promptDeleteTribunal(tribRef.id); } })
+                      ]);
+                      menuBtn.parentNode.appendChild(menu);
+                      var close = function(ev) { if (!menu.contains(ev.target) && ev.target !== menuBtn) { menu.remove(); document.removeEventListener('click', close); } };
+                      setTimeout(function() { document.addEventListener('click', close); }, 0);
+                    }});
+                    body.appendChild(el('div', {
+                      className: 'sidebar-item' + (tribRef.id === self.currentTribunalId ? ' active' : ''),
+                      onClick: function(e) { if (e.target.closest('.sidebar-context-btn') || e.target.closest('.sidebar-context-menu')) return; self.currentTribunalId = tribRef.id; self.activeTab = 'tribunals'; self.renderSidebar(); self.renderMain(); }
+                    }, [
+                      el('span', { className: 'sidebar-item-name', textContent: tribRef.name + badge }),
+                      el('div', { className: 'sidebar-item-actions', style: { position: 'relative' } }, [menuBtn])
+                    ]));
+                  })(trib, sol);
                 });
               }
             }
@@ -550,6 +563,24 @@ Tribunator.Tribunals = {
       resultLabel.style.color = 'var(--text-muted)';
       warningLabel.style.display = 'none';
       Tribunator.Utils.clearElement(contentArea);
+
+      // General activities (outside templates)
+      var generalActivities = ['Constitución del Tribunal', 'Llamamiento de Aspirantes'];
+      contentArea.appendChild(el('div', { style: { fontSize: '10px', color: 'var(--text-muted)', padding: '4px 12px', textTransform: 'uppercase', letterSpacing: '0.5px' }, textContent: t('tribunals.generalActivities') }));
+      generalActivities.forEach(function(act) {
+        contentArea.appendChild(el('div', {
+          style: { display: 'flex', alignItems: 'center', padding: '8px 12px', borderBottom: '1px solid var(--border)', cursor: 'pointer', fontSize: '13px' },
+          onClick: function() {
+            currentPath = [act];
+            currentText = act;
+            resultLabel.textContent = currentText;
+            resultLabel.style.color = 'var(--primary)';
+            isFromTribunalTemplate = true;
+            warningLabel.style.display = 'none';
+          }
+        }, [el('span', { textContent: act })]));
+      });
+      contentArea.appendChild(el('div', { style: { height: '8px' } }));
 
       // Show tribunal template first if available
       if (tribunalTemplate) {

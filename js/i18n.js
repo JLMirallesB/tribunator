@@ -4,7 +4,7 @@ Tribunator.translations = {
   es: {
     app: {
       title: 'Tribunator',
-      version: 'v1.0.0',
+      version: 'v1.0.1',
       phases: { dashboard: 'Inicio', space: 'Espacio', time: 'Tiempo', templates: 'Plantillas', tribunals: 'Tribunales', verify: 'Verificación' },
       changelog: 'Changelog',
       checkVersion: 'Versiones',
@@ -223,6 +223,7 @@ Tribunator.translations = {
       slotIncomplete: 'Debes completar aula y actividad',
       pickRoomHint: 'Haz click para elegir aula',
       pickActivityHint: 'Selecciona una actividad de la estructura de pruebas',
+      generalActivities: 'Actividades generales',
       selfConflict: 'Este tribunal ya usa esa aula en esa franja',
       sortAlpha: 'Ordenar alfabéticamente',
       assignDay: 'Asignar día',
@@ -245,6 +246,7 @@ Tribunator.translations = {
     export: {
       exportAll: 'Exportar todo',
       exportSpaces: 'Exportar espacios',
+      exportTime: 'Exportar tiempo',
       exportSolution: 'Exportar solución',
       importData: 'Importar datos',
       importWarning: 'Ya existen datos. ¿Qué deseas hacer?',
@@ -279,7 +281,9 @@ Tribunator.translations = {
       planDay: 'Día de ocupación (opcional)',
       noDay: 'Sin día',
       halfPage: 'Dos carteles por página',
-      includeEmpty: 'Incluir aulas sin tribunal'
+      includeEmpty: 'Incluir aulas sin tribunal',
+      showSpecialty: 'Mostrar especialidad de cada miembro',
+      showFullTime: 'Mostrar franja completa (inicio y fin)'
     },
     dashboard: {
       welcome: 'Bienvenido a Tribunator',
@@ -335,7 +339,11 @@ Tribunator.translations = {
       slotNoRoom: 'Franja sin aula asignada',
       slotNoActivity: 'Franja sin actividad indicada',
       roomConflict: 'Conflicto de aula: dos tribunales en la misma aula y franja',
+      roomOccupiedTwice: 'ocupada por dos tribunales a la vez',
+      sharedNonBlocking: 'compartida (actividad no bloqueante)',
       memberConflict: 'Conflicto de miembro: misma persona en tribunales distintos el mismo día',
+      memberOccupiedTwice: 'en dos tribunales a la vez',
+      memberSharedNonBlocking: 'coincide en actividad no bloqueante',
       dayHasRefs: 'Este día tiene franjas asignadas en tribunales',
       roomHasRefs: 'Esta aula está asignada en franjas de tribunales',
       candidateHasRefs: 'Este candidato es miembro de tribunales (será eliminado de ellos)'
@@ -351,7 +359,7 @@ Tribunator.translations = {
   va: {
     app: {
       title: 'Tribunator',
-      version: 'v1.0.0',
+      version: 'v1.0.1',
       phases: { dashboard: 'Inici', space: 'Espai', time: 'Temps', templates: 'Plantilles', tribunals: 'Tribunals', verify: 'Verificació' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
@@ -570,6 +578,7 @@ Tribunator.translations = {
       slotIncomplete: 'Has de completar aula i activitat',
       pickRoomHint: 'Fes click per a triar aula',
       pickActivityHint: 'Selecciona una activitat de l\'estructura de proves',
+      generalActivities: 'Activitats generals',
       selfConflict: 'Este tribunal ja usa eixa aula en eixa franja',
       sortAlpha: 'Ordenar alfabèticament',
       assignDay: 'Assignar dia',
@@ -592,6 +601,7 @@ Tribunator.translations = {
     export: {
       exportAll: 'Exportar tot',
       exportSpaces: 'Exportar espais',
+      exportTime: 'Exportar temps',
       exportSolution: 'Exportar solució',
       importData: 'Importar dades',
       importWarning: 'Ja existeixen dades. Què vols fer?',
@@ -626,7 +636,9 @@ Tribunator.translations = {
       planDay: 'Dia d\'ocupació (opcional)',
       noDay: 'Sense dia',
       halfPage: 'Dos cartells per pàgina',
-      includeEmpty: 'Incloure aules sense tribunal'
+      includeEmpty: 'Incloure aules sense tribunal',
+      showSpecialty: 'Mostrar especialitat de cada membre',
+      showFullTime: 'Mostrar franja completa (inici i fi)'
     },
     dashboard: {
       welcome: 'Benvingut a Tribunator',
@@ -682,7 +694,11 @@ Tribunator.translations = {
       slotNoRoom: 'Franja sense aula assignada',
       slotNoActivity: 'Franja sense activitat indicada',
       roomConflict: 'Conflicte d\'aula: dos tribunals en la mateixa aula i franja',
+      roomOccupiedTwice: 'ocupada per dos tribunals a la vegada',
+      sharedNonBlocking: 'compartida (activitat no bloquejant)',
       memberConflict: 'Conflicte de membre: mateixa persona en tribunals distints el mateix dia',
+      memberOccupiedTwice: 'en dos tribunals a la vegada',
+      memberSharedNonBlocking: 'coincideix en activitat no bloquejant',
       dayHasRefs: 'Este dia té franges assignades en tribunals',
       roomHasRefs: 'Esta aula està assignada en franges de tribunals',
       candidateHasRefs: 'Este candidat és membre de tribunals (serà eliminat d\'ells)'
@@ -698,7 +714,7 @@ Tribunator.translations = {
   en: {
     app: {
       title: 'Tribunator',
-      version: 'v1.0.0',
+      version: 'v1.0.1',
       phases: { dashboard: 'Home', space: 'Space', time: 'Time', templates: 'Templates', tribunals: 'Tribunals', verify: 'Verification' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
@@ -917,6 +933,7 @@ Tribunator.translations = {
       slotIncomplete: 'Room and activity are required',
       pickRoomHint: 'Click to pick a room',
       pickActivityHint: 'Select an activity from the exam structure',
+      generalActivities: 'General activities',
       selfConflict: 'This tribunal already uses that room in that time slot',
       sortAlpha: 'Sort alphabetically',
       assignDay: 'Assign day',
@@ -939,6 +956,7 @@ Tribunator.translations = {
     export: {
       exportAll: 'Export all',
       exportSpaces: 'Export spaces',
+      exportTime: 'Export time',
       exportSolution: 'Export solution',
       importData: 'Import data',
       importWarning: 'Data already exists. What do you want to do?',
@@ -973,7 +991,9 @@ Tribunator.translations = {
       planDay: 'Occupation day (optional)',
       noDay: 'No day',
       halfPage: 'Two signs per page',
-      includeEmpty: 'Include rooms without tribunal'
+      includeEmpty: 'Include rooms without tribunal',
+      showSpecialty: 'Show specialty for each member',
+      showFullTime: 'Show full time slot (start and end)'
     },
     dashboard: {
       welcome: 'Welcome to Tribunator',
@@ -1029,7 +1049,11 @@ Tribunator.translations = {
       slotNoRoom: 'Time slot without assigned room',
       slotNoActivity: 'Time slot without activity',
       roomConflict: 'Room conflict: two tribunals in the same room and time slot',
+      roomOccupiedTwice: 'occupied by two tribunals at the same time',
+      sharedNonBlocking: 'shared (non-blocking activity)',
       memberConflict: 'Member conflict: same person in different tribunals on the same day',
+      memberOccupiedTwice: 'in two tribunals at the same time',
+      memberSharedNonBlocking: 'overlaps in non-blocking activity',
       dayHasRefs: 'This day has assigned time slots in tribunals',
       roomHasRefs: 'This room is assigned in tribunal time slots',
       candidateHasRefs: 'This candidate is a member of tribunals (will be removed from them)'

@@ -12,6 +12,7 @@ Tribunator.PDF = {
 
   _accent: function(o) { return (o && o.accentColor) || [60, 60, 60]; },
   _hexToRgb: function(h) { h = h.replace('#',''); return [parseInt(h.substring(0,2),16), parseInt(h.substring(2,4),16), parseInt(h.substring(4,6),16)]; },
+  _fmtTime: function(start, end, full) { return full ? start + ' – ' + end : start; },
   _initDoc: function() {
     var C = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
     if (!C) { Tribunator.Utils.showToast('jsPDF not loaded', 'error'); return null; }
@@ -56,9 +57,13 @@ Tribunator.PDF = {
       var sn = c ? (c.useTitular && c.titularSurnames ? c.titularSurnames : c.surnames) : '—';
       var nm = c ? (c.useTitular && c.titularName ? c.titularName : c.name) : '';
       if (c && store.isSubstitute(c.id) && !c.useTitular && options.showTitular) { fi++; sn += ' *'+fi; footnotes.push({i:fi, sub:c.surnames+', '+c.name, tit:c.titularSurnames+', '+c.titularName}); }
-      return [sn, nm, m.role||'', c?(c.specialty||''):''];
+      var row = [sn, nm, m.role||''];
+      if (options.showSpecialty) row.push(c?(c.specialty||''):'');
+      return row;
     });
-    doc.autoTable({ startY: state.y, margin:{left:self.MARGIN,right:self.MARGIN}, head:[[t('tribunals.candidateSurnames'),t('tribunals.candidateName'),t('tribunals.role'),t('tribunals.candidateSpecialty')]], body:rows, styles:{fontSize:8,cellPadding:2,lineColor:[220,220,220],lineWidth:0.2}, headStyles:{fillColor:self._accent(options),textColor:self.WHITE,fontStyle:'bold',fontSize:8}, alternateRowStyles:{fillColor:self.TABLE_ALT},
+    var head = [t('tribunals.candidateSurnames'),t('tribunals.candidateName'),t('tribunals.role')];
+    if (options.showSpecialty) head.push(t('tribunals.candidateSpecialty'));
+    doc.autoTable({ startY: state.y, margin:{left:self.MARGIN,right:self.MARGIN}, head:[head], body:rows, styles:{fontSize:8,cellPadding:2,lineColor:[220,220,220],lineWidth:0.2}, headStyles:{fillColor:self._accent(options),textColor:self.WHITE,fontStyle:'bold',fontSize:8}, alternateRowStyles:{fillColor:self.TABLE_ALT},
       didParseCell:function(d){ if(d.section==='body'){ var m=filtered[d.row.index]; if(m){var rd=store.getRoleDefByName(m.role); if(rd&&!rd.counts){d.cell.styles.textColor=self.GRAY;d.cell.styles.fontStyle='italic';}} }}
     });
     state.y = doc.lastAutoTable.finalY + 2;
@@ -69,14 +74,14 @@ Tribunator.PDF = {
     var self = this;
     variations.forEach(function(v) { state.check(15); doc.setFillColor(210,210,210); doc.rect(self.MARGIN+2,state.y,1,6,'F'); doc.setFontSize(9); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc,self.GRAY); doc.text(t('tribunals.variations')+': '+v.name, self.MARGIN+6, state.y+4); state.y+=7; doc.setTextColor(0); self._membersTable(doc, v.members, store, state, options); });
   },
-  _scheduleTable: function(doc, schedule, store, state) {
+  _scheduleTable: function(doc, schedule, store, state, options) {
     var self = this;
     var sorted = schedule.slice().sort(function(a,b){ var da=store.getDay(a.dayId),db=store.getDay(b.dayId); return da&&db?da.date.localeCompare(db.date):0; });
     sorted.forEach(function(sched) {
       var day = store.getDay(sched.dayId); if (!day) return;
       var slots = (sched.slots||[]).slice().sort(function(a,b){return a.startTime.localeCompare(b.startTime);}); if (!slots.length) return;
       state.check(15); doc.setFillColor.apply(doc, self.LIGHT_BG); doc.rect(self.MARGIN, state.y, self.CONTENT_W, 7, 'F'); doc.setFontSize(10); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, self.DARK); doc.text(Tribunator.Time.formatDate(day.date), self.MARGIN+3, state.y+5); state.y+=9; doc.setTextColor(0);
-      var rows = slots.map(function(s){ var rm=s.roomId?store.getRoom(s.roomId):null; return [s.startTime+' – '+s.endTime, rm?rm.room.name:'—', s.activity||'']; });
+      var rows = slots.map(function(s){ var rm=s.roomId?store.getRoom(s.roomId):null; return [self._fmtTime(s.startTime, s.endTime, options && options.showFullTime), rm?rm.room.name:'—', s.activity||'']; });
       doc.autoTable({ startY:state.y, margin:{left:self.MARGIN+2,right:self.MARGIN}, head:[[t('time.timeSlot'),t('space.room'),t('tribunals.slotActivity')]], body:rows, styles:{fontSize:8,cellPadding:2,lineColor:[220,220,220],lineWidth:0.2}, headStyles:{fillColor:[80,80,80],textColor:self.WHITE,fontStyle:'bold',fontSize:7}, alternateRowStyles:{fillColor:[250,250,252]}, columnStyles:{0:{cellWidth:28},1:{cellWidth:30}} });
       state.y = doc.lastAutoTable.finalY + 4;
     });
@@ -96,7 +101,7 @@ Tribunator.PDF = {
       self._tribunalBand(doc, trib.name, state);
       if (trib.members.length > 0) { self._sectionLabel(doc, t('tribunals.members'), state, options); self._membersTable(doc, trib.members, store, state, options); }
       self._variationsBlock(doc, trib.variations, store, state, options);
-      if (!options.membersOnly) { var sched = trib.schedule||[]; if (sched.length) { self._sectionLabel(doc, t('tribunals.schedule'), state, options); self._scheduleTable(doc, sched, store, state); } }
+      if (!options.membersOnly) { var sched = trib.schedule||[]; if (sched.length) { self._sectionLabel(doc, t('tribunals.schedule'), state, options); self._scheduleTable(doc, sched, store, state, options); } }
       state.y += 4;
     });
     this._savePdf(doc, options);
@@ -137,7 +142,7 @@ Tribunator.PDF = {
             var c = store.getCandidate(m.candidateId);
             return c ? (c.useTitular && c.titularSurnames ? c.titularSurnames : c.surnames) + (m.role ? ' ('+m.role+')' : '') : '?';
           }).join(', ');
-          allSlots.push([slot.startTime + ' – ' + slot.endTime, trib.name, rm ? rm.room.name : '—', slot.activity || '', memberNames]);
+          allSlots.push([self._fmtTime(slot.startTime, slot.endTime, options.showFullTime), trib.name, rm ? rm.room.name : '—', slot.activity || '', memberNames]);
         });
       });
 
@@ -345,7 +350,7 @@ Tribunator.PDF = {
           // Slots for this day
           var sched = (trib.schedule||[]).find(function(s){return s.dayId===options.signDayId;});
           if (sched && sched.slots && sched.slots.length) {
-            var slotRows = sched.slots.slice().sort(function(a,b){return a.startTime.localeCompare(b.startTime);}).map(function(s) { return [s.startTime+' – '+s.endTime, s.activity||'']; });
+            var slotRows = sched.slots.slice().sort(function(a,b){return a.startTime.localeCompare(b.startTime);}).map(function(s) { return [self._fmtTime(s.startTime, s.endTime, options.showFullTime), s.activity||'']; });
             doc.autoTable({
               startY: signY, margin:{left:m, right:m},
               body: slotRows,
@@ -417,6 +422,8 @@ Tribunator.PDF = {
     store.getCampuses().forEach(function(c) { c.floors.forEach(function(f) { allFloors.push({ campus: c, floor: f }); }); });
     var selectedFloorIds = allFloors.map(function(f){return f.floor.id;});
     var showTitular = true;
+    var showSpecialty = false;
+    var showFullTime = false;
     var halfPage = false;
     var includeEmpty = false;
     var signDayId = days.length > 0 ? days[0].id : null;
@@ -460,6 +467,10 @@ Tribunator.PDF = {
         optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), makeRoleList()]));
         var stCb = el('input', { type: 'checkbox' }); stCb.checked = showTitular; stCb.addEventListener('change', function() { showTitular = stCb.checked; });
         optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [stCb, document.createTextNode(t('pdf.showTitular'))])]));
+        var spCb = el('input', { type: 'checkbox' }); spCb.checked = showSpecialty; spCb.addEventListener('change', function() { showSpecialty = spCb.checked; });
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [spCb, document.createTextNode(t('pdf.showSpecialty'))])]));
+        var ftCb = el('input', { type: 'checkbox' }); ftCb.checked = showFullTime; ftCb.addEventListener('change', function() { showFullTime = ftCb.checked; });
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [ftCb, document.createTextNode(t('pdf.showFullTime'))])]));
         optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.tribunals') }), makeTribunalList()]));
       } else if (pdfType === 'daily') {
         optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('time.days') }), makeDayList()]));
@@ -497,7 +508,7 @@ Tribunator.PDF = {
         headerText: headerInput.value, subHeaderText: subHeaderInput.value, customText: customTextInput.value,
         accentColor: self._hexToRgb(colorInput.value),
         solutionId: activeSol.id, tribunalIds: selectedIds.slice(), selectedRoles: selectedRoles.slice(),
-        showTitular: showTitular, dayIds: selectedDayIds.slice(), floorIds: selectedFloorIds.slice(),
+        showTitular: showTitular, showSpecialty: showSpecialty, showFullTime: showFullTime, dayIds: selectedDayIds.slice(), floorIds: selectedFloorIds.slice(),
         planDayId: planDayId, signDayId: signDayId, halfPage: halfPage, includeEmpty: includeEmpty
       };
       var logoFile = logoInput.files[0];

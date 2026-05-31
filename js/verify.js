@@ -64,12 +64,18 @@ Tribunator.Verify = {
       catErrors.forEach(function(err) {
         var icon = err.severity === 'error' ? '✕' : err.severity === 'warning' ? '⚠' : 'ℹ';
         var color = err.severity === 'error' ? 'var(--danger)' : err.severity === 'warning' ? 'var(--warning)' : 'var(--primary)';
+        var detailEl = el('div', { style: { flex: '1' } });
+        detailEl.appendChild(el('div', { style: { fontWeight: '500' }, textContent: err.message }));
+        if (err.detailLines) {
+          err.detailLines.forEach(function(line) {
+            detailEl.appendChild(el('div', { style: { color: line.color || 'var(--text-muted)', fontSize: '12px', marginTop: '2px', paddingLeft: line.indent ? '12px' : '0' }, textContent: line.text }));
+          });
+        } else if (err.detail) {
+          detailEl.appendChild(el('div', { style: { color: 'var(--text-muted)', fontSize: '12px', marginTop: '2px' }, textContent: err.detail }));
+        }
         body.appendChild(el('div', { style: { display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '10px 16px', borderBottom: '1px solid var(--border)', fontSize: '13px' } }, [
           el('span', { style: { color: color, fontWeight: '700', flexShrink: '0', width: '16px' }, textContent: icon }),
-          el('div', { style: { flex: '1' } }, [
-            el('div', { style: { fontWeight: '500' }, textContent: err.message }),
-            err.detail ? el('div', { style: { color: 'var(--text-muted)', fontSize: '12px', marginTop: '2px' }, textContent: err.detail }) : null
-          ].filter(Boolean))
+          detailEl
         ]));
       });
 
@@ -162,44 +168,77 @@ Tribunator.Verify = {
 
           // Room conflict with other tribunals
           if (slot.roomId) {
-            var conflicts = store.getRoomConflicts(sol.id, slot.roomId, sched.dayId, slot.startTime, slot.endTime, trib.id);
+            var conflicts = store.getRoomConflicts(sol.id, slot.roomId, sched.dayId, slot.startTime, slot.endTime, trib.id, slot.activity);
             conflicts.forEach(function(c) {
               var roomInfo = store.getRoom(slot.roomId);
               var roomName = roomInfo ? roomInfo.room.name : slot.roomId;
-              errors.push({ severity: 'error', category: 'conflicts', message: t('verify.roomConflict'), detail: roomName + ' ' + dayLabel + ' ' + slot.startTime + '–' + slot.endTime + ': ' + trib.name + ' / ' + c.tribunal.name });
+              var sev = c.nonBlocking ? 'info' : 'error';
+              var msg = c.nonBlocking ? roomName + ' — ' + t('verify.sharedNonBlocking') : roomName + ' — ' + t('verify.roomOccupiedTwice');
+              var lines = [
+                { text: trib.name + ': ' + slot.startTime + '–' + slot.endTime + (slot.activity ? ' — ' + slot.activity : ''), indent: true },
+                { text: c.tribunal.name + ': ' + (c.slot ? c.slot.startTime + '–' + c.slot.endTime + (c.slot.activity ? ' — ' + c.slot.activity : '') : ''), indent: true },
+                { text: '📅 ' + dayLabel, color: 'var(--text-muted)' }
+              ];
+              errors.push({ severity: sev, category: 'conflicts', message: msg, detailLines: lines });
             });
           }
         });
 
-        // Member time conflicts: check if any member of this tribunal is also in another tribunal on the same day
+        // Member time conflicts: check slot-level overlap
         trib.members.forEach(function(m) {
-          var key = m.candidateId + '_' + sched.dayId;
-          if (!memberDayMap[key]) memberDayMap[key] = [];
-          memberDayMap[key].push(trib);
+          (sched.slots || []).forEach(function(slot) {
+            var key = m.candidateId + '_' + sched.dayId + '_' + slot.startTime + '_' + slot.endTime;
+            if (!memberDayMap[key]) memberDayMap[key] = { candidateId: m.candidateId, dayId: sched.dayId, start: slot.startTime, end: slot.endTime, tribs: [] };
+            memberDayMap[key].tribs.push(trib);
+          });
         });
       });
     });
 
-    // Check member time conflicts (same person in different tribunals on same day)
+    // Check member time conflicts (same person overlapping slots in different tribunals)
     var seenConflicts = {};
-    Object.keys(memberDayMap).forEach(function(key) {
-      var tribs = memberDayMap[key];
-      if (tribs.length > 1) {
-        var parts = key.split('_');
-        var candidateId = parts[0];
-        var dayId = parts[1];
-        var c = store.getCandidate(candidateId);
-        var day = store.getDay(dayId);
-        var tribNames = tribs.map(function(t) { return t.name; });
-        var conflictKey = tribNames.sort().join('|') + '_' + dayId + '_' + candidateId;
-        if (!seenConflicts[conflictKey]) {
-          seenConflicts[conflictKey] = true;
-          errors.push({
-            severity: 'error',
-            category: 'conflicts',
-            message: t('verify.memberConflict'),
-            detail: (c ? c.surnames + ', ' + c.name : '?') + ' — ' + (day ? Tribunator.Time.formatDate(day.date) : '') + ': ' + tribNames.join(' / ')
+    var memberSlots = {};
+    // Rebuild: group by candidateId + dayId, collect all slots
+    sol.tribunals.forEach(function(trib) {
+      trib.members.forEach(function(m) {
+        (trib.schedule || []).forEach(function(sched) {
+          (sched.slots || []).forEach(function(slot) {
+            var key = m.candidateId + '_' + sched.dayId;
+            if (!memberSlots[key]) memberSlots[key] = [];
+            memberSlots[key].push({ trib: trib, slot: slot });
           });
+        });
+      });
+    });
+    Object.keys(memberSlots).forEach(function(key) {
+      var entries = memberSlots[key];
+      for (var i = 0; i < entries.length; i++) {
+        for (var j = i + 1; j < entries.length; j++) {
+          if (entries[i].trib.id === entries[j].trib.id) continue;
+          if (store._timesOverlap(entries[i].slot.startTime, entries[i].slot.endTime, entries[j].slot.startTime, entries[j].slot.endTime)) {
+            var parts = key.split('_');
+            var candidateId = parts[0], dayId = parts[1];
+            var c = store.getCandidate(candidateId);
+            var day = store.getDay(dayId);
+            var nonBlocking = store.isNonBlockingSlot(entries[i].slot) || store.isNonBlockingSlot(entries[j].slot);
+            var conflictKey = [entries[i].trib.id, entries[j].trib.id].sort().join('|') + '_' + dayId + '_' + candidateId;
+            if (!seenConflicts[conflictKey]) {
+              seenConflicts[conflictKey] = true;
+              var cName = c ? c.surnames + ', ' + c.name : '?';
+              var dayStr = day ? Tribunator.Time.formatDate(day.date) : '';
+              // Find roles
+              var role1 = ''; var role2 = '';
+              entries[i].trib.members.forEach(function(mb) { if (mb.candidateId === candidateId) role1 = mb.role || ''; });
+              entries[j].trib.members.forEach(function(mb) { if (mb.candidateId === candidateId) role2 = mb.role || ''; });
+              var msg = nonBlocking ? cName + ' — ' + t('verify.memberSharedNonBlocking') : cName + ' — ' + t('verify.memberOccupiedTwice');
+              var lines = [
+                { text: entries[i].trib.name + ': ' + entries[i].slot.startTime + '–' + entries[i].slot.endTime + (role1 ? ' (' + role1 + ')' : '') + (entries[i].slot.activity ? ' — ' + entries[i].slot.activity : ''), indent: true },
+                { text: entries[j].trib.name + ': ' + entries[j].slot.startTime + '–' + entries[j].slot.endTime + (role2 ? ' (' + role2 + ')' : '') + (entries[j].slot.activity ? ' — ' + entries[j].slot.activity : ''), indent: true },
+                { text: '📅 ' + dayStr, color: 'var(--text-muted)' }
+              ];
+              errors.push({ severity: nonBlocking ? 'info' : 'error', category: 'conflicts', message: msg, detailLines: lines });
+            }
+          }
         }
       }
     });

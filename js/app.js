@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.0.0' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.0.1' })
     ]));
 
     // Phase nav
@@ -279,6 +279,48 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.0.1',
+        date: '2026-05-31',
+        changes: {
+          es: [
+            'Actividades generales: Constitución del Tribunal y Llamamiento de Aspirantes',
+            'Llamamiento de Aspirantes como actividad no bloqueante (info en vez de error)',
+            'Verificación mejorada: detalle multi-línea con tribunal, hora, rol y actividad',
+            'Conflictos de miembros: ahora compara franjas horarias reales, no solo el día',
+            'Duplicar tribunal con un click (miembros, variaciones y horario)',
+            'Menú contextual ⋯ en tribunales del sidebar (subir, bajar, duplicar, editar, eliminar)',
+            'PDF: opción de mostrar/ocultar especialidad y franja completa',
+            'Dashboard: exportar/importar general con todos los tipos',
+            'Dashboard: botón de importar en la pantalla de bienvenida',
+            'Espacio: sidebar solo exporta/importa espacios'
+          ],
+          va: [
+            'Activitats generals: Constitució del Tribunal i Crida d\'Aspirants',
+            'Crida d\'Aspirants com a activitat no bloquejant (info en lloc d\'error)',
+            'Verificació millorada: detall multi-línia amb tribunal, hora, rol i activitat',
+            'Conflictes de membres: ara compara franges horàries reals, no només el dia',
+            'Duplicar tribunal amb un click (membres, variacions i horari)',
+            'Menú contextual ⋯ en tribunals del sidebar (pujar, baixar, duplicar, editar, eliminar)',
+            'PDF: opció de mostrar/ocultar especialitat i franja completa',
+            'Dashboard: exportar/importar general amb tots els tipus',
+            'Dashboard: botó d\'importar en la pantalla de benvinguda',
+            'Espai: sidebar només exporta/importa espais'
+          ],
+          en: [
+            'General activities: Tribunal Constitution and Candidate Roll Call',
+            'Candidate Roll Call as non-blocking activity (info instead of error)',
+            'Improved verification: multi-line detail with tribunal, time, role and activity',
+            'Member conflicts: now compares actual time slots, not just the day',
+            'Duplicate tribunal with one click (members, variations and schedule)',
+            'Context menu ⋯ on sidebar tribunals (move up/down, duplicate, edit, delete)',
+            'PDF: option to show/hide specialty and full time slot',
+            'Dashboard: general export/import with all types',
+            'Dashboard: import button on welcome screen',
+            'Space: sidebar only exports/imports spaces'
+          ]
+        }
+      },
       {
         version: '1.0.0',
         date: '2026-05-25',

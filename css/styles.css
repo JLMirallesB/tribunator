@@ -221,6 +221,49 @@ html, body {
   font-weight: 500;
 }
 
+/* Context menu */
+.sidebar-context-btn {
+  opacity: 0.3;
+  font-size: 14px !important;
+  letter-spacing: 1px;
+}
+
+.sidebar-item:hover .sidebar-context-btn {
+  opacity: 1;
+}
+
+.sidebar-context-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 50;
+  min-width: 140px;
+  padding: 4px 0;
+}
+
+.sidebar-context-item {
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sidebar-context-item:hover {
+  background: var(--bg-secondary);
+}
+
+.sidebar-context-danger {
+  color: var(--danger);
+}
+
+.sidebar-context-danger:hover {
+  background: var(--danger-light);
+}
+
 .sidebar-item-name {
   flex: 1;
   overflow: hidden;

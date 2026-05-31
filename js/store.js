@@ -2,7 +2,7 @@ window.Tribunator = window.Tribunator || {};
 
 Tribunator.Store = {
   STORAGE_KEY: 'tribunator_data',
-  VERSION: '1.0.0',
+  VERSION: '1.0.1',
 
   defaultData: function() {
     return {
@@ -1099,6 +1099,22 @@ Tribunator.Store = {
     return tribunal;
   },
 
+  duplicateTribunal: function(solutionId, tribunalId) {
+    var sol = this.getSolution(solutionId);
+    var trib = this.getTribunal(solutionId, tribunalId);
+    if (!sol || !trib) return null;
+    var self = this;
+    var copy = JSON.parse(JSON.stringify(trib));
+    copy.id = this.generateId();
+    copy.name = trib.name + ' (copia)';
+    copy.members.forEach(function(m) { m.id = self.generateId(); });
+    (copy.variations || []).forEach(function(v) { v.id = self.generateId(); v.members.forEach(function(m) { m.id = self.generateId(); }); });
+    (copy.schedule || []).forEach(function(s) { (s.slots || []).forEach(function(sl) { sl.id = self.generateId(); }); });
+    sol.tribunals.push(copy);
+    this.save();
+    return copy;
+  },
+
   updateTribunal: function(solutionId, tribunalId, updates) {
     var trib = this.getTribunal(solutionId, tribunalId);
     if (trib) { Object.assign(trib, updates); this.save(); }
@@ -1310,6 +1326,13 @@ Tribunator.Store = {
   },
 
   // --- Conflict detection ---
+  _nonBlockingActivities: ['Llamamiento de Aspirantes', 'Constitución del Tribunal'],
+
+  isNonBlockingSlot: function(slot) {
+    if (!slot || !slot.activity) return false;
+    return this._nonBlockingActivities.some(function(a) { return slot.activity.indexOf(a) !== -1; });
+  },
+
   _timeToMin: function(t) {
     var p = t.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]);
   },
@@ -1320,7 +1343,7 @@ Tribunator.Store = {
     return a < d && c < b;
   },
 
-  getRoomConflicts: function(solutionId, roomId, dayId, startTime, endTime, excludeTribunalId) {
+  getRoomConflicts: function(solutionId, roomId, dayId, startTime, endTime, excludeTribunalId, currentActivity) {
     var sol = this.getSolution(solutionId);
     if (!sol) return [];
     var self = this;
@@ -1337,23 +1360,35 @@ Tribunator.Store = {
       });
       (sched.slots || []).forEach(function(slot) {
         if (slot.roomId === roomId && self._timesOverlap(startTime, endTime, slot.startTime, slot.endTime)) {
-          conflicts.push({ tribunal: trib, type: 'slot', slot: slot });
+          var nonBlocking = self.isNonBlockingSlot(slot) || self.isNonBlockingSlot({ activity: currentActivity });
+          conflicts.push({ tribunal: trib, type: 'slot', slot: slot, nonBlocking: nonBlocking });
         }
       });
     });
     return conflicts;
   },
 
-  getMemberConflicts: function(solutionId, candidateId, dayId, excludeTribunalId) {
+  getMemberConflicts: function(solutionId, candidateId, dayId, excludeTribunalId, startTime, endTime) {
     var sol = this.getSolution(solutionId);
     if (!sol) return [];
+    var self = this;
     var conflicts = [];
     sol.tribunals.forEach(function(trib) {
       if (trib.id === excludeTribunalId) return;
       var hasMember = trib.members.some(function(m) { return m.candidateId === candidateId; });
       if (!hasMember) return;
       var sched = (trib.schedule || []).find(function(s) { return s.dayId === dayId; });
-      if (sched) {
+      if (!sched) return;
+      // If start/end times provided, check slot-level overlap
+      if (startTime && endTime && sched.slots && sched.slots.length > 0) {
+        var hasOverlap = sched.slots.some(function(slot) {
+          return self._timesOverlap(startTime, endTime, slot.startTime, slot.endTime);
+        });
+        if (hasOverlap) {
+          conflicts.push({ tribunal: trib, schedule: sched });
+        }
+      } else {
+        // No times specified — any presence on that day is a conflict
         conflicts.push({ tribunal: trib, schedule: sched });
       }
     });

@@ -159,11 +159,36 @@ Tribunator.Dashboard = {
       wrapper.appendChild(errPanel);
     }
 
-    // Quick actions
-    var actions = el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } });
-    actions.appendChild(el('button', { className: 'btn', textContent: t('export.exportAll'), onClick: function() { var data = store.exportAll(); Tribunator.Utils.downloadFile(data, 'tribunator-completo.json'); Tribunator.Utils.showToast(t('export.exportSuccess')); } }));
-    actions.appendChild(el('button', { className: 'btn', textContent: t('app.loadDemo'), onClick: function() { Tribunator.App.loadDemo(); } }));
-    wrapper.appendChild(actions);
+    // Export / Import section
+    var ioPanel = el('div', { className: 'panel', style: { marginBottom: '16px' } });
+    ioPanel.appendChild(el('div', { className: 'panel-header', textContent: t('common.export') + ' / ' + t('common.import') }));
+    var ioBody = el('div', { className: 'panel-body' });
+    var ioRow = el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' } });
+    ioRow.appendChild(el('button', { className: 'btn btn-sm', textContent: t('export.exportAll'), onClick: function() { var data = store.exportAll(); Tribunator.Utils.downloadFile(data, 'tribunator-completo.json'); Tribunator.Utils.showToast(t('export.exportSuccess')); } }));
+    ioRow.appendChild(el('button', { className: 'btn btn-sm', textContent: t('export.exportSpaces'), onClick: function() { var data = store.exportSpaces(); Tribunator.Utils.downloadFile(data, 'tribunator-espacios.json'); Tribunator.Utils.showToast(t('export.exportSuccess')); } }));
+    ioRow.appendChild(el('button', { className: 'btn btn-sm', textContent: t('export.exportTime'), onClick: function() { var data = store.exportTime(); Tribunator.Utils.downloadFile(data, 'tribunator-tiempo.json'); Tribunator.Utils.showToast(t('export.exportSuccess')); } }));
+    var fileInput = el('input', { type: 'file', accept: '.json', className: 'file-input-hidden', onChange: function(e) {
+      var file = e.target.files[0]; if (!file) return;
+      Tribunator.Utils.readFile(file, function(err, content) {
+        if (err) { Tribunator.Utils.showToast(err, 'error'); return; }
+        if (store.hasData()) {
+          Tribunator.Utils.showImportDialog(
+            function() { var r = store.importData(content, 'replace'); if (r.success) { Tribunator.Utils.showToast(t('export.importSuccess')); Tribunator.App.render(); Tribunator.App.renderCurrentPhase(); } else { Tribunator.Utils.showToast(t('export.' + r.error), 'error'); } },
+            function() { var r = store.importData(content, 'merge'); if (r.success) { Tribunator.Utils.showToast(t('export.importSuccess')); Tribunator.App.render(); Tribunator.App.renderCurrentPhase(); } else { Tribunator.Utils.showToast(t('export.' + r.error), 'error'); } }
+          );
+        } else {
+          var r = store.importData(content, 'replace');
+          if (r.success) { Tribunator.Utils.showToast(t('export.importSuccess')); Tribunator.App.render(); Tribunator.App.renderCurrentPhase(); }
+          else { Tribunator.Utils.showToast(t('export.' + r.error), 'error'); }
+        }
+      });
+      e.target.value = '';
+    }});
+    ioRow.appendChild(fileInput);
+    ioRow.appendChild(el('button', { className: 'btn btn-sm', textContent: t('export.importData'), onClick: function() { fileInput.click(); } }));
+    ioBody.appendChild(ioRow);
+    ioPanel.appendChild(ioBody);
+    wrapper.appendChild(ioPanel);
 
     container.appendChild(wrapper);
   },
@@ -175,6 +200,21 @@ Tribunator.Dashboard = {
       el('p', { style: { color: 'var(--text-secondary)', marginBottom: '24px', maxWidth: '500px', margin: '0 auto 24px' }, textContent: t('dashboard.welcomeDesc') }),
       el('div', { style: { display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' } }, [
         el('button', { className: 'btn btn-primary', textContent: t('dashboard.startFresh'), onClick: function() { Tribunator.App.setPhase('space'); } }),
+        (function() {
+          var fileIn = el('input', { type: 'file', accept: '.json', className: 'file-input-hidden', onChange: function(e) {
+            var file = e.target.files[0]; if (!file) return;
+            Tribunator.Utils.readFile(file, function(err, content) {
+              if (err) { Tribunator.Utils.showToast(err, 'error'); return; }
+              var r = Tribunator.Store.importData(content, 'replace');
+              if (r.success) { Tribunator.Utils.showToast(t('export.importSuccess')); Tribunator.App.render(); Tribunator.App.renderCurrentPhase(); }
+              else { Tribunator.Utils.showToast(t('export.' + r.error), 'error'); }
+            });
+            e.target.value = '';
+          }});
+          var btn = el('button', { className: 'btn', textContent: t('export.importData'), onClick: function() { fileIn.click(); } });
+          var wrap = el('span', {}, [fileIn, btn]);
+          return wrap;
+        })(),
         el('button', { className: 'btn', textContent: t('app.loadDemo'), onClick: function() { Tribunator.App.loadDemo(); } })
       ])
     ]));

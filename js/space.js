@@ -221,11 +221,10 @@ Tribunator.Space = {
 
     // Export/Import bar (collapsible)
     sidebar.appendChild(Tribunator.Utils.collapsibleSection('space_io',
-      t('common.export') + ' / ' + t('common.import'), null,
+      t('export.exportSpaces') + ' / ' + t('common.import'), null,
       function(body) {
         var ioBody = Tribunator.Utils.el('div', { style: { padding: '8px 16px', display: 'flex', gap: '8px', flexWrap: 'wrap' } });
         ioBody.appendChild(Tribunator.Utils.el('button', { className: 'btn btn-sm', textContent: t('export.exportSpaces'), onClick: function() { self.exportSpaces(); } }));
-        ioBody.appendChild(Tribunator.Utils.el('button', { className: 'btn btn-sm', textContent: t('export.exportAll'), onClick: function() { self.exportAll(); } }));
         var fileInput = Tribunator.Utils.el('input', { type: 'file', accept: '.json', className: 'file-input-hidden', onChange: function(e) { self.handleImport(e); } });
         ioBody.appendChild(fileInput);
         ioBody.appendChild(Tribunator.Utils.el('button', { className: 'btn btn-sm', textContent: t('export.importData'), onClick: function() { fileInput.click(); } }));
@@ -1616,11 +1615,6 @@ Tribunator.Space = {
     Tribunator.Utils.showToast(t('export.exportSuccess'));
   },
 
-  exportAll: function() {
-    var data = Tribunator.Store.exportAll();
-    Tribunator.Utils.downloadFile(data, 'tribunator-completo.json');
-    Tribunator.Utils.showToast(t('export.exportSuccess'));
-  },
 
   handleImport: function(e) {
     var self = this;
