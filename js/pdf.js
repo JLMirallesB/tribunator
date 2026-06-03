@@ -97,7 +97,7 @@ Tribunator.PDF = {
     var sol = store.getSolution(options.solutionId); if (!sol) return;
     var tribunals = options.tribunalIds ? sol.tribunals.filter(function(tr){return options.tribunalIds.indexOf(tr.id)!==-1;}) : sol.tribunals;
     tribunals.forEach(function(trib, idx) {
-      if (idx > 0) state.check(20);
+      if (idx > 0) { doc.addPage(); state.y = self.MARGIN; }
       self._tribunalBand(doc, trib.name, state);
       if (trib.publishNotes) {
         doc.setFontSize(9); doc.setFont(undefined, 'italic'); doc.setTextColor.apply(doc, self.GRAY);
