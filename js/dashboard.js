@@ -109,6 +109,12 @@ Tribunator.Dashboard = {
           if (!memberLoad[m.candidateId]) memberLoad[m.candidateId] = 0;
           memberLoad[m.candidateId]++;
         });
+        (trib.variations || []).forEach(function(v) {
+          v.members.forEach(function(m) {
+            if (!memberLoad[m.candidateId]) memberLoad[m.candidateId] = 0;
+            memberLoad[m.candidateId]++;
+          });
+        });
       });
       var sortedMembers = Object.keys(memberLoad).map(function(cid) { return { id: cid, count: memberLoad[cid] }; }).sort(function(a, b) { return b.count - a.count; });
 
@@ -136,7 +142,10 @@ Tribunator.Dashboard = {
     // Unused candidates
     if (activeSol && candidates.length > 0) {
       var usedIds = {};
-      tribunals.forEach(function(trib) { trib.members.forEach(function(m) { usedIds[m.candidateId] = true; }); });
+      tribunals.forEach(function(trib) {
+        trib.members.forEach(function(m) { usedIds[m.candidateId] = true; });
+        (trib.variations || []).forEach(function(v) { v.members.forEach(function(m) { usedIds[m.candidateId] = true; }); });
+      });
       var unused = candidates.filter(function(c) { return !usedIds[c.id]; });
       if (unused.length > 0) {
         var unusedPanel = el('div', { className: 'panel', style: { marginBottom: '16px' } });
