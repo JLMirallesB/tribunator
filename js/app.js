@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.1.0' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.1.1' })
     ]));
 
     // Phase nav
@@ -279,6 +279,27 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.1.1',
+        date: '2026-06-03',
+        changes: {
+          es: [
+            'PDF tribunales: cada tribunal empieza en página nueva',
+            'Dashboard: variaciones incluidas en conteo de carga y candidatos sin tribunal',
+            'Dashboard: tooltip en miembros mostrando en qué tribunales y variaciones participan'
+          ],
+          va: [
+            'PDF tribunals: cada tribunal comença en pàgina nova',
+            'Dashboard: variacions incloses en comptatge de càrrega i candidats sense tribunal',
+            'Dashboard: tooltip en membres mostrant en quins tribunals i variacions participen'
+          ],
+          en: [
+            'PDF tribunals: each tribunal starts on a new page',
+            'Dashboard: variations included in load count and unused candidates',
+            'Dashboard: tooltip on members showing which tribunals and variations they belong to'
+          ]
+        }
+      },
       {
         version: '1.1.0',
         date: '2026-06-03',
