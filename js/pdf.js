@@ -99,6 +99,14 @@ Tribunator.PDF = {
     tribunals.forEach(function(trib, idx) {
       if (idx > 0) state.check(20);
       self._tribunalBand(doc, trib.name, state);
+      if (trib.publishNotes) {
+        doc.setFontSize(9); doc.setFont(undefined, 'italic'); doc.setTextColor.apply(doc, self.GRAY);
+        var noteLines = doc.splitTextToSize(trib.publishNotes, self.CONTENT_W - 4);
+        state.check(noteLines.length * 4 + 4);
+        doc.text(noteLines, self.MARGIN + 2, state.y + 3);
+        state.y += noteLines.length * 4 + 4;
+        doc.setFont(undefined, 'normal'); doc.setTextColor(0);
+      }
       if (trib.members.length > 0) { self._sectionLabel(doc, t('tribunals.members'), state, options); self._membersTable(doc, trib.members, store, state, options); }
       self._variationsBlock(doc, trib.variations, store, state, options);
       if (!options.membersOnly) { var sched = trib.schedule||[]; if (sched.length) { self._sectionLabel(doc, t('tribunals.schedule'), state, options); self._scheduleTable(doc, sched, store, state, options); } }
@@ -347,10 +355,11 @@ Tribunator.PDF = {
             signY = doc.lastAutoTable.finalY + 2;
           }
 
-          // Slots for this day
+          // Slots for this day IN THIS ROOM only
           var sched = (trib.schedule||[]).find(function(s){return s.dayId===options.signDayId;});
           if (sched && sched.slots && sched.slots.length) {
-            var slotRows = sched.slots.slice().sort(function(a,b){return a.startTime.localeCompare(b.startTime);}).map(function(s) { return [self._fmtTime(s.startTime, s.endTime, options.showFullTime), s.activity||'']; });
+            var roomSlots = sched.slots.filter(function(s) { return s.roomId === room.id; });
+            var slotRows = roomSlots.slice().sort(function(a,b){return a.startTime.localeCompare(b.startTime);}).map(function(s) { return [self._fmtTime(s.startTime, s.endTime, options.showFullTime), s.activity||'']; });
             doc.autoTable({
               startY: signY, margin:{left:m, right:m},
               body: slotRows,

@@ -4,7 +4,7 @@ Tribunator.translations = {
   es: {
     app: {
       title: 'Tribunator',
-      version: 'v1.0.1',
+      version: 'v1.1.0',
       phases: { dashboard: 'Inicio', space: 'Espacio', time: 'Tiempo', templates: 'Plantillas', tribunals: 'Tribunales', verify: 'Verificación' },
       changelog: 'Changelog',
       checkVersion: 'Versiones',
@@ -226,6 +226,8 @@ Tribunator.translations = {
       generalActivities: 'Actividades generales',
       selfConflict: 'Este tribunal ya usa esa aula en esa franja',
       sortAlpha: 'Ordenar alfabéticamente',
+      publishNotes: 'Información para publicar de este tribunal',
+      moveAllTo: 'Mover todo a...',
       assignDay: 'Asignar día',
       removeDay: 'Quitar día',
       primaryRoom: 'Aula principal',
@@ -293,7 +295,8 @@ Tribunator.translations = {
       topRooms: 'Aulas más usadas',
       topMembers: 'Miembros con más carga',
       pendingErrors: 'Errores pendientes',
-      more: 'más...'
+      more: 'más...',
+      unusedCandidates: 'Candidatos sin tribunal'
     },
     templates: {
       title: 'Plantillas de prueba',
@@ -359,7 +362,7 @@ Tribunator.translations = {
   va: {
     app: {
       title: 'Tribunator',
-      version: 'v1.0.1',
+      version: 'v1.1.0',
       phases: { dashboard: 'Inici', space: 'Espai', time: 'Temps', templates: 'Plantilles', tribunals: 'Tribunals', verify: 'Verificació' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
@@ -581,6 +584,8 @@ Tribunator.translations = {
       generalActivities: 'Activitats generals',
       selfConflict: 'Este tribunal ja usa eixa aula en eixa franja',
       sortAlpha: 'Ordenar alfabèticament',
+      publishNotes: 'Informació per a publicar d\'este tribunal',
+      moveAllTo: 'Moure tot a...',
       assignDay: 'Assignar dia',
       removeDay: 'Llevar dia',
       primaryRoom: 'Aula principal',
@@ -648,7 +653,8 @@ Tribunator.translations = {
       topRooms: 'Aules més usades',
       topMembers: 'Membres amb més càrrega',
       pendingErrors: 'Errors pendents',
-      more: 'més...'
+      more: 'més...',
+      unusedCandidates: 'Candidats sense tribunal'
     },
     templates: {
       title: 'Plantilles de prova',
@@ -714,7 +720,7 @@ Tribunator.translations = {
   en: {
     app: {
       title: 'Tribunator',
-      version: 'v1.0.1',
+      version: 'v1.1.0',
       phases: { dashboard: 'Home', space: 'Space', time: 'Time', templates: 'Templates', tribunals: 'Tribunals', verify: 'Verification' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
@@ -936,6 +942,8 @@ Tribunator.translations = {
       generalActivities: 'General activities',
       selfConflict: 'This tribunal already uses that room in that time slot',
       sortAlpha: 'Sort alphabetically',
+      publishNotes: 'Information to publish for this tribunal',
+      moveAllTo: 'Move all to...',
       assignDay: 'Assign day',
       removeDay: 'Remove day',
       primaryRoom: 'Primary room',
@@ -1003,7 +1011,8 @@ Tribunator.translations = {
       topRooms: 'Most used rooms',
       topMembers: 'Members with highest load',
       pendingErrors: 'Pending errors',
-      more: 'more...'
+      more: 'more...',
+      unusedCandidates: 'Candidates without tribunal'
     },
     templates: {
       title: 'Exam templates',

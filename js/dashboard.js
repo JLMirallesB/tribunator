@@ -110,11 +110,11 @@ Tribunator.Dashboard = {
           memberLoad[m.candidateId]++;
         });
       });
-      var sortedMembers = Object.keys(memberLoad).map(function(cid) { return { id: cid, count: memberLoad[cid] }; }).sort(function(a, b) { return b.count - a.count; }).slice(0, 5);
+      var sortedMembers = Object.keys(memberLoad).map(function(cid) { return { id: cid, count: memberLoad[cid] }; }).sort(function(a, b) { return b.count - a.count; });
 
       var memberPanel = el('div', { className: 'panel' });
-      memberPanel.appendChild(el('div', { className: 'panel-header', textContent: t('dashboard.topMembers') }));
-      var memberBody = el('div', { className: 'panel-body', style: { padding: '0' } });
+      memberPanel.appendChild(el('div', { className: 'panel-header', textContent: t('dashboard.topMembers') + ' (' + sortedMembers.length + ')' }));
+      var memberBody = el('div', { className: 'panel-body', style: { padding: '0', maxHeight: '200px', overflowY: 'auto' } });
       if (sortedMembers.length === 0) {
         memberBody.appendChild(el('div', { style: { padding: '12px 16px', fontSize: '12px', color: 'var(--text-muted)' }, textContent: t('common.noData') }));
       } else {
@@ -132,6 +132,26 @@ Tribunator.Dashboard = {
       cols.appendChild(memberPanel);
     }
     wrapper.appendChild(cols);
+
+    // Unused candidates
+    if (activeSol && candidates.length > 0) {
+      var usedIds = {};
+      tribunals.forEach(function(trib) { trib.members.forEach(function(m) { usedIds[m.candidateId] = true; }); });
+      var unused = candidates.filter(function(c) { return !usedIds[c.id]; });
+      if (unused.length > 0) {
+        var unusedPanel = el('div', { className: 'panel', style: { marginBottom: '16px' } });
+        unusedPanel.appendChild(el('div', { className: 'panel-header', textContent: t('dashboard.unusedCandidates') + ' (' + unused.length + ')' }));
+        var unusedBody = el('div', { className: 'panel-body', style: { padding: '0', maxHeight: '150px', overflowY: 'auto' } });
+        unused.forEach(function(c) {
+          unusedBody.appendChild(el('div', { style: { display: 'flex', justifyContent: 'space-between', padding: '4px 16px', borderBottom: '1px solid var(--border)', fontSize: '12px' } }, [
+            el('span', { textContent: c.surnames + ', ' + c.name }),
+            el('span', { style: { color: 'var(--text-muted)' }, textContent: c.specialty || '' })
+          ]));
+        });
+        unusedPanel.appendChild(unusedBody);
+        wrapper.appendChild(unusedPanel);
+      }
+    }
 
     // Errors preview
     if (errors.length > 0) {

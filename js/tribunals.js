@@ -87,7 +87,15 @@ Tribunator.Tribunals = {
                         el('div', { className: 'sidebar-context-item', textContent: t('common.edit'), onClick: function() { menu.remove(); self.promptEditTribunal(tribRef.id); } }),
                         el('div', { className: 'sidebar-context-item sidebar-context-danger', textContent: t('common.delete'), onClick: function() { menu.remove(); self.promptDeleteTribunal(tribRef.id); } })
                       ]);
-                      menuBtn.parentNode.appendChild(menu);
+                      document.body.appendChild(menu);
+                      var rect = menuBtn.getBoundingClientRect();
+                      var menuH = 160;
+                      if (rect.bottom + menuH > window.innerHeight) {
+                        menu.style.top = (rect.top - menuH) + 'px';
+                      } else {
+                        menu.style.top = rect.bottom + 'px';
+                      }
+                      menu.style.left = Math.min(rect.right - 140, window.innerWidth - 150) + 'px';
                       var close = function(ev) { if (!menu.contains(ev.target) && ev.target !== menuBtn) { menu.remove(); document.removeEventListener('click', close); } };
                       setTimeout(function() { document.addEventListener('click', close); }, 0);
                     }});
@@ -183,6 +191,22 @@ Tribunator.Tribunals = {
       el('div', { className: 'main-area-title', textContent: trib.name })
     ]));
 
+    // Publish notes
+    var notesInput = el('textarea', {
+      className: 'form-textarea',
+      value: trib.publishNotes || '',
+      placeholder: t('tribunals.publishNotes'),
+      style: { minHeight: '40px', marginBottom: '12px', fontSize: '12px' },
+      onChange: function() {
+        store.updateTribunal(self.currentSolutionId, self.currentTribunalId, { publishNotes: notesInput.value });
+      }
+    });
+    notesInput.value = trib.publishNotes || '';
+    main.appendChild(el('div', { className: 'form-group' }, [
+      el('label', { className: 'form-label', textContent: t('tribunals.publishNotes') }),
+      notesInput
+    ]));
+
     // Tabs
     var tabs = el('div', { className: 'tabs' });
     ['schedule', 'members', 'variations'].forEach(function(tab) {
@@ -253,7 +277,13 @@ Tribunator.Tribunals = {
       var roleInput = el('input', { className: 'form-input', type: 'text', value: member.role || '', list: 'role-dl', style: { width: '140px', padding: '4px 6px', fontSize: '12px' }, onChange: function() { store.updateTribunalMember(self.currentSolutionId, self.currentTribunalId, member.id, { role: roleInput.value }); } });
       roleCell.appendChild(roleInput);
       tr.appendChild(roleCell);
-      tr.appendChild(el('td', {}, [el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { store.removeTribunalMember(self.currentSolutionId, self.currentTribunalId, member.id); self.renderMain(); self.renderSidebar(); } })]));
+      (function(mId) {
+        tr.appendChild(el('td', {}, [
+          el('button', { className: 'btn-icon btn-sm', textContent: '↑', title: t('common.moveUp'), onClick: function() { store.moveTribunalMember(self.currentSolutionId, self.currentTribunalId, mId, 'up'); self.renderMain(); } }),
+          el('button', { className: 'btn-icon btn-sm', textContent: '↓', title: t('common.moveDown'), onClick: function() { store.moveTribunalMember(self.currentSolutionId, self.currentTribunalId, mId, 'down'); self.renderMain(); } }),
+          el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { store.removeTribunalMember(self.currentSolutionId, self.currentTribunalId, mId); self.renderMain(); self.renderSidebar(); } })
+        ]));
+      })(member.id);
       tbody.appendChild(tr);
     });
     table.appendChild(tbody);
@@ -287,10 +317,24 @@ Tribunator.Tribunals = {
       var panel = el('div', { className: 'panel', style: { marginBottom: '16px' } });
 
       // Day header
+      var dayActions = [];
+      if (isConfigured && (sched.slots || []).length > 0) {
+        (function(fromDayId) {
+          var moveSel = el('select', { className: 'form-select', style: { fontSize: '10px', padding: '2px 4px', width: 'auto' }, onChange: function() {
+            if (moveSel.value) { store.moveAllSlotsToDay(self.currentSolutionId, self.currentTribunalId, fromDayId, moveSel.value); self.renderMain(); }
+          }});
+          moveSel.appendChild(el('option', { value: '', textContent: t('tribunals.moveAllTo') }));
+          days.forEach(function(d) { if (d.id !== fromDayId) moveSel.appendChild(el('option', { value: d.id, textContent: Tribunator.Time.formatDate(d.date) })); });
+          dayActions.push(moveSel);
+        })(day.id);
+      }
+      if (isConfigured) {
+        dayActions.push(el('button', { className: 'btn btn-sm', style: { color: 'var(--danger)' }, textContent: t('tribunals.removeDay'), onClick: function() { store.removeDaySchedule(self.currentSolutionId, self.currentTribunalId, day.id); self.renderMain(); } }));
+      }
       var dayHeader = el('div', { className: 'panel-header' }, [
         el('span', { textContent: Tribunator.Time.formatDate(day.date) + '  (' + day.startTime + ' – ' + day.endTime + ')' }),
         isConfigured
-          ? el('button', { className: 'btn btn-sm', style: { color: 'var(--danger)' }, textContent: t('tribunals.removeDay'), onClick: function() { store.removeDaySchedule(self.currentSolutionId, self.currentTribunalId, day.id); self.renderMain(); } })
+          ? el('div', { style: { display: 'flex', gap: '4px', alignItems: 'center' } }, dayActions)
           : el('button', { className: 'btn btn-sm btn-primary', textContent: t('tribunals.assignDay'), onClick: function() { store.setDaySchedule(self.currentSolutionId, self.currentTribunalId, day.id, {}); self.renderMain(); } })
       ]);
       panel.appendChild(dayHeader);
@@ -305,6 +349,7 @@ Tribunator.Tribunals = {
       var timeOptions = store.generateTimeSlots(day.startTime, day.endTime);
 
       if ((sched.slots || []).length > 0) {
+        store.sortDaySlots(self.currentSolutionId, self.currentTribunalId, day.id);
         var slotTable = el('table', { className: 'room-list-table', style: { marginBottom: '8px' } });
         var stHead = el('thead');
         var stHr = el('tr');
@@ -342,17 +387,23 @@ Tribunator.Tribunals = {
             tr.appendChild(el('td', {}, [el('div', { style: { display: 'flex', gap: '2px', alignItems: 'center' } }, [input, pickBtn])]));
           })(actIn, slot);
 
-          tr.appendChild(el('td', {}, [el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { store.removeTimeSlot(self.currentSolutionId, self.currentTribunalId, day.id, slot.id); self.renderMain(); } })]));
-
-          // Conflict check
+          // Conflict check - show inside same row
+          var conflictMsg = null;
           if (slot.roomId) {
-            var conflicts = store.getRoomConflicts(self.currentSolutionId, slot.roomId, day.id, slot.startTime, slot.endTime, self.currentTribunalId);
+            var conflicts = store.getRoomConflicts(self.currentSolutionId, slot.roomId, day.id, slot.startTime, slot.endTime, self.currentTribunalId, slot.activity);
             if (conflicts.length > 0) {
-              var ctr = el('tr');
-              ctr.appendChild(el('td', { colSpan: '5' }, [el('span', { className: 'warning-badge', textContent: '⚠ ' + t('tribunals.roomConflict') + ': ' + conflicts.map(function(c) { return c.tribunal.name; }).join(', ') })]));
-              stBody.appendChild(ctr);
+              var isNb = conflicts.every(function(c) { return c.nonBlocking; });
+              conflictMsg = (isNb ? 'ℹ ' : '⚠ ') + conflicts.map(function(c) { return c.tribunal.name + (c.slot ? ' ' + c.slot.startTime + '–' + c.slot.endTime : ''); }).join(', ');
+              tr.style.background = isNb ? 'var(--primary-light)' : 'var(--danger-light)';
             }
           }
+
+          var lastCell = el('td');
+          lastCell.appendChild(el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { store.removeTimeSlot(self.currentSolutionId, self.currentTribunalId, day.id, slot.id); self.renderMain(); } }));
+          if (conflictMsg) {
+            lastCell.appendChild(el('div', { style: { fontSize: '10px', color: 'var(--danger)', marginTop: '2px' }, textContent: conflictMsg }));
+          }
+          tr.appendChild(lastCell);
 
           stBody.appendChild(tr);
         });
@@ -410,12 +461,21 @@ Tribunator.Tribunals = {
         var body = el('div', { className: 'panel-body' });
         variation.members.forEach(function(m) {
           var c = store.getCandidate(m.candidateId);
-          body.appendChild(el('div', { style: { display: 'flex', gap: '8px', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid var(--border)', fontSize: '13px' } }, [
+          var roleIn = el('input', { className: 'form-input', type: 'text', value: m.role || '', list: 'var-role-dl-' + variation.id, placeholder: t('tribunals.role'), style: { width: '120px', padding: '3px 6px', fontSize: '11px' }, onChange: function() { store.updateVariationMember(self.currentSolutionId, self.currentTribunalId, variation.id, m.id, { role: roleIn.value }); } });
+          (function(mId, vId) {
+          body.appendChild(el('div', { style: { display: 'flex', gap: '6px', alignItems: 'center', padding: '4px 0', borderBottom: '1px solid var(--border)', fontSize: '13px' } }, [
             el('span', { style: { flex: '1' }, textContent: (c ? c.surnames + ', ' + c.name : '—') }),
-            el('span', { style: { color: 'var(--text-muted)' }, textContent: m.role || '' }),
-            el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { store.removeVariationMember(self.currentSolutionId, self.currentTribunalId, variation.id, m.id); self.renderMain(); } })
+            roleIn,
+            el('button', { className: 'btn-icon btn-sm', textContent: '↑', onClick: function() { store.moveVariationMember(self.currentSolutionId, self.currentTribunalId, vId, mId, 'up'); self.renderMain(); } }),
+            el('button', { className: 'btn-icon btn-sm', textContent: '↓', onClick: function() { store.moveVariationMember(self.currentSolutionId, self.currentTribunalId, vId, mId, 'down'); self.renderMain(); } }),
+            el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { store.removeVariationMember(self.currentSolutionId, self.currentTribunalId, vId, mId); self.renderMain(); } })
           ]));
+          })(m.id, variation.id);
         });
+        var dlId = 'var-role-dl-' + variation.id;
+        var dl = el('datalist', { id: dlId });
+        store.getRoleDefs().forEach(function(r) { dl.appendChild(el('option', { value: r.name })); });
+        body.appendChild(dl);
         panel.appendChild(body);
       }
       main.appendChild(panel);
@@ -1002,9 +1062,33 @@ Tribunator.Tribunals = {
     var candidates = store.getCandidates();
     if (candidates.length === 0) { Tribunator.Utils.showToast(t('tribunals.noCandidates'), 'warning'); return; }
 
+    // Detect busy candidates
+    var trib = store.getTribunal(self.currentSolutionId, self.currentTribunalId);
+    var tribSchedule = trib ? (trib.schedule || []) : [];
+    var busyCandidates = {};
+    if (tribSchedule.length > 0) {
+      candidates.forEach(function(c) {
+        var busyIn = [];
+        tribSchedule.forEach(function(sched) {
+          (sched.slots || []).forEach(function(slot) {
+            var conflicts = store.getMemberConflicts(self.currentSolutionId, c.id, sched.dayId, self.currentTribunalId, slot.startTime, slot.endTime);
+            if (conflicts.length > 0) { conflicts.forEach(function(cf) { if (busyIn.indexOf(cf.tribunal.name) === -1) busyIn.push(cf.tribunal.name); }); }
+          });
+        });
+        if (busyIn.length > 0) busyCandidates[c.id] = busyIn;
+      });
+    }
+
     var sel = el('select', { className: 'form-select' });
     sel.appendChild(el('option', { value: '', textContent: '—' }));
-    candidates.forEach(function(c) { sel.appendChild(el('option', { value: c.id, textContent: c.surnames + ', ' + c.name })); });
+    candidates.forEach(function(c) {
+      var label = c.surnames + ', ' + c.name;
+      var busy = busyCandidates[c.id];
+      if (busy) label += ' ⚠ ' + busy.join(', ');
+      var opt = el('option', { value: c.id, textContent: label });
+      if (busy) opt.style.color = '#999';
+      sel.appendChild(opt);
+    });
     var roleInput = el('input', { className: 'form-input', type: 'text', placeholder: t('tribunals.role'), list: 'var-role-dl' });
     var dl = el('datalist', { id: 'var-role-dl' });
     store.getRoleDefs().forEach(function(r) { dl.appendChild(el('option', { value: r.name })); });
@@ -1130,6 +1214,25 @@ Tribunator.Tribunals = {
     // Candidate select
     var sel = el('select', { className: 'form-select' });
 
+    // Detect busy candidates based on tribunal's schedule
+    var trib = store.getTribunal(self.currentSolutionId, self.currentTribunalId);
+    var tribSchedule = trib ? (trib.schedule || []) : [];
+    var busyCandidates = {};
+    if (tribSchedule.length > 0) {
+      candidates.forEach(function(c) {
+        var busyIn = [];
+        tribSchedule.forEach(function(sched) {
+          (sched.slots || []).forEach(function(slot) {
+            var conflicts = store.getMemberConflicts(self.currentSolutionId, c.id, sched.dayId, self.currentTribunalId, slot.startTime, slot.endTime);
+            if (conflicts.length > 0) {
+              conflicts.forEach(function(cf) { if (busyIn.indexOf(cf.tribunal.name) === -1) busyIn.push(cf.tribunal.name); });
+            }
+          });
+        });
+        if (busyIn.length > 0) busyCandidates[c.id] = busyIn;
+      });
+    }
+
     var rebuildCandidates = function() {
       var prev = sel.value;
       while (sel.firstChild) sel.removeChild(sel.firstChild);
@@ -1137,7 +1240,12 @@ Tribunator.Tribunals = {
       var filter = specFilter.value;
       candidates.forEach(function(c) {
         if (filter && c.specialty !== filter) return;
-        sel.appendChild(el('option', { value: c.id, textContent: c.surnames + ', ' + c.name + (c.specialty ? ' (' + c.specialty + ')' : '') }));
+        var label = c.surnames + ', ' + c.name + (c.specialty ? ' (' + c.specialty + ')' : '');
+        var busy = busyCandidates[c.id];
+        if (busy) label += ' ⚠ ' + busy.join(', ');
+        var opt = el('option', { value: c.id, textContent: label });
+        if (busy) opt.style.color = '#999';
+        sel.appendChild(opt);
       });
       if (prev) sel.value = prev;
     };

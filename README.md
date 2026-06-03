@@ -2,7 +2,7 @@
   <img src="logo.svg" alt="Tribunator" width="128" height="128">
 </p>
 
-<h1 align="center">Tribunator <sub>v1.0.1</sub></h1>
+<h1 align="center">Tribunator <sub>v1.1.0</sub></h1>
 
 <p align="center">
   Herramienta para la gestion de tribunales, aulas y horarios en centros educativos.

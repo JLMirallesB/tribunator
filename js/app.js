@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.0.1' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.1.0' })
     ]));
 
     // Phase nav
@@ -279,6 +279,54 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.1.0',
+        date: '2026-06-03',
+        changes: {
+          es: [
+            'Campo "Información para publicar" en cada tribunal (aparece en PDF)',
+            'Franjas horarias ordenadas automáticamente (pruebas antes que no-bloqueantes)',
+            'Hora fin del día seleccionable como hora de fin de franja',
+            'Miembros de tribunal reordenables con ↑↓',
+            'Variaciones: rol editable y miembros reordenables con ↑↓',
+            'Mover todas las franjas de un día a otro con selector',
+            'Candidatos ocupados marcados en gris al añadir miembro o variación',
+            'Conflictos de franja inline: fondo coloreado en la misma fila',
+            'Menú contextual ⋯ con posición fija (no se corta por overflow)',
+            'Dashboard: candidatos sin tribunal y lista completa de carga',
+            'Dashboard: panel de importar/exportar general',
+            'Cartelería PDF: solo muestra franjas que ocurren en el aula'
+          ],
+          va: [
+            'Camp "Informació per a publicar" en cada tribunal (apareix en PDF)',
+            'Franges horàries ordenades automàticament (proves abans que no-bloquejants)',
+            'Hora fi del dia seleccionable com a hora de fi de franja',
+            'Membres de tribunal reordenables amb ↑↓',
+            'Variacions: rol editable i membres reordenables amb ↑↓',
+            'Moure totes les franges d\'un dia a un altre amb selector',
+            'Candidats ocupats marcats en gris al afegir membre o variació',
+            'Conflictes de franja inline: fons acolorit en la mateixa fila',
+            'Menú contextual ⋯ amb posició fixa (no es talla per overflow)',
+            'Dashboard: candidats sense tribunal i llista completa de càrrega',
+            'Dashboard: panell d\'importar/exportar general',
+            'Cartelleria PDF: només mostra franges que ocorren en l\'aula'
+          ],
+          en: [
+            'Publish notes field for each tribunal (shown in PDF)',
+            'Time slots auto-sorted (exams before non-blocking)',
+            'Day end time selectable as slot end time',
+            'Tribunal members reorderable with ↑↓',
+            'Variations: editable role and reorderable members with ↑↓',
+            'Move all slots from one day to another with selector',
+            'Busy candidates shown in gray when adding member or variation',
+            'Inline slot conflicts: colored background on same row',
+            'Context menu ⋯ with fixed position (no overflow clipping)',
+            'Dashboard: unused candidates and full member load list',
+            'Dashboard: general import/export panel',
+            'Room signs PDF: only shows slots that occur in that room'
+          ]
+        }
+      },
       {
         version: '1.0.1',
         date: '2026-05-31',

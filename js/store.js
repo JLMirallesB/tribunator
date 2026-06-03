@@ -2,7 +2,7 @@ window.Tribunator = window.Tribunator || {};
 
 Tribunator.Store = {
   STORAGE_KEY: 'tribunator_data',
-  VERSION: '1.0.1',
+  VERSION: '1.1.0',
 
   defaultData: function() {
     return {
@@ -1090,6 +1090,7 @@ Tribunator.Store = {
     var tribunal = {
       id: this.generateId(),
       name: name,
+      publishNotes: '',
       members: [],
       variations: [],
       schedule: []
@@ -1171,6 +1172,47 @@ Tribunator.Store = {
     var trib = this.getTribunal(solutionId, tribunalId);
     if (!trib) return;
     var member = trib.members.find(function(m) { return m.id === memberId; });
+    if (member) { Object.assign(member, updates); this.save(); }
+  },
+
+  moveTribunalMember: function(solutionId, tribunalId, memberId, direction) {
+    var trib = this.getTribunal(solutionId, tribunalId);
+    if (!trib) return;
+    var idx = -1;
+    trib.members.forEach(function(m, i) { if (m.id === memberId) idx = i; });
+    if (idx === -1) return;
+    var newIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (newIdx < 0 || newIdx >= trib.members.length) return;
+    var temp = trib.members[idx];
+    trib.members[idx] = trib.members[newIdx];
+    trib.members[newIdx] = temp;
+    this.save();
+  },
+
+  moveVariationMember: function(solutionId, tribunalId, variationId, memberId, direction) {
+    var trib = this.getTribunal(solutionId, tribunalId);
+    if (!trib) return;
+    this._ensureVariations(trib);
+    var v = trib.variations.find(function(x) { return x.id === variationId; });
+    if (!v) return;
+    var idx = -1;
+    v.members.forEach(function(m, i) { if (m.id === memberId) idx = i; });
+    if (idx === -1) return;
+    var newIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (newIdx < 0 || newIdx >= v.members.length) return;
+    var temp = v.members[idx];
+    v.members[idx] = v.members[newIdx];
+    v.members[newIdx] = temp;
+    this.save();
+  },
+
+  updateVariationMember: function(solutionId, tribunalId, variationId, memberId, updates) {
+    var trib = this.getTribunal(solutionId, tribunalId);
+    if (!trib) return;
+    this._ensureVariations(trib);
+    var v = trib.variations.find(function(x) { return x.id === variationId; });
+    if (!v) return;
+    var member = v.members.find(function(m) { return m.id === memberId; });
     if (member) { Object.assign(member, updates); this.save(); }
   },
 
@@ -1325,6 +1367,54 @@ Tribunator.Store = {
     if (v) { v.members = v.members.filter(function(m) { return m.id !== memberId; }); this.save(); }
   },
 
+  moveSlotToDay: function(solutionId, tribunalId, fromDayId, slotId, toDayId) {
+    var fromSched = this.getDaySchedule(solutionId, tribunalId, fromDayId);
+    if (!fromSched || !fromSched.slots) return;
+    var slotIdx = -1;
+    fromSched.slots.forEach(function(s, i) { if (s.id === slotId) slotIdx = i; });
+    if (slotIdx === -1) return;
+    var slot = fromSched.slots.splice(slotIdx, 1)[0];
+    var toSched = this.getDaySchedule(solutionId, tribunalId, toDayId);
+    if (!toSched) {
+      this.setDaySchedule(solutionId, tribunalId, toDayId, { slots: [slot] });
+    } else {
+      if (!toSched.slots) toSched.slots = [];
+      toSched.slots.push(slot);
+    }
+    this.save();
+  },
+
+  moveAllSlotsToDay: function(solutionId, tribunalId, fromDayId, toDayId) {
+    var fromSched = this.getDaySchedule(solutionId, tribunalId, fromDayId);
+    if (!fromSched || !fromSched.slots || fromSched.slots.length === 0) return;
+    var toSched = this.getDaySchedule(solutionId, tribunalId, toDayId);
+    if (!toSched) {
+      this.setDaySchedule(solutionId, tribunalId, toDayId, { slots: fromSched.slots.slice() });
+    } else {
+      if (!toSched.slots) toSched.slots = [];
+      fromSched.slots.forEach(function(s) { toSched.slots.push(s); });
+    }
+    fromSched.slots = [];
+    this.save();
+  },
+
+  sortDaySlots: function(solutionId, tribunalId, dayId) {
+    var sched = this.getDaySchedule(solutionId, tribunalId, dayId);
+    if (!sched || !sched.slots || sched.slots.length <= 1) return;
+    var self = this;
+    sched.slots.sort(function(a, b) {
+      var timeA = self._timeToMin(a.startTime), timeB = self._timeToMin(b.startTime);
+      if (timeA !== timeB) return timeA - timeB;
+      // Same start time: exam activities first, non-blocking last
+      var aNb = self.isNonBlockingSlot(a) ? 1 : 0;
+      var bNb = self.isNonBlockingSlot(b) ? 1 : 0;
+      return aNb - bNb;
+    });
+    this._skipSnapshot = true;
+    this.save();
+    this._skipSnapshot = false;
+  },
+
   // --- Conflict detection ---
   _nonBlockingActivities: ['Llamamiento de Aspirantes', 'Constitución del Tribunal'],
 
@@ -1439,7 +1529,7 @@ Tribunator.Store = {
     var slots = [];
     var start = this._timeToMin(startTime);
     var end = this._timeToMin(endTime);
-    for (var m = start; m < end; m += 30) {
+    for (var m = start; m <= end; m += 30) {
       var h = Math.floor(m / 60); var mi = m % 60;
       slots.push((h < 10 ? '0' : '') + h + ':' + (mi < 10 ? '0' : '') + mi);
     }
