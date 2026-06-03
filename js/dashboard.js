@@ -104,15 +104,19 @@ Tribunator.Dashboard = {
     // Member workload
     if (activeSol) {
       var memberLoad = {};
+      var memberTribs = {};
       tribunals.forEach(function(trib) {
         trib.members.forEach(function(m) {
-          if (!memberLoad[m.candidateId]) memberLoad[m.candidateId] = 0;
+          if (!memberLoad[m.candidateId]) { memberLoad[m.candidateId] = 0; memberTribs[m.candidateId] = []; }
           memberLoad[m.candidateId]++;
+          if (memberTribs[m.candidateId].indexOf(trib.name) === -1) memberTribs[m.candidateId].push(trib.name);
         });
         (trib.variations || []).forEach(function(v) {
           v.members.forEach(function(m) {
-            if (!memberLoad[m.candidateId]) memberLoad[m.candidateId] = 0;
+            if (!memberLoad[m.candidateId]) { memberLoad[m.candidateId] = 0; memberTribs[m.candidateId] = []; }
             memberLoad[m.candidateId]++;
+            var varLabel = trib.name + ' (' + v.name + ')';
+            if (memberTribs[m.candidateId].indexOf(varLabel) === -1) memberTribs[m.candidateId].push(varLabel);
           });
         });
       });
@@ -128,7 +132,8 @@ Tribunator.Dashboard = {
           var c = store.getCandidate(m.id);
           var name = c ? c.surnames + ', ' + c.name : '?';
           var color = m.count >= 3 ? 'var(--danger)' : 'var(--text-muted)';
-          memberBody.appendChild(el('div', { style: { display: 'flex', justifyContent: 'space-between', padding: '6px 16px', borderBottom: '1px solid var(--border)', fontSize: '12px' } }, [
+          var tooltip = (memberTribs[m.id] || []).join('\n');
+          memberBody.appendChild(el('div', { style: { display: 'flex', justifyContent: 'space-between', padding: '6px 16px', borderBottom: '1px solid var(--border)', fontSize: '12px', cursor: 'default' }, title: tooltip }, [
             el('span', { textContent: name }),
             el('span', { style: { color: color, fontWeight: m.count >= 3 ? '600' : '400' }, textContent: m.count + ' trib.' })
           ]));
