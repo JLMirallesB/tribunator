@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.1.2' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.1.3' })
     ]));
 
     // Phase nav
@@ -279,6 +279,21 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.1.3',
+        date: '2026-06-03',
+        changes: {
+          es: [
+            'PDF: botones Todos/Ninguno para selección rápida de días'
+          ],
+          va: [
+            'PDF: botons Tots/Cap per a selecció ràpida de dies'
+          ],
+          en: [
+            'PDF: All/None toggle buttons for quick day selection'
+          ]
+        }
+      },
       {
         version: '1.1.2',
         date: '2026-06-03',
