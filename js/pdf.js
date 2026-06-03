@@ -461,14 +461,28 @@ Tribunator.PDF = {
       return tl;
     };
     var makeDayList = function() {
-      var dl = el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' } });
+      var wrap = el('div', { style: { marginTop: '4px' } });
+      var cbs = [];
+      var toggleAll = el('button', { className: 'btn btn-sm', style: { marginBottom: '6px', fontSize: '10px' }, textContent: t('common.all'), onClick: function() {
+        selectedDayIds = days.map(function(d) { return d.id; });
+        cbs.forEach(function(c) { c.checked = true; });
+      }});
+      var toggleNone = el('button', { className: 'btn btn-sm', style: { marginBottom: '6px', marginLeft: '4px', fontSize: '10px' }, textContent: t('common.none'), onClick: function() {
+        selectedDayIds = [];
+        cbs.forEach(function(c) { c.checked = false; });
+      }});
+      wrap.appendChild(toggleAll);
+      wrap.appendChild(toggleNone);
+      var dl = el('div', { style: { display: 'flex', gap: '8px', flexWrap: 'wrap' } });
       days.forEach(function(day) {
         var lbl = el('label', { style: { display: 'flex', alignItems: 'center', gap: '3px', fontSize: '11px', cursor: 'pointer' } });
         var cb = el('input', { type: 'checkbox' }); cb.checked = selectedDayIds.indexOf(day.id) !== -1;
         cb.addEventListener('change', function() { if (cb.checked) { if (selectedDayIds.indexOf(day.id)===-1) selectedDayIds.push(day.id); } else { selectedDayIds = selectedDayIds.filter(function(id){return id!==day.id;}); } });
+        cbs.push(cb);
         lbl.appendChild(cb); lbl.appendChild(document.createTextNode(Tribunator.Time.formatDate(day.date))); dl.appendChild(lbl);
       });
-      return dl;
+      wrap.appendChild(dl);
+      return wrap;
     };
 
     var renderOptions = function() {
