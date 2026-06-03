@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.1.1' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.1.2' })
     ]));
 
     // Phase nav
@@ -279,6 +279,24 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.1.2',
+        date: '2026-06-03',
+        changes: {
+          es: [
+            'Texto de publicación por solución: se guarda y se precarga en el PDF',
+            'PDF: campo de texto adicional precargado desde la solución activa'
+          ],
+          va: [
+            'Text de publicació per solució: es guarda i es precarrega en el PDF',
+            'PDF: camp de text addicional precarregat des de la solució activa'
+          ],
+          en: [
+            'Publish text per solution: saved and preloaded in PDF',
+            'PDF: custom text field preloaded from active solution'
+          ]
+        }
+      },
       {
         version: '1.1.1',
         date: '2026-06-03',

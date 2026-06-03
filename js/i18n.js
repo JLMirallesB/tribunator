@@ -4,7 +4,7 @@ Tribunator.translations = {
   es: {
     app: {
       title: 'Tribunator',
-      version: 'v1.1.1',
+      version: 'v1.1.2',
       phases: { dashboard: 'Inicio', space: 'Espacio', time: 'Tiempo', templates: 'Plantillas', tribunals: 'Tribunales', verify: 'Verificación' },
       changelog: 'Changelog',
       checkVersion: 'Versiones',
@@ -228,6 +228,7 @@ Tribunator.translations = {
       sortAlpha: 'Ordenar alfabéticamente',
       publishNotes: 'Información para publicar de este tribunal',
       moveAllTo: 'Mover todo a...',
+      solutionPublishText: 'Texto de publicación de la solución',
       assignDay: 'Asignar día',
       removeDay: 'Quitar día',
       primaryRoom: 'Aula principal',
@@ -362,7 +363,7 @@ Tribunator.translations = {
   va: {
     app: {
       title: 'Tribunator',
-      version: 'v1.1.1',
+      version: 'v1.1.2',
       phases: { dashboard: 'Inici', space: 'Espai', time: 'Temps', templates: 'Plantilles', tribunals: 'Tribunals', verify: 'Verificació' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
@@ -586,6 +587,7 @@ Tribunator.translations = {
       sortAlpha: 'Ordenar alfabèticament',
       publishNotes: 'Informació per a publicar d\'este tribunal',
       moveAllTo: 'Moure tot a...',
+      solutionPublishText: 'Text de publicació de la solució',
       assignDay: 'Assignar dia',
       removeDay: 'Llevar dia',
       primaryRoom: 'Aula principal',
@@ -720,7 +722,7 @@ Tribunator.translations = {
   en: {
     app: {
       title: 'Tribunator',
-      version: 'v1.1.1',
+      version: 'v1.1.2',
       phases: { dashboard: 'Home', space: 'Space', time: 'Time', templates: 'Templates', tribunals: 'Tribunals', verify: 'Verification' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
@@ -944,6 +946,7 @@ Tribunator.translations = {
       sortAlpha: 'Sort alphabetically',
       publishNotes: 'Information to publish for this tribunal',
       moveAllTo: 'Move all to...',
+      solutionPublishText: 'Solution publish text',
       assignDay: 'Assign day',
       removeDay: 'Remove day',
       primaryRoom: 'Primary room',

@@ -57,6 +57,20 @@ Tribunator.Tribunals = {
         ]));
 
         if (isActive) {
+          // Publish text for this solution
+          var ptInput = el('textarea', {
+            className: 'form-textarea',
+            value: sol.publishText || '',
+            placeholder: t('tribunals.solutionPublishText'),
+            style: { margin: '8px 16px', width: 'calc(100% - 32px)', minHeight: '50px', fontSize: '11px' },
+            onChange: function() { store.updateSolution(sol.id, { publishText: ptInput.value }); }
+          });
+          ptInput.value = sol.publishText || '';
+          solSection.appendChild(el('div', {}, [
+            el('label', { className: 'form-label', style: { padding: '4px 16px 0', fontSize: '10px' }, textContent: t('tribunals.solutionPublishText') }),
+            ptInput
+          ]));
+
           var tribunals = store.getTribunals(sol.id);
           solSection.appendChild(Tribunator.Utils.collapsibleSection('tribunals_list',
             t('tribunals.tribunals') + ' (' + tribunals.length + ')',

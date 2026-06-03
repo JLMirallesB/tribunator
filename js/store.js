@@ -2,7 +2,7 @@ window.Tribunator = window.Tribunator || {};
 
 Tribunator.Store = {
   STORAGE_KEY: 'tribunator_data',
-  VERSION: '1.1.1',
+  VERSION: '1.1.2',
 
   defaultData: function() {
     return {
@@ -1047,6 +1047,7 @@ Tribunator.Store = {
       id: this.generateId(),
       name: name,
       active: isFirst,
+      publishText: '',
       tribunals: []
     };
     this.data.solutions.push(sol);

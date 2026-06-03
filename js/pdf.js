@@ -418,6 +418,7 @@ Tribunator.PDF = {
     var copyTitleBtn = el('button', { className: 'btn btn-sm', textContent: '← ' + t('pdf.copyTitle'), style: { flexShrink: '0' }, onClick: function() { if (headerInput.value.trim()) filenameInput.value = headerInput.value.trim().replace(/[^a-zA-Z0-9áéíóúñüÁÉÍÓÚÑÜ \-_]/g, '').replace(/\s+/g, '_'); } });
     var subHeaderInput = el('input', { className: 'form-input', type: 'text', placeholder: t('pdf.subHeaderText') });
     var customTextInput = el('textarea', { className: 'form-textarea', placeholder: t('pdf.customText'), style: { minHeight: '40px' } });
+    customTextInput.value = activeSol.publishText || '';
     var logoInput = el('input', { type: 'file', accept: 'image/*', className: 'form-input' });
     var colorInput = el('input', { type: 'color', value: '#3c3c3c', style: { width: '40px', height: '28px', border: 'none', cursor: 'pointer' } });
 
