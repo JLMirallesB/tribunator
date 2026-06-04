@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.0' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.1' })
     ]));
 
     // Phase nav
@@ -279,6 +279,27 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.2.1',
+        date: '2026-06-04',
+        changes: {
+          es: [
+            'Conflictos no bloqueantes: ahora ambas franjas deben ser no bloqueantes para reducir a info',
+            'Deduplicación de conflictos: conflictos bloqueantes y no bloqueantes se reportan por separado',
+            'Roles en conflictos de variaciones: se muestra el rol correcto del miembro en la variación'
+          ],
+          va: [
+            'Conflictes no bloquejants: ara ambdues franges han de ser no bloquejants per a reduir a info',
+            'Deduplicació de conflictes: conflictes bloquejants i no bloquejants es reporten per separat',
+            'Rols en conflictes de variacions: es mostra el rol correcte del membre en la variació'
+          ],
+          en: [
+            'Non-blocking conflicts: both slots must now be non-blocking to downgrade to info',
+            'Conflict deduplication: blocking and non-blocking conflicts reported separately',
+            'Variation conflict roles: correct member role shown from variation data'
+          ]
+        }
+      },
       {
         version: '1.2.0',
         date: '2026-06-04',

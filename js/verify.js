@@ -224,16 +224,18 @@ Tribunator.Verify = {
             var candidateId = parts[0], dayId = parts[1];
             var c = store.getCandidate(candidateId);
             var day = store.getDay(dayId);
-            var nonBlocking = store.isNonBlockingSlot(entries[i].slot) || store.isNonBlockingSlot(entries[j].slot);
-            var conflictKey = [entries[i].trib.id, entries[j].trib.id].sort().join('|') + '_' + dayId + '_' + candidateId;
+            var nonBlocking = store.isNonBlockingSlot(entries[i].slot) && store.isNonBlockingSlot(entries[j].slot);
+            var conflictKey = [entries[i].trib.id, entries[j].trib.id].sort().join('|') + '_' + dayId + '_' + candidateId + (nonBlocking ? '_nb' : '_bl');
             if (!seenConflicts[conflictKey]) {
               seenConflicts[conflictKey] = true;
               var cName = c ? c.surnames + ', ' + c.name : '?';
               var dayStr = day ? Tribunator.Time.formatDate(day.date) : '';
               // Find roles
               var role1 = ''; var role2 = '';
-              entries[i].trib.members.forEach(function(mb) { if (mb.candidateId === candidateId) role1 = mb.role || ''; });
-              entries[j].trib.members.forEach(function(mb) { if (mb.candidateId === candidateId) role2 = mb.role || ''; });
+              entries[i].trib.members.forEach(function(mb) { if (mb.candidateId === candidateId && !role1) role1 = mb.role || ''; });
+              if (!role1) (entries[i].trib.variations||[]).forEach(function(v) { v.members.forEach(function(mb) { if (mb.candidateId === candidateId && !role1) role1 = mb.role || ''; }); });
+              entries[j].trib.members.forEach(function(mb) { if (mb.candidateId === candidateId && !role2) role2 = mb.role || ''; });
+              if (!role2) (entries[j].trib.variations||[]).forEach(function(v) { v.members.forEach(function(mb) { if (mb.candidateId === candidateId && !role2) role2 = mb.role || ''; }); });
               var msg = nonBlocking ? cName + ' — ' + t('verify.memberSharedNonBlocking') : cName + ' — ' + t('verify.memberOccupiedTwice');
               var lines = [
                 { text: entries[i].trib.name + ': ' + entries[i].slot.startTime + '–' + entries[i].slot.endTime + (role1 ? ' (' + role1 + ')' : '') + (entries[i].slot.activity ? ' — ' + entries[i].slot.activity : ''), indent: true },
