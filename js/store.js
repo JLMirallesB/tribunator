@@ -2,7 +2,7 @@ window.Tribunator = window.Tribunator || {};
 
 Tribunator.Store = {
   STORAGE_KEY: 'tribunator_data',
-  VERSION: '1.1.3',
+  VERSION: '1.2.0',
 
   defaultData: function() {
     return {
@@ -1467,6 +1467,9 @@ Tribunator.Store = {
     sol.tribunals.forEach(function(trib) {
       if (trib.id === excludeTribunalId) return;
       var hasMember = trib.members.some(function(m) { return m.candidateId === candidateId; });
+      if (!hasMember) {
+        hasMember = (trib.variations || []).some(function(v) { return v.members.some(function(m) { return m.candidateId === candidateId; }); });
+      }
       if (!hasMember) return;
       var sched = (trib.schedule || []).find(function(s) { return s.dayId === dayId; });
       if (!sched) return;

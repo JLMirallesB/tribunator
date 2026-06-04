@@ -184,8 +184,10 @@ Tribunator.Verify = {
           }
         });
 
-        // Member time conflicts: check slot-level overlap
-        trib.members.forEach(function(m) {
+        // Member time conflicts: check slot-level overlap (including variations)
+        var allMembers = trib.members.slice();
+        (trib.variations || []).forEach(function(v) { v.members.forEach(function(vm) { if (!allMembers.some(function(m) { return m.candidateId === vm.candidateId; })) allMembers.push(vm); }); });
+        allMembers.forEach(function(m) {
           (sched.slots || []).forEach(function(slot) {
             var key = m.candidateId + '_' + sched.dayId + '_' + slot.startTime + '_' + slot.endTime;
             if (!memberDayMap[key]) memberDayMap[key] = { candidateId: m.candidateId, dayId: sched.dayId, start: slot.startTime, end: slot.endTime, tribs: [] };
@@ -200,7 +202,9 @@ Tribunator.Verify = {
     var memberSlots = {};
     // Rebuild: group by candidateId + dayId, collect all slots
     sol.tribunals.forEach(function(trib) {
-      trib.members.forEach(function(m) {
+      var allMembersForSlots = trib.members.slice();
+      (trib.variations || []).forEach(function(v) { v.members.forEach(function(vm) { if (!allMembersForSlots.some(function(m) { return m.candidateId === vm.candidateId; })) allMembersForSlots.push(vm); }); });
+      allMembersForSlots.forEach(function(m) {
         (trib.schedule || []).forEach(function(sched) {
           (sched.slots || []).forEach(function(slot) {
             var key = m.candidateId + '_' + sched.dayId;
