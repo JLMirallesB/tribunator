@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.1' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.2' })
     ]));
 
     // Phase nav
@@ -279,6 +279,36 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.2.2',
+        date: '2026-06-06',
+        changes: {
+          es: [
+            'Dashboard: carga de miembros muestra tribunales únicos, no participaciones duplicadas',
+            'Dashboard: buscador de candidatos con filtro por especialidad y nombre',
+            'Dashboard: esquema diario de pruebas con agrupación por actividades',
+            'PDF: nuevo tipo "Directorio" con listado alfabético de miembros y sus asignaciones',
+            'PDF: cabeceras optimizadas para impresión (fondo gris claro + barra lateral)',
+            'PDF: campo libre de texto solo se muestra en el tipo Tribunales'
+          ],
+          va: [
+            'Dashboard: càrrega de membres mostra tribunals únics, no participacions duplicades',
+            'Dashboard: cercador de candidats amb filtre per especialitat i nom',
+            'Dashboard: esquema diari de proves amb agrupació per activitats',
+            'PDF: nou tipus "Directori" amb llistat alfabètic de membres i les seues assignacions',
+            'PDF: capçaleres optimitzades per a impressió (fons gris clar + barra lateral)',
+            'PDF: camp lliure de text només es mostra en el tipus Tribunals'
+          ],
+          en: [
+            'Dashboard: member load shows unique tribunals, not duplicate participations',
+            'Dashboard: candidate search with specialty and name filter',
+            'Dashboard: daily exam overview with activity grouping',
+            'PDF: new "Directory" type with alphabetical member listing and assignments',
+            'PDF: headers optimized for printing (light gray background + sidebar accent)',
+            'PDF: custom text field only shown for Tribunals type'
+          ]
+        }
+      },
       {
         version: '1.2.1',
         date: '2026-06-04',

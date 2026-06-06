@@ -282,6 +282,8 @@ Tribunator.translations = {
       type_daily: 'Planning diario',
       type_plans: 'Planos',
       type_signs: 'Cartelería',
+      type_directory: 'Directorio',
+      assignments: 'Tribunales y actividades',
       planDay: 'Día de ocupación (opcional)',
       noDay: 'Sin día',
       halfPage: 'Dos carteles por página',
@@ -298,7 +300,15 @@ Tribunator.translations = {
       topMembers: 'Miembros con más carga',
       pendingErrors: 'Errores pendientes',
       more: 'más...',
-      unusedCandidates: 'Candidatos sin tribunal'
+      unusedCandidates: 'Candidatos sin tribunal',
+      searchCandidate: 'Buscar candidato',
+      searchPlaceholder: 'Nombre o apellidos...',
+      allSpecialties: 'Todas las especialidades',
+      memberOf: 'Miembro',
+      variationOf: 'Variación',
+      noTribunals: 'Sin tribunales asignados',
+      selectCandidate: 'Selecciona un candidato para ver su agenda',
+      dailyOverview: 'Esquema diario de pruebas'
     },
     templates: {
       title: 'Plantillas de prueba',
@@ -642,6 +652,8 @@ Tribunator.translations = {
       type_daily: 'Planning diari',
       type_plans: 'Plànols',
       type_signs: 'Cartelleria',
+      type_directory: 'Directori',
+      assignments: 'Tribunals i activitats',
       planDay: 'Dia d\'ocupació (opcional)',
       noDay: 'Sense dia',
       halfPage: 'Dos cartells per pàgina',
@@ -658,7 +670,15 @@ Tribunator.translations = {
       topMembers: 'Membres amb més càrrega',
       pendingErrors: 'Errors pendents',
       more: 'més...',
-      unusedCandidates: 'Candidats sense tribunal'
+      unusedCandidates: 'Candidats sense tribunal',
+      searchCandidate: 'Buscar candidat',
+      searchPlaceholder: 'Nom o cognoms...',
+      allSpecialties: 'Totes les especialitats',
+      memberOf: 'Membre',
+      variationOf: 'Variació',
+      noTribunals: 'Sense tribunals assignats',
+      selectCandidate: 'Selecciona un candidat per a veure la seua agenda',
+      dailyOverview: 'Esquema diari de proves'
     },
     templates: {
       title: 'Plantilles de prova',
@@ -1002,6 +1022,8 @@ Tribunator.translations = {
       type_daily: 'Daily planning',
       type_plans: 'Floor plans',
       type_signs: 'Room signs',
+      type_directory: 'Directory',
+      assignments: 'Tribunals and activities',
       planDay: 'Occupation day (optional)',
       noDay: 'No day',
       halfPage: 'Two signs per page',
@@ -1018,7 +1040,15 @@ Tribunator.translations = {
       topMembers: 'Members with highest load',
       pendingErrors: 'Pending errors',
       more: 'more...',
-      unusedCandidates: 'Candidates without tribunal'
+      unusedCandidates: 'Candidates without tribunal',
+      searchCandidate: 'Search candidate',
+      searchPlaceholder: 'Name or surnames...',
+      allSpecialties: 'All specialties',
+      memberOf: 'Member',
+      variationOf: 'Variation',
+      noTribunals: 'No tribunals assigned',
+      selectCandidate: 'Select a candidate to view their schedule',
+      dailyOverview: 'Daily exam overview'
     },
     templates: {
       title: 'Exam templates',

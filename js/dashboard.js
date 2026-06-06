@@ -67,6 +67,55 @@ Tribunator.Dashboard = {
       wrapper.appendChild(daysPanel);
     }
 
+    // Daily activity overview
+    if (days.length > 0 && activeSol) {
+      var overviewPanel = el('div', { className: 'panel', style: { marginBottom: '16px' } });
+      overviewPanel.appendChild(el('div', { className: 'panel-header', textContent: t('dashboard.dailyOverview') }));
+      var overviewBody = el('div', { className: 'panel-body', style: { padding: '0' } });
+      days.forEach(function(day) {
+        var tribActivities = {};
+        tribunals.forEach(function(trib) {
+          var sched = (trib.schedule || []).find(function(s) { return s.dayId === day.id; });
+          if (!sched) return;
+          var activities = [];
+          (sched.slots || []).forEach(function(slot) {
+            if (!slot.activity) return;
+            var hasPart = slot.activity.indexOf('Parte A') !== -1 || slot.activity.indexOf('Parte B') !== -1 || slot.activity.indexOf('Part A') !== -1 || slot.activity.indexOf('Part B') !== -1;
+            var hasLevel = slot.activity.indexOf('EEM') !== -1 || slot.activity.indexOf('EPM') !== -1;
+            if (!hasPart && !hasLevel) return;
+            if (activities.indexOf(slot.activity) === -1) activities.push(slot.activity);
+          });
+          if (activities.length > 0) tribActivities[trib.name] = activities.join(', ');
+        });
+        var tribNames = Object.keys(tribActivities);
+        if (tribNames.length === 0) return;
+
+        var groups = {};
+        tribNames.forEach(function(name) {
+          var key = tribActivities[name];
+          if (!groups[key]) groups[key] = [];
+          groups[key].push(name);
+        });
+
+        var daySection = el('div', { style: { padding: '10px 16px', borderBottom: '1px solid var(--border)' } });
+        daySection.appendChild(el('div', { style: { fontWeight: '600', fontSize: '13px', marginBottom: '6px' }, textContent: Tribunator.Time.formatDate(day.date) }));
+
+        Object.keys(groups).forEach(function(actKey) {
+          var row = el('div', { style: { display: 'flex', gap: '6px', fontSize: '12px', marginBottom: '4px', alignItems: 'center', flexWrap: 'wrap' } });
+          groups[actKey].forEach(function(name, i) {
+            if (i > 0) row.appendChild(el('span', { style: { color: 'var(--border)', margin: '0 2px' }, textContent: '·' }));
+            row.appendChild(el('span', { style: { fontWeight: '600', padding: '2px 7px', background: 'var(--bg-secondary)', borderRadius: '3px', border: '1px solid var(--border)' }, textContent: name }));
+          });
+          row.appendChild(el('span', { style: { color: 'var(--text-muted)', marginLeft: '4px' }, textContent: '— ' + actKey }));
+          daySection.appendChild(row);
+        });
+
+        overviewBody.appendChild(daySection);
+      });
+      overviewPanel.appendChild(overviewBody);
+      wrapper.appendChild(overviewPanel);
+    }
+
     // Two columns: rooms + members
     var cols = el('div', { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' } });
 
@@ -103,24 +152,25 @@ Tribunator.Dashboard = {
 
     // Member workload
     if (activeSol) {
-      var memberLoad = {};
-      var memberTribs = {};
+      var memberInfo = {};
       tribunals.forEach(function(trib) {
         trib.members.forEach(function(m) {
-          if (!memberLoad[m.candidateId]) { memberLoad[m.candidateId] = 0; memberTribs[m.candidateId] = []; }
-          memberLoad[m.candidateId]++;
-          if (memberTribs[m.candidateId].indexOf(trib.name) === -1) memberTribs[m.candidateId].push(trib.name);
+          if (!memberInfo[m.candidateId]) memberInfo[m.candidateId] = { tribs: {}, details: [] };
+          memberInfo[m.candidateId].tribs[trib.id] = true;
+          memberInfo[m.candidateId].details.push(trib.name + (m.role ? ' (' + m.role + ')' : ''));
         });
         (trib.variations || []).forEach(function(v) {
           v.members.forEach(function(m) {
-            if (!memberLoad[m.candidateId]) { memberLoad[m.candidateId] = 0; memberTribs[m.candidateId] = []; }
-            memberLoad[m.candidateId]++;
-            var varLabel = trib.name + ' (' + v.name + ')';
-            if (memberTribs[m.candidateId].indexOf(varLabel) === -1) memberTribs[m.candidateId].push(varLabel);
+            if (!memberInfo[m.candidateId]) memberInfo[m.candidateId] = { tribs: {}, details: [] };
+            memberInfo[m.candidateId].tribs[trib.id] = true;
+            memberInfo[m.candidateId].details.push(trib.name + ' — ' + v.name + (m.role ? ' (' + m.role + ')' : ''));
           });
         });
       });
-      var sortedMembers = Object.keys(memberLoad).map(function(cid) { return { id: cid, count: memberLoad[cid] }; }).sort(function(a, b) { return b.count - a.count; });
+      var sortedMembers = Object.keys(memberInfo).map(function(cid) {
+        var info = memberInfo[cid];
+        return { id: cid, tribCount: Object.keys(info.tribs).length, details: info.details };
+      }).sort(function(a, b) { return b.tribCount - a.tribCount || b.details.length - a.details.length; });
 
       var memberPanel = el('div', { className: 'panel' });
       memberPanel.appendChild(el('div', { className: 'panel-header', textContent: t('dashboard.topMembers') + ' (' + sortedMembers.length + ')' }));
@@ -131,11 +181,13 @@ Tribunator.Dashboard = {
         sortedMembers.forEach(function(m) {
           var c = store.getCandidate(m.id);
           var name = c ? c.surnames + ', ' + c.name : '?';
-          var color = m.count >= 3 ? 'var(--danger)' : 'var(--text-muted)';
-          var tooltip = (memberTribs[m.id] || []).join('\n');
+          var color = m.tribCount >= 3 ? 'var(--danger)' : 'var(--text-muted)';
+          var tooltip = m.details.join('\n');
+          var label = m.tribCount + ' trib.';
+          if (m.details.length > m.tribCount) label += ' (' + m.details.length + ' partic.)';
           memberBody.appendChild(el('div', { style: { display: 'flex', justifyContent: 'space-between', padding: '6px 16px', borderBottom: '1px solid var(--border)', fontSize: '12px', cursor: 'default' }, title: tooltip }, [
             el('span', { textContent: name }),
-            el('span', { style: { color: color, fontWeight: m.count >= 3 ? '600' : '400' }, textContent: m.count + ' trib.' })
+            el('span', { style: { color: color, fontWeight: m.tribCount >= 3 ? '600' : '400' }, textContent: label })
           ]));
         });
       }
@@ -143,6 +195,136 @@ Tribunator.Dashboard = {
       cols.appendChild(memberPanel);
     }
     wrapper.appendChild(cols);
+
+    // Candidate search
+    if (activeSol && candidates.length > 0) {
+      var searchPanel = el('div', { className: 'panel', style: { marginBottom: '16px' } });
+      searchPanel.appendChild(el('div', { className: 'panel-header', textContent: t('dashboard.searchCandidate') }));
+      var searchBody = el('div', { className: 'panel-body' });
+
+      var specialties = {};
+      candidates.forEach(function(c) { if (c.specialty) specialties[c.specialty] = true; });
+      var specKeys = Object.keys(specialties).sort();
+
+      var filterRow = el('div', { style: { display: 'flex', gap: '8px', marginBottom: '8px' } });
+      var specSelect = el('select', { style: { flex: '0 0 auto', fontSize: '12px', padding: '4px 8px', border: '1px solid var(--border)', borderRadius: '4px', background: 'var(--bg)' } });
+      specSelect.appendChild(el('option', { value: '', textContent: t('dashboard.allSpecialties') }));
+      specKeys.forEach(function(sp) { specSelect.appendChild(el('option', { value: sp, textContent: sp })); });
+      var nameInput = el('input', { type: 'text', placeholder: t('dashboard.searchPlaceholder'), style: { flex: '1', fontSize: '12px', padding: '4px 8px', border: '1px solid var(--border)', borderRadius: '4px', background: 'var(--bg)' } });
+      filterRow.appendChild(specSelect);
+      filterRow.appendChild(nameInput);
+      searchBody.appendChild(filterRow);
+
+      var resultArea = el('div', { style: { maxHeight: '300px', overflowY: 'auto' } });
+      var detailArea = el('div');
+      searchBody.appendChild(resultArea);
+      searchBody.appendChild(detailArea);
+
+      var selectedId = null;
+
+      function buildCandidateDetail(cid) {
+        Tribunator.Utils.clearElement(detailArea);
+        selectedId = cid;
+        var c = store.getCandidate(cid);
+        if (!c) return;
+
+        var entries = [];
+        tribunals.forEach(function(trib) {
+          trib.members.forEach(function(m) {
+            if (m.candidateId === cid) entries.push({ type: 'member', trib: trib, role: m.role });
+          });
+          (trib.variations || []).forEach(function(v) {
+            v.members.forEach(function(m) {
+              if (m.candidateId === cid) entries.push({ type: 'variation', trib: trib, varName: v.name, role: m.role });
+            });
+          });
+        });
+
+        if (entries.length === 0) {
+          detailArea.appendChild(el('div', { style: { padding: '8px 0', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }, textContent: t('dashboard.noTribunals') }));
+          return;
+        }
+
+        var detailBox = el('div', { style: { marginTop: '8px', padding: '10px 12px', background: 'var(--bg-secondary)', borderRadius: '6px', border: '1px solid var(--border)' } });
+        detailBox.appendChild(el('div', { style: { fontWeight: '600', fontSize: '13px', marginBottom: '8px' }, textContent: c.surnames + ', ' + c.name + (c.specialty ? ' — ' + c.specialty : '') }));
+
+        entries.forEach(function(entry) {
+          var tag = entry.type === 'member' ? t('dashboard.memberOf') : t('dashboard.variationOf');
+          var tagColor = entry.type === 'member' ? 'var(--primary)' : 'var(--warning)';
+          var tribLabel = entry.trib.name;
+          if (entry.type === 'variation') tribLabel += ' — ' + entry.varName;
+          if (entry.role) tribLabel += ' (' + entry.role + ')';
+
+          var entryRow = el('div', { style: { display: 'flex', gap: '8px', alignItems: 'flex-start', marginBottom: '6px', fontSize: '12px' } }, [
+            el('span', { style: { fontSize: '10px', padding: '1px 6px', borderRadius: '3px', background: tagColor, color: '#fff', fontWeight: '600', flexShrink: '0', marginTop: '1px' }, textContent: tag }),
+            el('div', { style: { flex: '1' } })
+          ]);
+          var detailCol = entryRow.lastChild;
+          detailCol.appendChild(el('div', { style: { fontWeight: '500' }, textContent: tribLabel }));
+
+          var schedule = entry.trib.schedule || [];
+          schedule.forEach(function(sched) {
+            var day = store.getDay(sched.dayId);
+            if (!day) return;
+            var slots = (sched.slots || []).slice().sort(function(a, b) { return a.startTime.localeCompare(b.startTime); });
+            if (slots.length === 0) return;
+            var slotTexts = slots.map(function(s) { return s.startTime + '–' + s.endTime + (s.activity ? ' ' + s.activity : ''); });
+            detailCol.appendChild(el('div', { style: { color: 'var(--text-muted)', marginTop: '2px' }, textContent: Tribunator.Time.formatDate(day.date) + ': ' + slotTexts.join(', ') }));
+          });
+
+          detailBox.appendChild(entryRow);
+        });
+
+        detailArea.appendChild(detailBox);
+      }
+
+      function updateResults() {
+        Tribunator.Utils.clearElement(resultArea);
+        Tribunator.Utils.clearElement(detailArea);
+        selectedId = null;
+        var specFilter = specSelect.value;
+        var textFilter = nameInput.value.trim().toLowerCase();
+        if (!specFilter && !textFilter) {
+          resultArea.appendChild(el('div', { style: { padding: '8px 0', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }, textContent: t('dashboard.selectCandidate') }));
+          return;
+        }
+        var filtered = candidates.filter(function(c) {
+          if (specFilter && c.specialty !== specFilter) return false;
+          if (textFilter) {
+            var full = ((c.surnames || '') + ' ' + (c.name || '')).toLowerCase();
+            if (full.indexOf(textFilter) === -1) return false;
+          }
+          return true;
+        });
+        if (filtered.length === 0) {
+          resultArea.appendChild(el('div', { style: { padding: '8px 0', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }, textContent: t('common.noData') }));
+          return;
+        }
+        filtered.forEach(function(c) {
+          var row = el('div', { style: { display: 'flex', justifyContent: 'space-between', padding: '5px 10px', borderBottom: '1px solid var(--border)', fontSize: '12px', cursor: 'pointer', background: selectedId === c.id ? 'var(--primary-light)' : '' }, onClick: function() { buildCandidateDetail(c.id); updateHighlight(); } }, [
+            el('span', { textContent: c.surnames + ', ' + c.name }),
+            el('span', { style: { color: 'var(--text-muted)' }, textContent: c.specialty || '' })
+          ]);
+          row._cid = c.id;
+          resultArea.appendChild(row);
+        });
+      }
+
+      function updateHighlight() {
+        var rows = resultArea.children;
+        for (var i = 0; i < rows.length; i++) {
+          rows[i].style.background = rows[i]._cid === selectedId ? 'var(--primary-light)' : '';
+        }
+      }
+
+      specSelect.addEventListener('change', updateResults);
+      nameInput.addEventListener('input', updateResults);
+
+      resultArea.appendChild(el('div', { style: { padding: '8px 0', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }, textContent: t('dashboard.selectCandidate') }));
+
+      searchPanel.appendChild(searchBody);
+      wrapper.appendChild(searchPanel);
+    }
 
     // Unused candidates
     if (activeSol && candidates.length > 0) {
