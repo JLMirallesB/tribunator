@@ -383,6 +383,15 @@ Tribunator.Dashboard = {
     ioRow.appendChild(el('button', { className: 'btn btn-sm', textContent: t('export.exportAll'), onClick: function() { var data = store.exportAll(); Tribunator.Utils.downloadFile(data, 'tribunator-completo.json'); Tribunator.Utils.showToast(t('export.exportSuccess')); } }));
     ioRow.appendChild(el('button', { className: 'btn btn-sm', textContent: t('export.exportSpaces'), onClick: function() { var data = store.exportSpaces(); Tribunator.Utils.downloadFile(data, 'tribunator-espacios.json'); Tribunator.Utils.showToast(t('export.exportSuccess')); } }));
     ioRow.appendChild(el('button', { className: 'btn btn-sm', textContent: t('export.exportTime'), onClick: function() { var data = store.exportTime(); Tribunator.Utils.downloadFile(data, 'tribunator-tiempo.json'); Tribunator.Utils.showToast(t('export.exportSuccess')); } }));
+    if (activeSol) {
+      ioRow.appendChild(el('button', { className: 'btn btn-sm', textContent: t('export.exportListings'), onClick: function() {
+        var out = { source: 'tribunator', solutionName: activeSol.name, tribunals: activeSol.tribunals.map(function(trib) {
+          return { id: trib.id, name: trib.name, variations: (trib.variations || []).map(function(v) { return { id: v.id, name: v.name }; }) };
+        })};
+        Tribunator.Utils.downloadFile(JSON.stringify(out, null, 2), 'tribunales-export.json');
+        Tribunator.Utils.showToast(t('export.exportSuccess'));
+      }}));
+    }
     var fileInput = el('input', { type: 'file', accept: '.json', className: 'file-input-hidden', onChange: function(e) {
       var file = e.target.files[0]; if (!file) return;
       Tribunator.Utils.readFile(file, function(err, content) {
