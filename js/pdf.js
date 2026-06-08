@@ -347,8 +347,11 @@ Tribunator.PDF = {
         doc.setTextColor(0);
       } else {
         var signY = contentY;
+        var seenTribs = {};
         occ.forEach(function(o) {
           var trib = o.tribunal;
+          if (seenTribs[trib.id]) return;
+          seenTribs[trib.id] = true;
           // Tribunal name
           doc.setFillColor.apply(doc, self.DARK);
           doc.rect(m, signY, 1.5, 8, 'F');
