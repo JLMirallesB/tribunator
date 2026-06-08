@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.7' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.8' })
     ]));
 
     // Phase nav
@@ -279,6 +279,15 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.2.8',
+        date: '2026-06-08',
+        changes: {
+          es: ['PDF Cartelería: secciones Base y variaciones siempre visibles'],
+          va: ['PDF Cartelleria: seccions Base i variacions sempre visibles'],
+          en: ['PDF Room signs: Base and variation sections always visible']
+        }
+      },
       {
         version: '1.2.7',
         date: '2026-06-08',
