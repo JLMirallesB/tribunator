@@ -185,12 +185,14 @@ Tribunator.PDF = {
     var doc = this._initDoc(); if (!doc) return;
     var store = Tribunator.Store, self = this;
     var campuses = store.getCampuses();
-    var occupation = {};
-    if (options.planDayId) {
-      var activeSol = store.getActiveSolution();
-      if (activeSol) occupation = store.getRoomOccupation(activeSol.id, options.planDayId);
-    }
+    var activeSol = store.getActiveSolution();
+    var planDays = (options.dayIds && options.dayIds.length > 0) ? options.dayIds : [null];
     var firstPage = true;
+
+    planDays.forEach(function(dayId) {
+      var occupation = {};
+      var day = dayId ? store.getDay(dayId) : null;
+      if (dayId && activeSol) occupation = store.getRoomOccupation(activeSol.id, dayId);
 
     campuses.forEach(function(campus) {
       campus.floors.forEach(function(floor) {
@@ -201,10 +203,12 @@ Tribunator.PDF = {
         self._addHeader(doc, options, state);
 
         // Floor title
+        var floorTitle = campus.name + ' — ' + floor.name;
+        if (day) floorTitle += '  ·  ' + Tribunator.Time.formatDate(day.date);
         state.check(12); doc.setFillColor.apply(doc, self.DARK);
         doc.rect(self.MARGIN, state.y, 1.5, 8, 'F');
         doc.setFontSize(11); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, self.DARK);
-        doc.text(campus.name + ' — ' + floor.name, self.MARGIN + 5, state.y + 6);
+        doc.text(floorTitle, self.MARGIN + 5, state.y + 6);
         state.y += 11; doc.setTextColor(0);
 
         // Draw grid
@@ -228,7 +232,7 @@ Tribunator.PDF = {
               var occ = occupation[room.id];
               if (occ && occ.length > 0) {
                 doc.setFillColor(255, 200, 200);
-              } else if (options.planDayId) {
+              } else if (dayId) {
                 doc.setFillColor(200, 240, 200);
               } else {
                 doc.setFillColor(200, 210, 230);
@@ -264,15 +268,15 @@ Tribunator.PDF = {
         floor.rooms.forEach(function(room) {
           var occ = occupation[room.id];
           var status = '';
-          if (options.planDayId) {
+          if (dayId) {
             status = occ && occ.length > 0 ? occ.map(function(o){return o.tribunal.name;}).join(', ') : t('common.free');
           }
           var row = [room.name, room.notes || ''];
-          if (options.planDayId) row.push(status);
+          if (dayId) row.push(status);
           legendRows.push(row);
         });
         var legendHead = [t('space.room'), t('common.notes')];
-        if (options.planDayId) legendHead.push(t('space.status'));
+        if (dayId) legendHead.push(t('space.status'));
         doc.autoTable({
           startY: state.y, margin:{left:self.MARGIN, right:self.MARGIN},
           head: [legendHead], body: legendRows,
@@ -282,6 +286,7 @@ Tribunator.PDF = {
         });
       });
     });
+    }); // end planDays loop
     this._savePdf(doc, options);
   },
 
@@ -292,24 +297,28 @@ Tribunator.PDF = {
     var doc = this._initDoc(); if (!doc) return;
     var store = Tribunator.Store, self = this;
     var sol = store.getActiveSolution(); if (!sol) return;
-    var day = store.getDay(options.signDayId); if (!day) return;
-    var occupation = store.getRoomOccupation(sol.id, options.signDayId);
+    var signDayIds = (options.dayIds && options.dayIds.length > 0) ? options.dayIds : (options.signDayId ? [options.signDayId] : []);
     var allRooms = store.getAllRooms();
     var signRooms = options.signRoomIds ? allRooms.filter(function(r){return options.signRoomIds.indexOf(r.room.id)!==-1;}) : allRooms;
     var halfPage = options.halfPage;
     var m = self.MARGIN;
+    var pageIdx = 0;
 
-    signRooms.forEach(function(item, idx) {
+    signDayIds.forEach(function(dayId) {
+      var day = store.getDay(dayId); if (!day) return;
+      var occupation = store.getRoomOccupation(sol.id, dayId);
+
+    signRooms.forEach(function(item) {
       var room = item.room;
       var occ = occupation[room.id] || [];
       if (occ.length === 0 && !options.includeEmpty) return;
 
       if (halfPage) {
-        if (idx > 0 && idx % 2 === 0) doc.addPage();
-        var yOffset = (idx % 2 === 0) ? 0 : 148.5;
+        if (pageIdx > 0 && pageIdx % 2 === 0) doc.addPage();
+        var yOffset = (pageIdx % 2 === 0) ? 0 : 148.5;
         var availH = 148.5;
       } else {
-        if (idx > 0) doc.addPage();
+        if (pageIdx > 0) doc.addPage();
         var yOffset = 0;
         var availH = 297;
       }
@@ -361,7 +370,7 @@ Tribunator.PDF = {
           }
 
           // Slots for this day IN THIS ROOM only
-          var sched = (trib.schedule||[]).find(function(s){return s.dayId===options.signDayId;});
+          var sched = (trib.schedule||[]).find(function(s){return s.dayId===dayId;});
           if (sched && sched.slots && sched.slots.length) {
             var roomSlots = sched.slots.filter(function(s) { return s.roomId === room.id; });
             var slotRows = roomSlots.slice().sort(function(a,b){return a.startTime.localeCompare(b.startTime);}).map(function(s) { return [self._fmtTime(s.startTime, s.endTime, options.showFullTime), s.activity||'']; });
@@ -378,11 +387,13 @@ Tribunator.PDF = {
       }
 
       // Separator for half page
-      if (halfPage && idx % 2 === 0) {
+      if (halfPage && pageIdx % 2 === 0) {
         doc.setDrawColor(200); doc.setLineWidth(0.3);
         doc.line(0, 148.5, self.PAGE_W, 148.5);
       }
+      pageIdx++;
     });
+    }); // end signDayIds loop
     this._savePdf(doc, options);
   },
 
@@ -416,11 +427,13 @@ Tribunator.PDF = {
     });
 
     var rows = [];
+    var footnotes = [], fi = 0;
     Object.keys(candidateMap).forEach(function(cid) {
       var c = store.getCandidate(cid);
       if (!c) return;
       var sn = c.useTitular && c.titularSurnames ? c.titularSurnames : c.surnames;
       var nm = c.useTitular && c.titularName ? c.titularName : c.name;
+      if (c && store.isSubstitute(c.id) && !c.useTitular && options.showTitular) { fi++; sn += ' *'+fi; footnotes.push({i:fi, sub:c.surnames+', '+c.name, tit:c.titularSurnames+', '+c.titularName}); }
       var entries = candidateMap[cid];
       if (entries.length === 0) {
         var row = [sn, nm];
@@ -467,6 +480,8 @@ Tribunator.PDF = {
       alternateRowStyles: { fillColor: self.TABLE_ALT },
       columnStyles: options.showSpecialty ? { 0: { cellWidth: 30 }, 1: { cellWidth: 22 }, 2: { cellWidth: 22 } } : { 0: { cellWidth: 30 }, 1: { cellWidth: 22 } }
     });
+    state.y = doc.lastAutoTable.finalY + 2;
+    if (footnotes.length > 0) { doc.setFontSize(7); doc.setFont(undefined,'italic'); doc.setTextColor.apply(doc,self.GRAY); footnotes.forEach(function(fn){ state.check(8); doc.text('*'+fn.i+' '+fn.sub+' — '+t('pdf.titularFootnote')+': '+fn.tit, self.MARGIN+2, state.y+3); state.y+=4; }); doc.setTextColor(0); doc.setFont(undefined,'normal'); state.y+=2; }
 
     this._savePdf(doc, options);
   },
@@ -597,14 +612,9 @@ Tribunator.PDF = {
           lbl.appendChild(cb); lbl.appendChild(document.createTextNode(f.campus.name + ' — ' + f.floor.name)); floorList.appendChild(lbl);
         });
         optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('space.floors') }), floorList]));
-        var pdSel = el('select', { className: 'form-select', onChange: function() { planDayId = pdSel.value || null; } });
-        pdSel.appendChild(el('option', { value: '', textContent: '— ' + t('pdf.noDay') + ' —' }));
-        days.forEach(function(d) { var o = el('option', { value: d.id, textContent: Tribunator.Time.formatDate(d.date) }); if (d.id === planDayId) o.selected = true; pdSel.appendChild(o); });
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('pdf.planDay') }), pdSel]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('time.days') }), makeDayList()]));
       } else if (pdfType === 'signs') {
-        var sdSel = el('select', { className: 'form-select', onChange: function() { signDayId = sdSel.value; } });
-        days.forEach(function(d) { var o = el('option', { value: d.id, textContent: Tribunator.Time.formatDate(d.date) }); if (d.id === signDayId) o.selected = true; sdSel.appendChild(o); });
-        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('time.date') }), sdSel]));
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('time.days') }), makeDayList()]));
         optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { className: 'form-label', textContent: t('tribunals.roles') }), makeRoleList()]));
         var hpCb = el('input', { type: 'checkbox' }); hpCb.checked = halfPage; hpCb.addEventListener('change', function() { halfPage = hpCb.checked; });
         optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [hpCb, document.createTextNode(t('pdf.halfPage'))])]));
@@ -613,6 +623,8 @@ Tribunator.PDF = {
       } else if (pdfType === 'directory') {
         var dspCb = el('input', { type: 'checkbox' }); dspCb.checked = showSpecialty; dspCb.addEventListener('change', function() { showSpecialty = dspCb.checked; });
         optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [dspCb, document.createTextNode(t('pdf.showSpecialty'))])]));
+        var dstCb = el('input', { type: 'checkbox' }); dstCb.checked = showTitular; dstCb.addEventListener('change', function() { showTitular = dstCb.checked; });
+        optionsArea.appendChild(el('div', { className: 'form-group' }, [el('label', { style: { display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', cursor: 'pointer' } }, [dstCb, document.createTextNode(t('pdf.showTitular'))])]));
       }
     };
     renderOptions();

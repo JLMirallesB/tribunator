@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.3' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.4' })
     ]));
 
     // Phase nav
@@ -279,6 +279,27 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.2.4',
+        date: '2026-06-08',
+        changes: {
+          es: [
+            'PDF Directorio: nota al pie con nombre del titular para sustitutos',
+            'PDF Planos: selección de múltiples días con fecha en cada página',
+            'PDF Cartelería: selección de múltiples días con fecha en cada página'
+          ],
+          va: [
+            'PDF Directori: nota al peu amb nom del titular per a substituts',
+            'PDF Plànols: selecció de múltiples dies amb data a cada pàgina',
+            'PDF Cartelleria: selecció de múltiples dies amb data a cada pàgina'
+          ],
+          en: [
+            'PDF Directory: footnote with titular name for substitutes',
+            'PDF Floor plans: multi-day selection with date on each page',
+            'PDF Room signs: multi-day selection with date on each page'
+          ]
+        }
+      },
       {
         version: '1.2.3',
         date: '2026-06-06',
