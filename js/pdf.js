@@ -369,6 +369,28 @@ Tribunator.PDF = {
             signY = doc.lastAutoTable.finalY + 2;
           }
 
+          // Variations
+          (trib.variations || []).forEach(function(v) {
+            var vMembers = v.members.filter(function(mb) { return !options.selectedRoles || !mb.role || options.selectedRoles.indexOf(mb.role) !== -1; });
+            if (!vMembers.length) return;
+            doc.setFontSize(8); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, self.GRAY);
+            doc.text(t('tribunals.variations') + ': ' + v.name, m + 2, signY + 3);
+            doc.setTextColor(0); doc.setFont(undefined,'normal'); signY += 5;
+            var vRows = vMembers.map(function(mb) {
+              var c = store.getCandidate(mb.candidateId);
+              var nm = c ? (c.useTitular && c.titularSurnames ? c.titularSurnames+', '+c.titularName : c.surnames+', '+c.name) : '?';
+              return [nm, mb.role || ''];
+            });
+            doc.autoTable({
+              startY: signY, margin:{left:m, right:m},
+              body: vRows,
+              styles: {fontSize:8, cellPadding:1.5, lineColor:[220,220,220], lineWidth:0.1},
+              alternateRowStyles: {fillColor:self.TABLE_ALT},
+              columnStyles: {1:{cellWidth:30}}
+            });
+            signY = doc.lastAutoTable.finalY + 2;
+          });
+
           // Slots for this day IN THIS ROOM only
           var sched = (trib.schedule||[]).find(function(s){return s.dayId===dayId;});
           if (sched && sched.slots && sched.slots.length) {
