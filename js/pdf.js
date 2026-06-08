@@ -323,25 +323,30 @@ Tribunator.PDF = {
         var availH = 297;
       }
 
+      // Logo
+      var logoY = yOffset + 8;
+      if (options.logo) { try { doc.addImage(options.logo, 'PNG', self.PAGE_W/2 - 10, logoY, 20, 20); } catch(e) {} logoY += 22; } else { logoY = yOffset + 8; }
+
       // Room name big
       doc.setFontSize(28); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, self.DARK);
-      doc.text(room.name, self.PAGE_W/2, yOffset + 30, {align:'center'});
+      doc.text(room.name, self.PAGE_W/2, logoY + 14, {align:'center'});
 
       // Campus / floor
       doc.setFontSize(10); doc.setFont(undefined,'normal'); doc.setTextColor.apply(doc, self.GRAY);
-      doc.text(item.campus.name + ' — ' + item.floor.name, self.PAGE_W/2, yOffset + 38, {align:'center'});
+      doc.text(item.campus.name + ' — ' + item.floor.name, self.PAGE_W/2, logoY + 22, {align:'center'});
 
       // Day
       doc.setFontSize(12); doc.setFont(undefined,'bold'); doc.setTextColor.apply(doc, self.DARK);
-      doc.text(Tribunator.Time.formatDate(day.date), self.PAGE_W/2, yOffset + 50, {align:'center'});
+      doc.text(Tribunator.Time.formatDate(day.date), self.PAGE_W/2, logoY + 34, {align:'center'});
       doc.setTextColor(0);
 
+      var contentY = logoY + 40;
       if (occ.length === 0) {
         doc.setFontSize(14); doc.setFont(undefined,'normal'); doc.setTextColor.apply(doc, self.GRAY);
-        doc.text(t('common.free'), self.PAGE_W/2, yOffset + 70, {align:'center'});
+        doc.text(t('common.free'), self.PAGE_W/2, contentY + 10, {align:'center'});
         doc.setTextColor(0);
       } else {
-        var signY = yOffset + 56;
+        var signY = contentY;
         occ.forEach(function(o) {
           var trib = o.tribunal;
           // Tribunal name
