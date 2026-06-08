@@ -414,12 +414,18 @@ Tribunator.Tribunals = {
 
           var lastCell = el('td');
           lastCell.appendChild(el('button', { className: 'btn-icon btn-sm', textContent: '×', onClick: function() { store.removeTimeSlot(self.currentSolutionId, self.currentTribunalId, day.id, slot.id); self.renderMain(); } }));
-          if (conflictMsg) {
-            lastCell.appendChild(el('div', { style: { fontSize: '10px', color: 'var(--danger)', marginTop: '2px' }, textContent: conflictMsg }));
-          }
           tr.appendChild(lastCell);
-
           stBody.appendChild(tr);
+
+          if (conflictMsg) {
+            var colCount = tr.children.length;
+            var conflictTr = el('tr', { style: { background: tr.style.background || '' } });
+            var conflictTd = el('td', { colSpan: String(colCount), style: { paddingTop: '0', paddingBottom: '4px', borderTop: 'none' } });
+            var isNbMsg = conflictMsg.indexOf('ℹ') === 0;
+            conflictTd.appendChild(el('div', { style: { fontSize: '10px', color: isNbMsg ? 'var(--primary)' : 'var(--danger)', paddingLeft: '4px' }, textContent: conflictMsg }));
+            conflictTr.appendChild(conflictTd);
+            stBody.appendChild(conflictTr);
+          }
         });
         slotTable.appendChild(stBody);
         body.appendChild(slotTable);

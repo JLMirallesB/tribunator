@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.4' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.5' })
     ]));
 
     // Phase nav
@@ -279,6 +279,15 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.2.5',
+        date: '2026-06-08',
+        changes: {
+          es: ['Conflictos de franja se muestran debajo del slot en fila propia'],
+          va: ['Conflictes de franja es mostren davall del slot en fila pròpia'],
+          en: ['Slot conflicts shown below the slot in a dedicated row']
+        }
+      },
       {
         version: '1.2.4',
         date: '2026-06-08',
