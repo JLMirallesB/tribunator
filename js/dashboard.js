@@ -386,7 +386,12 @@ Tribunator.Dashboard = {
     if (activeSol) {
       ioRow.appendChild(el('button', { className: 'btn btn-sm', textContent: t('export.exportListings'), onClick: function() {
         var out = { source: 'tribunator', solutionName: activeSol.name, tribunals: activeSol.tribunals.map(function(trib) {
-          return { id: trib.id, name: trib.name, variations: (trib.variations || []).map(function(v) { return { id: v.id, name: v.name }; }) };
+          var tribDays = (trib.schedule || []).map(function(s) { var d = store.getDay(s.dayId); return d ? d.date : null; }).filter(Boolean);
+          var tribMembers = trib.members.map(function(m) { var c = store.getCandidate(m.candidateId); return { role: m.role || '', name: c ? (c.surnames + ', ' + c.name) : '?' }; });
+          return { id: trib.id, name: trib.name, days: tribDays, members: tribMembers, variations: (trib.variations || []).map(function(v) {
+            var vMembers = v.members.map(function(m) { var c = store.getCandidate(m.candidateId); return { role: m.role || '', name: c ? (c.surnames + ', ' + c.name) : '?' }; });
+            return { id: v.id, name: v.name, days: tribDays, members: vMembers.length > 0 ? vMembers : [] };
+          }) };
         })};
         Tribunator.Utils.downloadFile(JSON.stringify(out, null, 2), 'tribunales-export.json');
         Tribunator.Utils.showToast(t('export.exportSuccess'));

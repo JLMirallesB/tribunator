@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.9' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.10' })
     ]));
 
     // Phase nav
@@ -279,6 +279,15 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.2.10',
+        date: '2026-06-11',
+        changes: {
+          es: ['Exportar para Listados: incluye miembros (rol y nombre) y días en tribunales y variaciones'],
+          va: ['Exportar per a Llistats: inclou membres (rol i nom) i dies en tribunals i variacions'],
+          en: ['Export for Listings: includes members (role and name) and days in tribunals and variations']
+        }
+      },
       {
         version: '1.2.9',
         date: '2026-06-08',
