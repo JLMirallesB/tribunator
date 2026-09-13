@@ -106,8 +106,6 @@ Tribunator.Verify = {
     }
 
     // --- Per-tribunal checks ---
-    var memberDayMap = {};
-
     sol.tribunals.forEach(function(trib) {
       var mc = store.countTribunalMembers(sol.id, trib.id);
 
@@ -183,17 +181,6 @@ Tribunator.Verify = {
             });
           }
         });
-
-        // Member time conflicts: check slot-level overlap (including variations)
-        var allMembers = trib.members.slice();
-        (trib.variations || []).forEach(function(v) { v.members.forEach(function(vm) { if (!allMembers.some(function(m) { return m.candidateId === vm.candidateId; })) allMembers.push(vm); }); });
-        allMembers.forEach(function(m) {
-          (sched.slots || []).forEach(function(slot) {
-            var key = m.candidateId + '_' + sched.dayId + '_' + slot.startTime + '_' + slot.endTime;
-            if (!memberDayMap[key]) memberDayMap[key] = { candidateId: m.candidateId, dayId: sched.dayId, start: slot.startTime, end: slot.endTime, tribs: [] };
-            memberDayMap[key].tribs.push(trib);
-          });
-        });
       });
     });
 
@@ -264,21 +251,13 @@ Tribunator.Verify = {
       });
     });
 
-    // --- Rooms without assignment (info) ---
-    var assignedRoomIds = {};
-    sol.tribunals.forEach(function(trib) {
-      (trib.schedule || []).forEach(function(sched) {
-        (sched.slots || []).forEach(function(slot) {
-          if (slot.roomId) assignedRoomIds[slot.roomId] = true;
-        });
-      });
-    });
-
-    // Deduplicate room conflicts
+    // Deduplicate conflicts: each room clash is found from both tribunals, so compare
+    // the two tribunal lines in any order plus the day, not just the message
     var seen = {};
     errors = errors.filter(function(e) {
       if (e.category === 'conflicts') {
-        var k = e.message + '|' + e.detail;
+        var lines = (e.detailLines || []).map(function(l) { return l.text; });
+        var k = e.message + '|' + (e.detail || '') + '|' + lines.slice(0, 2).sort().join('||') + '|' + lines.slice(2).join('|');
         if (seen[k]) return false;
         seen[k] = true;
       }

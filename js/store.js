@@ -2,7 +2,7 @@ window.Tribunator = window.Tribunator || {};
 
 Tribunator.Store = {
   STORAGE_KEY: 'tribunator_data',
-  VERSION: '1.2.12',
+  VERSION: '1.2.13',
 
   defaultData: function() {
     return {
@@ -290,6 +290,7 @@ Tribunator.Store = {
   _redoStack: [],
   _maxUndo: 40,
   _skipSnapshot: false,
+  _lastSnapshot: null,
 
   init: function() {
     var saved = localStorage.getItem(this.STORAGE_KEY);
@@ -311,23 +312,26 @@ Tribunator.Store = {
     } else {
       this.data = this.defaultData();
     }
+    this._lastSnapshot = JSON.stringify(this.data);
   },
 
   save: function() {
+    var current = JSON.stringify(this.data);
     if (!this._skipSnapshot) {
-      this._pushUndo();
+      this._pushUndo(current);
     }
+    this._lastSnapshot = current;
     try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.data));
+      localStorage.setItem(this.STORAGE_KEY, current);
     } catch (e) {
       console.error('Error saving data:', e);
     }
   },
 
-  _pushUndo: function() {
-    var snapshot = JSON.stringify(this.data);
-    if (this._undoStack.length > 0 && this._undoStack[this._undoStack.length - 1] === snapshot) return;
-    this._undoStack.push(snapshot);
+  // Stores the state BEFORE the change being saved, so undo returns to it
+  _pushUndo: function(current) {
+    if (this._lastSnapshot === null || this._lastSnapshot === current) return;
+    this._undoStack.push(this._lastSnapshot);
     if (this._undoStack.length > this._maxUndo) this._undoStack.shift();
     this._redoStack = [];
   },
@@ -903,6 +907,9 @@ Tribunator.Store = {
       (sol.tribunals || []).forEach(function(trib) {
         var isMember = trib.members.some(function(m) { return m.candidateId === candidateId; });
         if (isMember) refs.push({ solution: sol.name, tribunal: trib.name });
+        (trib.variations || []).forEach(function(v) {
+          if (v.members.some(function(m) { return m.candidateId === candidateId; })) refs.push({ solution: sol.name, tribunal: trib.name + ' — ' + v.name });
+        });
       });
     });
     return refs;

@@ -4,7 +4,7 @@ Tribunator.translations = {
   es: {
     app: {
       title: 'Tribunator',
-      version: 'v1.2.12',
+      version: 'v1.2.13',
       phases: { dashboard: 'Inicio', space: 'Espacio', time: 'Tiempo', templates: 'Plantillas', tribunals: 'Tribunales', verify: 'Verificación' },
       changelog: 'Changelog',
       checkVersion: 'Versiones',
@@ -310,9 +310,13 @@ Tribunator.translations = {
       variationOf: 'Variación',
       noTribunals: 'Sin tribunales asignados',
       selectCandidate: 'Selecciona un candidato para ver su agenda',
-      dailyOverview: 'Esquema diario de pruebas'
+      dailyOverview: 'Esquema diario de pruebas',
+      slotsCount: 'franjas',
+      roomsCount: 'aulas'
     },
     templates: {
+      onlyForTag: 'solo',
+      excludeForTag: 'excluye',
       title: 'Plantillas de prueba',
       add: 'Nueva plantilla',
       templateName: 'Nombre de la plantilla',
@@ -376,7 +380,7 @@ Tribunator.translations = {
   va: {
     app: {
       title: 'Tribunator',
-      version: 'v1.2.12',
+      version: 'v1.2.13',
       phases: { dashboard: 'Inici', space: 'Espai', time: 'Temps', templates: 'Plantilles', tribunals: 'Tribunals', verify: 'Verificació' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
@@ -682,9 +686,13 @@ Tribunator.translations = {
       variationOf: 'Variació',
       noTribunals: 'Sense tribunals assignats',
       selectCandidate: 'Selecciona un candidat per a veure la seua agenda',
-      dailyOverview: 'Esquema diari de proves'
+      dailyOverview: 'Esquema diari de proves',
+      slotsCount: 'franges',
+      roomsCount: 'aules'
     },
     templates: {
+      onlyForTag: 'només',
+      excludeForTag: 'exclou',
       title: 'Plantilles de prova',
       add: 'Nova plantilla',
       templateName: 'Nom de la plantilla',
@@ -748,7 +756,7 @@ Tribunator.translations = {
   en: {
     app: {
       title: 'Tribunator',
-      version: 'v1.2.12',
+      version: 'v1.2.13',
       phases: { dashboard: 'Home', space: 'Space', time: 'Time', templates: 'Templates', tribunals: 'Tribunals', verify: 'Verification' },
       changelog: 'Changelog',
       checkVersion: 'Versions',
@@ -1054,9 +1062,13 @@ Tribunator.translations = {
       variationOf: 'Variation',
       noTribunals: 'No tribunals assigned',
       selectCandidate: 'Select a candidate to view their schedule',
-      dailyOverview: 'Daily exam overview'
+      dailyOverview: 'Daily exam overview',
+      slotsCount: 'slots',
+      roomsCount: 'rooms'
     },
     templates: {
+      onlyForTag: 'only',
+      excludeForTag: 'excludes',
       title: 'Exam templates',
       add: 'New template',
       templateName: 'Template name',

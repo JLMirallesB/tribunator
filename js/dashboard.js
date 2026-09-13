@@ -60,7 +60,7 @@ Tribunator.Dashboard = {
         var roomCount = Object.keys(occupation).length;
         daysBody.appendChild(el('div', { style: { display: 'flex', justifyContent: 'space-between', padding: '8px 16px', borderBottom: '1px solid var(--border)', fontSize: '13px', cursor: 'pointer' }, onClick: function() { Tribunator.App.setPhase('time'); } }, [
           el('span', { style: { fontWeight: '500' }, textContent: Tribunator.Time.formatDate(day.date) }),
-          el('span', { style: { color: 'var(--text-muted)' }, textContent: tribCount + ' trib. · ' + slotCount + ' franjas · ' + roomCount + ' aulas' })
+          el('span', { style: { color: 'var(--text-muted)' }, textContent: tribCount + ' trib. · ' + slotCount + ' ' + t('dashboard.slotsCount') + ' · ' + roomCount + ' ' + t('dashboard.roomsCount') })
         ]));
       });
       daysPanel.appendChild(daysBody);
@@ -142,7 +142,7 @@ Tribunator.Dashboard = {
           var name = found ? found.room.name : r.id;
           roomBody.appendChild(el('div', { style: { display: 'flex', justifyContent: 'space-between', padding: '6px 16px', borderBottom: '1px solid var(--border)', fontSize: '12px' } }, [
             el('span', { textContent: name }),
-            el('span', { style: { color: 'var(--text-muted)' }, textContent: r.count + ' franjas' })
+            el('span', { style: { color: 'var(--text-muted)' }, textContent: r.count + ' ' + t('dashboard.slotsCount') })
           ]));
         });
       }

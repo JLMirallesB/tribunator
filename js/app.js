@@ -289,6 +289,15 @@ Tribunator.App = {
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
       {
+        version: '1.2.13',
+        date: '2026-09-13',
+        changes: {
+          es: ['Verificación: ya no se ocultan conflictos distintos de la misma aula o de la misma persona', 'Deshacer: el primer Ctrl+Z ya deshace el último cambio', 'Eliminar candidato: el aviso incluye también las variaciones', 'Textos del Inicio y de Plantillas traducidos al valenciano y al inglés'],
+          va: ['Verificació: ja no s\'amaguen conflictes diferents de la mateixa aula o de la mateixa persona', 'Desfer: el primer Ctrl+Z ja desfà l\'últim canvi', 'Eliminar candidat: l\'avís inclou també les variacions', 'Textos de l\'Inici i de Plantilles traduïts al valencià i a l\'anglés'],
+          en: ['Verification: different conflicts in the same room or for the same person are no longer hidden', 'Undo: the first Ctrl+Z now undoes the last change', 'Delete candidate: the warning now includes variations', 'Home and Templates texts translated into Valencian and English']
+        }
+      },
+      {
         version: '1.2.12',
         date: '2026-09-13',
         changes: {

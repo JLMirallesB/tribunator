@@ -147,8 +147,8 @@ Tribunator.Templates = {
       nodes.forEach(function(node) {
         var hasChildren = node.children && node.children.length > 0;
         var specialtyNote = '';
-        if (node.onlyFor) specialtyNote = ' [solo: ' + node.onlyFor.join(', ') + ']';
-        if (node.excludeFor) specialtyNote = ' [excluye: ' + node.excludeFor.join(', ') + ']';
+        if (node.onlyFor) specialtyNote = ' [' + t('templates.onlyForTag') + ': ' + node.onlyFor.join(', ') + ']';
+        if (node.excludeFor) specialtyNote = ' [' + t('templates.excludeForTag') + ': ' + node.excludeFor.join(', ') + ']';
 
         var nodeEl = el('div', { style: { padding: '6px 8px', borderBottom: '1px solid var(--border)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' } }, [
           el('span', { style: { fontWeight: hasChildren ? '600' : '400' }, textContent: (hasChildren ? '▸ ' : '  ') + node.label }),
