@@ -280,6 +280,15 @@ Tribunator.App = {
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
       {
+        version: '1.2.11',
+        date: '2026-09-13',
+        changes: {
+          es: ['Ejemplo ampliado: textos para publicar, actividades generales, sustitutos con titular, campos personalizados de aula y una segunda solución'],
+          va: ['Exemple ampliat: textos per a publicar, activitats generals, substituts amb titular, camps personalitzats d\'aula i una segona solució'],
+          en: ['Extended demo: publishing texts, general activities, substitutes with titular, custom room fields and a second solution']
+        }
+      },
+      {
         version: '1.2.10',
         date: '2026-06-11',
         changes: {

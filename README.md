@@ -2,7 +2,7 @@
   <img src="logo.svg" alt="Tribunator" width="128" height="128">
 </p>
 
-<h1 align="center">Tribunator <sub>v1.2.0</sub></h1>
+<h1 align="center">Tribunator <sub>v1.2.11</sub></h1>
 
 <p align="center">
   Herramienta para la gestion de tribunales, aulas y horarios en centros educativos.
@@ -26,8 +26,8 @@ Tribunator es una aplicacion web que funciona directamente en el navegador, sin 
 - Planificar dias y franjas horarias con deteccion de conflictos
 - Asignar aulas a tribunales con selector visual de planos
 - Verificar la solucion completa con auditoria automatica
-- Generar 4 tipos de PDF: tribunales, planning diario, planos y carteleria
-- Comparar diferentes soluciones de asignacion
+- Generar 5 tipos de PDF: tribunales, planning diario, planos, carteleria y directorio
+- Preparar varias soluciones de asignacion alternativas
 
 ## Como usarla
 
@@ -57,8 +57,10 @@ Pantalla principal al abrir la app. Muestra de un vistazo:
 - Tarjetas resumen: aulas, dias, tribunales, errores (clicables para navegar)
 - Solucion activa con dias de pruebas y estadisticas
 - Aulas mas usadas y miembros con mas carga
+- Esquema diario de pruebas y candidatos sin tribunal
+- Buscador de candidatos: en que tribunales y variaciones esta cada persona, con rol, dias y actividades
 - Errores pendientes con acceso directo a Verificacion
-- Acciones rapidas: exportar todo, cargar demo
+- Panel de exportar/importar (completo, espacios, tiempo, para Listados)
 - Pantalla de bienvenida si no hay datos
 
 ### 1. Espacio
@@ -109,10 +111,12 @@ Gestiona soluciones, candidatos, roles y tribunales.
 **Tribunales**:
 - Generador de nombre por especialidad + curso/nivel
 - Plantilla de prueba asociada automaticamente
-- Ordenacion manual y alfabetica
-- Tab Horario: franjas con aula + actividad obligatorias, selector visual de aulas y actividades
+- Ordenacion manual y alfabetica, duplicar tribunal
+- Textos para publicar: uno por solucion y otro por tribunal, que salen en el PDF
+- Tab Horario: franjas con aula + actividad, selector visual de aulas y actividades, buscar aulas libres, mover todas las franjas a otro dia. Conflictos en una fila bajo cada franja
+- Actividades generales no bloqueantes: Constitucion del Tribunal y Llamamiento de Aspirantes (su coincidencia se marca como informacion, no como error)
 - Tab Miembros: filtro por especialidad, deteccion de conflictos
-- Tab Variaciones: composiciones alternativas para conflicto de alumnos
+- Tab Variaciones: composiciones alternativas para conflicto de alumnos, incluidas en la deteccion de conflictos
 
 ### 5. Verificacion
 
@@ -125,18 +129,20 @@ Auditoria automatica de la solucion activa:
 
 ### Exportacion e importacion
 
-- Exportar todo / espacios / tiempo / solucion / plantillas
+- Exportar todo / espacios / tiempo / plantillas
+- Exportar para Listados: JSON reducido con tribunales, miembros y dias
 - Importar con opcion de reemplazar o combinar
 - Persistencia automatica en LocalStorage
 
-### PDF (4 tipos)
+### PDF (5 tipos)
 
 Dialogo unificado con pestanas:
 
-- **Tribunales**: miembros con roles en tabla, variaciones, horarios ordenados. Modo "solo miembros" disponible. Sustitutos con asterisco y nota al pie sobre titulares
+- **Tribunales**: miembros con roles en tabla, variaciones, horarios ordenados, un tribunal por pagina. Modo "solo miembros" disponible. Sustitutos con asterisco y nota al pie sobre titulares
 - **Planning diario**: agenda por dia con todos los tribunales, ordenada cronologicamente
-- **Planos**: rejilla por planta con aulas coloreadas (libre/ocupada), bordes y leyenda
-- **Carteleria**: un cartel por aula para colgar en la puerta, con tribunal, miembros y horario. Opcion de media pagina
+- **Planos**: rejilla por planta con aulas coloreadas (libre/ocupada), bordes y leyenda. Varios dias a la vez
+- **Carteleria**: un cartel por aula y dia para colgar en la puerta, con tribunal, miembros (tambien los de las variaciones) y horario. Opcion de media pagina
+- **Directorio**: todas las personas por orden alfabetico con sus tribunales y variaciones, rol y dias. Nota al pie con los titulares
 
 Opciones comunes: nombre de archivo, cabecera con logo, color principal configurable, seleccion de roles a imprimir.
 
@@ -145,7 +151,7 @@ Opciones comunes: nombre de archivo, cabecera con logo, color principal configur
 - Dashboard con estadisticas al abrir la app
 - Undo/Redo con Ctrl+Z / Ctrl+Shift+Z y botones en el header
 - Sidebars con cabeceras oscuras y secciones colapsables
-- Demo cargable con datos de ejemplo (10 tribunales con errores intencionados)
+- Demo cargable con datos de ejemplo: 10 tribunales con errores intencionados, variaciones, sustitutos con titular, actividades generales, campos personalizados de aula y dos soluciones
 - Idiomas: Espanol, Valenciano, Ingles
 - Boton "Versiones" para comprobar actualizaciones
 

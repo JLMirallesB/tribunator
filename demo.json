@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "1.2.11",
   "settings": {
     "language": "es",
     "defaultMembersPerTribunal": 3
@@ -46,7 +46,11 @@
               ],
               "color": "#5B9BD5",
               "notes": "Sala grande. 2 pianos de cola.",
-              "customFields": {}
+              "customFields": {
+                "cf_piano": "Dos de cola",
+                "cf_aforo": 20,
+                "cf_acustica": true
+              }
             },
             {
               "id": "ra2",
@@ -71,7 +75,11 @@
               ],
               "color": "#E8A838",
               "notes": "1 piano vertical.",
-              "customFields": {}
+              "customFields": {
+                "cf_piano": "Vertical",
+                "cf_aforo": 12,
+                "cf_acustica": false
+              }
             },
             {
               "id": "ra3",
@@ -96,7 +104,11 @@
               ],
               "color": "#E8A838",
               "notes": "1 piano vertical. Acond. Acust.",
-              "customFields": {}
+              "customFields": {
+                "cf_piano": "Vertical",
+                "cf_aforo": 10,
+                "cf_acustica": false
+              }
             },
             {
               "id": "ra4",
@@ -121,7 +133,11 @@
               ],
               "color": "#7DC47D",
               "notes": "Sin piano.",
-              "customFields": {}
+              "customFields": {
+                "cf_piano": "Vertical",
+                "cf_aforo": 25,
+                "cf_acustica": false
+              }
             },
             {
               "id": "ra5",
@@ -154,7 +170,11 @@
               ],
               "color": "#5B9BD5",
               "notes": "Sala grande. 1 piano de cola.",
-              "customFields": {}
+              "customFields": {
+                "cf_piano": "De cola",
+                "cf_aforo": 30,
+                "cf_acustica": true
+              }
             },
             {
               "id": "demo_hall",
@@ -195,7 +215,11 @@
               ],
               "color": "#AAAAAA",
               "notes": "Espacio común.",
-              "customFields": {}
+              "customFields": {
+                "cf_piano": "Ninguno",
+                "cf_aforo": 80,
+                "cf_acustica": false
+              }
             },
             {
               "id": "ra6",
@@ -352,7 +376,11 @@
               ],
               "color": "#5B9BD5",
               "notes": "Sala grande. 1 piano de cola + 1 vertical.",
-              "customFields": {}
+              "customFields": {
+                "cf_piano": "De cola",
+                "cf_aforo": 40,
+                "cf_acustica": true
+              }
             }
           ]
         },
@@ -443,7 +471,11 @@
               ],
               "color": "#9B7DC4",
               "notes": "Sala mediana. Arpa.",
-              "customFields": {}
+              "customFields": {
+                "cf_piano": "De cola",
+                "cf_aforo": 15,
+                "cf_acustica": true
+              }
             },
             {
               "id": "rb4",
@@ -468,7 +500,11 @@
               ],
               "color": "#7DC47D",
               "notes": "Sin piano.",
-              "customFields": {}
+              "customFields": {
+                "cf_piano": "Vertical",
+                "cf_aforo": 25,
+                "cf_acustica": false
+              }
             },
             {
               "id": "rb_dep",
@@ -641,7 +677,31 @@
       ]
     }
   ],
-  "customFieldDefs": [],
+  "customFieldDefs": [
+    {
+      "id": "cf_piano",
+      "name": "Piano",
+      "type": "select",
+      "options": [
+        "Ninguno",
+        "Vertical",
+        "De cola",
+        "Dos de cola"
+      ]
+    },
+    {
+      "id": "cf_aforo",
+      "name": "Aforo",
+      "type": "number",
+      "options": []
+    },
+    {
+      "id": "cf_acustica",
+      "name": "Acondicionamiento acústico",
+      "type": "boolean",
+      "options": []
+    }
+  ],
   "groups": [
     {
       "id": "grp1",
@@ -761,9 +821,9 @@
       "name": "Andrés",
       "surnames": "Romero Peña",
       "specialty": "Percusión",
-      "titularName": "",
-      "titularSurnames": "",
-      "useTitular": false
+      "titularName": "Nuria",
+      "titularSurnames": "Soler Ferrer",
+      "useTitular": true
     },
     {
       "id": "c11",
@@ -815,8 +875,8 @@
       "name": "Sergio",
       "surnames": "Campos Luna",
       "specialty": "Saxofón",
-      "titularName": "",
-      "titularSurnames": "",
+      "titularName": "Jorge",
+      "titularSurnames": "Beltrán Ortiz",
       "useTitular": false
     }
   ],
@@ -925,6 +985,13 @@
               "activity": "",
               "slots": [
                 {
+                  "id": "s_gen1",
+                  "startTime": "09:00",
+                  "endTime": "09:30",
+                  "roomId": "demo_hall",
+                  "activity": "Llamamiento de Aspirantes"
+                },
+                {
                   "id": "s1",
                   "startTime": "09:00",
                   "endTime": "11:00",
@@ -955,7 +1022,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "publishNotes": "La lectura a primera vista del martes se hace en el mismo orden que la interpretación."
         },
         {
           "id": "t2",
@@ -986,6 +1054,13 @@
               "activity": "",
               "slots": [
                 {
+                  "id": "s_gen2",
+                  "startTime": "09:00",
+                  "endTime": "09:30",
+                  "roomId": "demo_hall",
+                  "activity": "Llamamiento de Aspirantes"
+                },
+                {
                   "id": "s3",
                   "startTime": "09:00",
                   "endTime": "12:00",
@@ -994,7 +1069,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "publishNotes": ""
         },
         {
           "id": "t3",
@@ -1111,7 +1187,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "publishNotes": ""
         },
         {
           "id": "t4",
@@ -1134,7 +1211,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "publishNotes": ""
         },
         {
           "id": "t5",
@@ -1180,7 +1258,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "publishNotes": "Los aspirantes pueden traer su propio reposapiés."
         },
         {
           "id": "t6",
@@ -1253,7 +1332,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "publishNotes": ""
         },
         {
           "id": "t7",
@@ -1281,7 +1361,8 @@
             }
           ],
           "variations": [],
-          "schedule": []
+          "schedule": [],
+          "publishNotes": ""
         },
         {
           "id": "t8",
@@ -1384,7 +1465,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "publishNotes": ""
         },
         {
           "id": "t9",
@@ -1420,6 +1502,13 @@
               "activity": "",
               "slots": [
                 {
+                  "id": "s_gen3",
+                  "startTime": "09:00",
+                  "endTime": "09:30",
+                  "roomId": "rb7",
+                  "activity": "Constitución del Tribunal"
+                },
+                {
                   "id": "s14",
                   "startTime": "09:00",
                   "endTime": "11:30",
@@ -1435,7 +1524,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "publishNotes": ""
         },
         {
           "id": "t10",
@@ -1491,9 +1581,689 @@
                 }
               ]
             }
-          ]
+          ],
+          "publishNotes": ""
         }
-      ]
+      ],
+      "publishText": "Los aspirantes deben presentarse en el Hall 15 minutos antes de la hora de su prueba, con DNI y con las partituras de las obras que van a interpretar."
+    },
+    {
+      "id": "sol2",
+      "name": "Alternativa: Canto en planta baja",
+      "active": false,
+      "tribunals": [
+        {
+          "id": "t1_alt",
+          "name": "Piano — 1 EPM",
+          "members": [
+            {
+              "id": "m1_alt",
+              "candidateId": "c1",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m2_alt",
+              "candidateId": "c2",
+              "role": "Vocal"
+            },
+            {
+              "id": "m3_alt",
+              "candidateId": "c11",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m4_alt",
+              "candidateId": "c8",
+              "role": "Suplente"
+            },
+            {
+              "id": "m35_alt",
+              "candidateId": "c12",
+              "role": "Asesor/a"
+            }
+          ],
+          "variations": [
+            {
+              "id": "v1_alt",
+              "name": "Alumnos de Ana García",
+              "members": [
+                {
+                  "id": "vm1_alt",
+                  "candidateId": "c15",
+                  "role": "Presidente/a"
+                },
+                {
+                  "id": "vm2_alt",
+                  "candidateId": "c2",
+                  "role": "Vocal"
+                },
+                {
+                  "id": "vm3_alt",
+                  "candidateId": "c11",
+                  "role": "Secretario/a"
+                },
+                {
+                  "id": "vm4_alt",
+                  "candidateId": "c8",
+                  "role": "Suplente"
+                },
+                {
+                  "id": "vm13_alt",
+                  "candidateId": "c12",
+                  "role": "Asesor/a"
+                }
+              ]
+            }
+          ],
+          "schedule": [
+            {
+              "dayId": "day1",
+              "primaryRoomId": "ra1",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s_gen1_alt",
+                  "startTime": "09:00",
+                  "endTime": "09:30",
+                  "roomId": "demo_hall",
+                  "activity": "Llamamiento de Aspirantes"
+                },
+                {
+                  "id": "s1_alt",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra1",
+                  "activity": "1 EPM — Parte A: Interpretación"
+                },
+                {
+                  "id": "s2_alt",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "ra2",
+                  "activity": "1 EPM — Parte B: Lenguaje Musical"
+                }
+              ]
+            },
+            {
+              "dayId": "day2",
+              "primaryRoomId": "ra1",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s20_alt",
+                  "startTime": "09:00",
+                  "endTime": "10:30",
+                  "roomId": "ra1",
+                  "activity": "1 EPM — Parte A: Lectura a primera vista"
+                }
+              ]
+            }
+          ],
+          "publishNotes": "La lectura a primera vista del martes se hace en el mismo orden que la interpretación."
+        },
+        {
+          "id": "t2_alt",
+          "name": "Violín — 3 EPM",
+          "members": [
+            {
+              "id": "m5_alt",
+              "candidateId": "c3",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m6_alt",
+              "candidateId": "c4",
+              "role": "Vocal"
+            },
+            {
+              "id": "m7_alt",
+              "candidateId": "c15",
+              "role": "Secretario/a"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day1",
+              "primaryRoomId": "ra5",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s_gen2_alt",
+                  "startTime": "09:00",
+                  "endTime": "09:30",
+                  "roomId": "demo_hall",
+                  "activity": "Llamamiento de Aspirantes"
+                },
+                {
+                  "id": "s3_alt",
+                  "startTime": "09:00",
+                  "endTime": "12:00",
+                  "roomId": "ra5",
+                  "activity": "3 EPM — Parte A"
+                }
+              ]
+            }
+          ],
+          "publishNotes": ""
+        },
+        {
+          "id": "t3_alt",
+          "name": "Flauta — 2 EPM",
+          "members": [
+            {
+              "id": "m8_alt",
+              "candidateId": "c5",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m9_alt",
+              "candidateId": "c6",
+              "role": "Vocal"
+            },
+            {
+              "id": "m10_alt",
+              "candidateId": "c7",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m11_alt",
+              "candidateId": "c13",
+              "role": "Suplente"
+            },
+            {
+              "id": "m36_alt",
+              "candidateId": "c10",
+              "role": "Ayudante"
+            }
+          ],
+          "variations": [
+            {
+              "id": "v2_alt",
+              "name": "Alumnos de Pablo Ruiz",
+              "members": [
+                {
+                  "id": "vm5_alt",
+                  "candidateId": "c5",
+                  "role": "Presidente/a"
+                },
+                {
+                  "id": "vm6_alt",
+                  "candidateId": "c16",
+                  "role": "Vocal"
+                },
+                {
+                  "id": "vm7_alt",
+                  "candidateId": "c7",
+                  "role": "Secretario/a"
+                },
+                {
+                  "id": "vm8_alt",
+                  "candidateId": "c13",
+                  "role": "Suplente"
+                },
+                {
+                  "id": "vm14_alt",
+                  "candidateId": "c10",
+                  "role": "Ayudante"
+                }
+              ]
+            }
+          ],
+          "schedule": [
+            {
+              "dayId": "day2",
+              "primaryRoomId": "ra3",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s4_alt",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra3",
+                  "activity": "2 EPM — Parte A: Interpretación"
+                },
+                {
+                  "id": "s5_alt",
+                  "startTime": "11:00",
+                  "endTime": "11:30",
+                  "roomId": "ra3",
+                  "activity": "2 EPM — Parte A: Lectura a primera vista"
+                },
+                {
+                  "id": "s6_alt",
+                  "startTime": "12:00",
+                  "endTime": "13:30",
+                  "roomId": "ra4",
+                  "activity": "2 EPM — Parte B: Lenguaje Musical"
+                }
+              ]
+            },
+            {
+              "dayId": "day3",
+              "primaryRoomId": "ra3",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s21_alt",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra3",
+                  "activity": "2 EPM — Parte A: Interpretación"
+                },
+                {
+                  "id": "s22_alt",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "ra4",
+                  "activity": "2 EPM — Parte B: Lenguaje Musical"
+                }
+              ]
+            }
+          ],
+          "publishNotes": ""
+        },
+        {
+          "id": "t4_alt",
+          "name": "Clarinete — 1 EEM",
+          "members": [],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day2",
+              "primaryRoomId": "rb1",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s7_alt",
+                  "startTime": "09:00",
+                  "endTime": "12:00",
+                  "roomId": "rb1",
+                  "activity": "1 EEM — Prueba de aptitud"
+                }
+              ]
+            }
+          ],
+          "publishNotes": ""
+        },
+        {
+          "id": "t5_alt",
+          "name": "Guitarra — 4 EPM",
+          "members": [
+            {
+              "id": "m12_alt",
+              "candidateId": "c8",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m13_alt",
+              "candidateId": "c12",
+              "role": "Vocal"
+            },
+            {
+              "id": "m14_alt",
+              "candidateId": "c16",
+              "role": "Secretario/a"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day3",
+              "primaryRoomId": "ra10",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s8_alt",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra10",
+                  "activity": "4 EPM — Parte A"
+                },
+                {
+                  "id": "s9_alt",
+                  "startTime": "11:30",
+                  "endTime": "13:30",
+                  "roomId": "ra9",
+                  "activity": "4 EPM — Parte B"
+                }
+              ]
+            }
+          ],
+          "publishNotes": "Los aspirantes pueden traer su propio reposapiés."
+        },
+        {
+          "id": "t6_alt",
+          "name": "Canto — 2 EPM",
+          "members": [
+            {
+              "id": "m15_alt",
+              "candidateId": "c9",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m16_alt",
+              "candidateId": "c1",
+              "role": "Vocal"
+            },
+            {
+              "id": "m17_alt",
+              "candidateId": "c11",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m18_alt",
+              "candidateId": "c15",
+              "role": "Suplente"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day2",
+              "primaryRoomId": "ra5",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s10_alt",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra5",
+                  "activity": "2 EPM — Parte A: Interpretación"
+                },
+                {
+                  "id": "s11_alt",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "ra4",
+                  "activity": "2 EPM — Parte B: Lenguaje Musical"
+                }
+              ]
+            },
+            {
+              "dayId": "day3",
+              "primaryRoomId": "rb3",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s23_alt",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra6",
+                  "activity": "2 EPM — Parte A: Interpretación"
+                },
+                {
+                  "id": "s24_alt",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "ra2",
+                  "activity": "2 EPM — Parte B: Lenguaje Musical"
+                }
+              ]
+            }
+          ],
+          "publishNotes": ""
+        },
+        {
+          "id": "t7_alt",
+          "name": "Percusión — 1 EEM",
+          "members": [
+            {
+              "id": "m19_alt",
+              "candidateId": "c10",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m20_alt",
+              "candidateId": "c6",
+              "role": "Vocal"
+            },
+            {
+              "id": "m21_alt",
+              "candidateId": "c7",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m22_alt",
+              "candidateId": "c16",
+              "role": "Suplente"
+            }
+          ],
+          "variations": [],
+          "schedule": [],
+          "publishNotes": ""
+        },
+        {
+          "id": "t8_alt",
+          "name": "Trompeta — 1 EPM",
+          "members": [
+            {
+              "id": "m23_alt",
+              "candidateId": "c14",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m24_alt",
+              "candidateId": "c10",
+              "role": "Vocal"
+            },
+            {
+              "id": "m25_alt",
+              "candidateId": "c13",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m26_alt",
+              "candidateId": "c4",
+              "role": "Suplente"
+            },
+            {
+              "id": "m37_alt",
+              "candidateId": "c9",
+              "role": "Asesor/a"
+            }
+          ],
+          "variations": [
+            {
+              "id": "v3_alt",
+              "name": "Alumnos de Andrés Romero",
+              "members": [
+                {
+                  "id": "vm9_alt",
+                  "candidateId": "c14",
+                  "role": "Presidente/a"
+                },
+                {
+                  "id": "vm10_alt",
+                  "candidateId": "c3",
+                  "role": "Vocal"
+                },
+                {
+                  "id": "vm11_alt",
+                  "candidateId": "c13",
+                  "role": "Secretario/a"
+                },
+                {
+                  "id": "vm12_alt",
+                  "candidateId": "c4",
+                  "role": "Suplente"
+                },
+                {
+                  "id": "vm15_alt",
+                  "candidateId": "c9",
+                  "role": "Asesor/a"
+                }
+              ]
+            }
+          ],
+          "schedule": [
+            {
+              "dayId": "day3",
+              "primaryRoomId": "rb2",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s12_alt",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "rb2",
+                  "activity": "1 EPM — Parte A: Interpretación"
+                },
+                {
+                  "id": "s13_alt",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "rb4",
+                  "activity": "1 EPM — Parte B: Lenguaje Musical"
+                }
+              ]
+            },
+            {
+              "dayId": "day1",
+              "primaryRoomId": "rb2",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s25_alt",
+                  "startTime": "12:00",
+                  "endTime": "13:30",
+                  "roomId": "rb2",
+                  "activity": "1 EPM — Parte A: Lectura a primera vista"
+                }
+              ]
+            }
+          ],
+          "publishNotes": ""
+        },
+        {
+          "id": "t9_alt",
+          "name": "Violonchelo — 5 EPM",
+          "members": [
+            {
+              "id": "m27_alt",
+              "candidateId": "c12",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m28_alt",
+              "candidateId": "c3",
+              "role": ""
+            },
+            {
+              "id": "m29_alt",
+              "candidateId": "c15",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m30_alt",
+              "candidateId": "c5",
+              "role": "Suplente"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day1",
+              "primaryRoomId": "rb3",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s_gen3_alt",
+                  "startTime": "09:00",
+                  "endTime": "09:30",
+                  "roomId": "rb7",
+                  "activity": "Constitución del Tribunal"
+                },
+                {
+                  "id": "s14_alt",
+                  "startTime": "09:00",
+                  "endTime": "11:30",
+                  "roomId": "rb3",
+                  "activity": "5 EPM — Parte A"
+                },
+                {
+                  "id": "s15_alt",
+                  "startTime": "12:00",
+                  "endTime": "13:30",
+                  "roomId": "rb1",
+                  "activity": "5 EPM — Parte B"
+                }
+              ]
+            }
+          ],
+          "publishNotes": ""
+        },
+        {
+          "id": "t10_alt",
+          "name": "Oboe — 3 EEM",
+          "members": [
+            {
+              "id": "m31_alt",
+              "candidateId": "c13",
+              "role": "Presidente/a"
+            },
+            {
+              "id": "m32_alt",
+              "candidateId": "c16",
+              "role": "Vocal"
+            },
+            {
+              "id": "m33_alt",
+              "candidateId": "c2",
+              "role": "Secretario/a"
+            },
+            {
+              "id": "m34_alt",
+              "candidateId": "c9",
+              "role": "Suplente"
+            },
+            {
+              "id": "m38_alt",
+              "candidateId": "c12",
+              "role": "Ayudante"
+            }
+          ],
+          "variations": [],
+          "schedule": [
+            {
+              "dayId": "day3",
+              "primaryRoomId": "ra7",
+              "supportRooms": [],
+              "activity": "",
+              "slots": [
+                {
+                  "id": "s16_alt",
+                  "startTime": "09:00",
+                  "endTime": "11:00",
+                  "roomId": "ra7",
+                  "activity": "2-4 EEM — Parte A"
+                },
+                {
+                  "id": "s17_alt",
+                  "startTime": "11:30",
+                  "endTime": "13:00",
+                  "roomId": "ra8",
+                  "activity": ""
+                }
+              ]
+            }
+          ],
+          "publishNotes": ""
+        }
+      ],
+      "publishText": "Los aspirantes deben presentarse en el Hall 15 minutos antes de la hora de su prueba, con DNI y con las partituras de las obras que van a interpretar."
     }
   ]
 }
