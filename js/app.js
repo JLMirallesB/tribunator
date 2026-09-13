@@ -68,7 +68,7 @@ Tribunator.App = {
     left.appendChild(Tribunator.Utils.el('img', { src: 'logo.svg', alt: 'Tribunator', style: { width: '28px', height: '28px', imageRendering: 'pixelated' } }));
     left.appendChild(Tribunator.Utils.el('div', { className: 'app-title' }, [
       'Tribunator',
-      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v1.2.10' })
+      Tribunator.Utils.el('span', { className: 'app-version', textContent: ' v' + Tribunator.Store.VERSION })
     ]));
 
     // Phase nav
@@ -239,24 +239,33 @@ Tribunator.App = {
       buttons: [
         { text: t('common.cancel'), className: 'btn-secondary' },
         { text: t('app.loadDemo'), className: 'btn-danger', close: false, action: function() {
+          var applyDemo = function(text) {
+            var result = Tribunator.Store.importData(text, 'replace');
+            if (result.success) {
+              Tribunator.Utils.showToast(t('export.importSuccess'));
+              Tribunator.Space.currentCampusId = null;
+              Tribunator.Space.currentFloorId = null;
+              Tribunator.Tribunals.currentSolutionId = null;
+              Tribunator.Tribunals.currentTribunalId = null;
+              var active = Tribunator.Store.getActiveSolution();
+              if (active) Tribunator.Tribunals.currentSolutionId = active.id;
+              self.render();
+              self.renderCurrentPhase();
+            } else {
+              Tribunator.Utils.showToast(t('export.formatError'), 'error');
+            }
+          };
+          // Single-file build (dist/tribunator.html) embeds the demo: no XHR needed
+          if (window.TRIBUNATOR_DEMO) {
+            applyDemo(JSON.stringify(window.TRIBUNATOR_DEMO));
+            document.querySelector('.modal-overlay').remove();
+            return;
+          }
           var xhr = new XMLHttpRequest();
           xhr.open('GET', 'demo.json', true);
           xhr.onload = function() {
             if (xhr.status === 200 || xhr.status === 0) {
-              var result = Tribunator.Store.importData(xhr.responseText, 'replace');
-              if (result.success) {
-                Tribunator.Utils.showToast(t('export.importSuccess'));
-                Tribunator.Space.currentCampusId = null;
-                Tribunator.Space.currentFloorId = null;
-                Tribunator.Tribunals.currentSolutionId = null;
-                Tribunator.Tribunals.currentTribunalId = null;
-                var active = Tribunator.Store.getActiveSolution();
-                if (active) Tribunator.Tribunals.currentSolutionId = active.id;
-                self.render();
-                self.renderCurrentPhase();
-              } else {
-                Tribunator.Utils.showToast(t('export.formatError'), 'error');
-              }
+              applyDemo(xhr.responseText);
             } else {
               Tribunator.Utils.showToast(t('export.fileError'), 'error');
             }
@@ -279,6 +288,15 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.2.12',
+        date: '2026-09-13',
+        changes: {
+          es: ['tribunator.html: la aplicación en un único archivo, con librerías, demo y logo incluidos; funciona sin conexión', 'El ejemplo se carga también al abrir el archivo con doble clic'],
+          va: ['tribunator.html: l\'aplicació en un únic fitxer, amb llibreries, demo i logo inclosos; funciona sense connexió', 'L\'exemple es carrega també en obrir el fitxer amb doble clic'],
+          en: ['tribunator.html: the whole app in a single file, with libraries, demo and logo included; works offline', 'The demo also loads when opening the file by double-click']
+        }
+      },
       {
         version: '1.2.11',
         date: '2026-09-13',

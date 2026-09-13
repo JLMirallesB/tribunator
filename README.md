@@ -2,7 +2,7 @@
   <img src="logo.svg" alt="Tribunator" width="128" height="128">
 </p>
 
-<h1 align="center">Tribunator <sub>v1.2.11</sub></h1>
+<h1 align="center">Tribunator <sub>v1.2.12</sub></h1>
 
 <p align="center">
   Herramienta para la gestion de tribunales, aulas y horarios en centros educativos.
@@ -33,10 +33,11 @@ Tribunator es una aplicacion web que funciona directamente en el navegador, sin 
 
 ### Opcion 1: Descarga local (recomendada)
 
-1. Ve a [Releases](https://github.com/JLMirallesB/tribunator/releases/latest) y descarga el ZIP de la ultima version
-2. Descomprime en cualquier carpeta
-3. Abre `index.html` en tu navegador
-4. Listo. Tus datos se guardan en el navegador (LocalStorage)
+1. Ve a [Releases](https://github.com/JLMirallesB/tribunator/releases/latest) y descarga `tribunator.html` de la ultima version
+2. Abre el archivo con doble clic en tu navegador
+3. Listo. Es un unico archivo con todo incluido y funciona sin conexion. Tus datos se guardan en el navegador (LocalStorage)
+
+Alternativa: si prefieres el codigo fuente, descarga el ZIP de la misma release, descomprime en cualquier carpeta y abre `index.html`.
 
 > **Recomendado**: usar la version descargada en local garantiza que tus datos no se pierdan por una actualizacion. Exporta tus datos regularmente como JSON por seguridad.
 
@@ -46,7 +47,17 @@ Puedes usar la version online en: `https://JLMirallesB.github.io/tribunator/`
 
 > **Aviso**: esta version se actualiza automaticamente. Tras una actualizacion, los datos guardados en LocalStorage podrian no ser compatibles. Exporta tus datos antes de actualizar.
 
-> **Nota**: La carga de archivos Excel y la generacion de PDF requieren conexion a internet para las librerias SheetJS y jsPDF via CDN. El resto funciona offline.
+> **Nota**: En `index.html` y GitHub Pages, la carga de archivos Excel y la generacion de PDF requieren conexion a internet para las librerias SheetJS y jsPDF via CDN. El resto funciona offline. `tribunator.html` ya lleva estas librerias incluidas.
+
+### Generar el HTML unico (desarrollo)
+
+Para crear `dist/tribunator.html` (CSS, scripts, librerias, demo y logo incrustados en un solo archivo):
+
+```
+node build/build-single.mjs
+```
+
+No necesita dependencias npm. Las librerias se guardan en `build/vendor/` y solo se descargan si faltan.
 
 ## Fases de uso
 

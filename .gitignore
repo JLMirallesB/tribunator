@@ -8,3 +8,6 @@ data/
 !.claude/agents/
 !.claude/skills/
 CLAUDE.local.md
+
+# Build de un solo fichero (node build/build-single.mjs)
+dist/
