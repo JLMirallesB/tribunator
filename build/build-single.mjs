@@ -2,6 +2,7 @@
 // demo y logo incrustados) que funciona con doble clic y sin conexion.
 // Uso: node build/build-single.mjs   (sin dependencias npm)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -13,8 +14,8 @@ const OUT = join(OUT_DIR, 'tribunator.html');
 // CDN URL -> fichero local en build/vendor (mismas versiones que index.html)
 const LIBS = {
   'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js': 'xlsx.full.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js': 'jspdf.umd.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js': 'jspdf.plugin.autotable.min.js'
+  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.2.1/jspdf.umd.min.js': 'jspdf.umd.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/5.0.9/jspdf.plugin.autotable.min.js': 'jspdf.plugin.autotable.min.js'
 };
 
 const read = p => readFileSync(join(ROOT, p), 'utf8');
@@ -53,7 +54,12 @@ for (const part of parts) {
   } else if ((m = part.match(/^<script[^>]*src="([^"?]+)(\?[^"]*)?"[^>]*><\/script>$/))) {
     const src = m[1];
     if (LIBS[src]) {
-      out.push(scriptTag(await vendor(src)));
+      const code = await vendor(src);
+      // La copia local tiene que ser la misma que index.html exige con integrity
+      const sri = (part.match(/integrity="(sha384-[^"]+)"/) || [])[1];
+      const real = 'sha384-' + createHash('sha384').update(code).digest('base64');
+      if (sri && sri !== real) throw new Error('build/vendor/' + LIBS[src] + ' no coincide con el integrity de index.html');
+      out.push(scriptTag(code));
     } else if (/^https?:/.test(src)) {
       throw new Error('Script externo sin copia local: ' + src);
     } else {

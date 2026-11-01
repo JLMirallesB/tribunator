@@ -289,6 +289,15 @@ Tribunator.App = {
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
       {
+        version: '1.2.14',
+        date: '2026-11-01',
+        changes: {
+          es: ['Seguridad: jsPDF 2.5.1 → 4.2.1 y jspdf-autotable 3.8.2 → 5.0.9 (corrigen fallos críticos de la 2.5.1). Los PDF salen exactamente iguales', 'Las librerías se cargan con comprobación de integridad (SRI)'],
+          va: ['Seguretat: jsPDF 2.5.1 → 4.2.1 i jspdf-autotable 3.8.2 → 5.0.9 (corregeixen errors crítics de la 2.5.1). Els PDF ixen exactament iguals', 'Les llibreries es carreguen amb comprovació d\'integritat (SRI)'],
+          en: ['Security: jsPDF 2.5.1 → 4.2.1 and jspdf-autotable 3.8.2 → 5.0.9 (they fix critical flaws in 2.5.1). PDFs come out exactly the same', 'Libraries are loaded with integrity checks (SRI)']
+        }
+      },
+      {
         version: '1.2.13',
         date: '2026-09-13',
         changes: {
