@@ -18,7 +18,11 @@ Tribunator.translations = {
         designedBy: 'está diseñada por',
         withHelp: 'con ayuda de Claude.',
         coffee: 'Si te resulta útil, puedes invitarme a una horchata',
-        contact: 'Errores y sugerencias'
+        contact: 'Errores y sugerencias',
+        moreInfo: 'Más información sobre este proyecto',
+        codeLicense: 'Código bajo licencia',
+        contentLicense: 'contenidos bajo',
+        source: 'código fuente'
       }
     },
     common: {
@@ -394,7 +398,11 @@ Tribunator.translations = {
         designedBy: 'està dissenyada per',
         withHelp: 'amb ajuda de Claude.',
         coffee: 'Si et resulta útil, pots convidar-me a una orxata',
-        contact: 'Errors i suggeriments'
+        contact: 'Errors i suggeriments',
+        moreInfo: 'Més informació sobre aquest projecte',
+        codeLicense: 'Codi amb llicència',
+        contentLicense: 'continguts amb llicència',
+        source: 'codi font'
       }
     },
     common: {
@@ -770,7 +778,11 @@ Tribunator.translations = {
         designedBy: 'is designed by',
         withHelp: 'with the help of Claude.',
         coffee: 'If you find it useful, you can buy me a horchata',
-        contact: 'Bugs & suggestions'
+        contact: 'Bugs & suggestions',
+        moreInfo: 'More about this project',
+        codeLicense: 'Code licensed under',
+        contentLicense: 'content under',
+        source: 'source code'
       }
     },
     common: {

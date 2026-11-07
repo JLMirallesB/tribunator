@@ -209,9 +209,9 @@ Tribunator.App = {
     }));
     footer.appendChild(document.createTextNode(' ' + t('app.footer.designedBy') + ' '));
     footer.appendChild(Tribunator.Utils.el('a', {
-      href: 'https://www.jlmirall.es',
+      href: 'https://jlmirall.es',
       target: '_blank',
-      textContent: 'José Luis Miralles'
+      textContent: 'José Luis Miralles Bono'
     }));
     footer.appendChild(document.createTextNode(' ' + t('app.footer.withHelp') + ' '));
     footer.appendChild(document.createTextNode(t('app.footer.coffee') + ' '));
@@ -225,6 +225,20 @@ Tribunator.App = {
       href: 'mailto:joseluismirallesbono@gmail.com',
       textContent: t('app.footer.contact')
     }));
+    footer.appendChild(document.createTextNode(' · '));
+    footer.appendChild(Tribunator.Utils.el('a', {
+      href: 'https://elpulpoenelvaso.jlmirall.es/?p=744',
+      target: '_blank',
+      textContent: t('app.footer.moreInfo')
+    }));
+    var lic = Tribunator.Utils.el('div', { className: 'app-footer-licencia' });
+    lic.appendChild(document.createTextNode(t('app.footer.codeLicense') + ' '));
+    lic.appendChild(Tribunator.Utils.el('a', { href: 'https://www.gnu.org/licenses/agpl-3.0.html', target: '_blank', textContent: 'AGPL v3' }));
+    lic.appendChild(document.createTextNode(' · ' + t('app.footer.contentLicense') + ' '));
+    lic.appendChild(Tribunator.Utils.el('a', { href: 'https://creativecommons.org/licenses/by-sa/4.0/', target: '_blank', textContent: 'CC BY-SA 4.0' }));
+    lic.appendChild(document.createTextNode(' · '));
+    lic.appendChild(Tribunator.Utils.el('a', { href: 'https://github.com/JLMirallesB/tribunator', target: '_blank', textContent: t('app.footer.source') }));
+    footer.appendChild(lic);
   },
 
   loadDemo: function() {
@@ -288,6 +302,15 @@ Tribunator.App = {
     var el = Tribunator.Utils.el;
     var currentVersion = Tribunator.Store.VERSION;
     var entries = [
+      {
+        version: '1.2.15',
+        date: '2026-11-07',
+        changes: {
+          es: ['Licencia: el código pasa a GNU AGPL v3 y los contenidos a CC BY-SA 4.0. El pie lo indica, con enlace al código fuente y a la entrada del blog'],
+          va: ['Llicència: el codi passa a GNU AGPL v3 i els continguts a CC BY-SA 4.0. El peu ho indica, amb enllaç al codi font i a l\'entrada del blog'],
+          en: ['License: code is now GNU AGPL v3 and content CC BY-SA 4.0. The footer says so, with links to the source code and the blog post']
+        }
+      },
       {
         version: '1.2.14',
         date: '2026-11-01',

@@ -170,7 +170,9 @@ Opciones comunes: nombre de archivo, cabecera con logo, color principal configur
 
 ## Creditos
 
-**Tribunator** esta disenada por [Jose Luis Miralles](https://www.jlmirall.es) con ayuda de Claude.
+**Tribunator** esta disenada por [José Luis Miralles Bono](https://jlmirall.es) con ayuda de Claude.
+
+Más información: [TRIBUNATOR, App para el diseño de tribunales](https://elpulpoenelvaso.jlmirall.es/?p=744)
 
 Si te resulta util, puedes invitarme a una horchata: [ko-fi.com/miralles](https://ko-fi.com/miralles)
 
@@ -178,4 +180,12 @@ Errores y sugerencias: [joseluismirallesbono@gmail.com](mailto:joseluismirallesb
 
 ## Licencia
 
-Uso libre para centros educativos.
+© 2026 José Luis Miralles Bono
+
+- **Código:** [GNU AGPL v3](LICENSE). Puedes usarlo, modificarlo y redistribuirlo, también con fines
+  comerciales, siempre que lo que derives se publique con la misma licencia y con su código fuente disponible.
+- **Contenidos** (textos, plantillas, datos de demostración y documentación): [CC BY-SA 4.0](LICENSE-CONTENIDOS).
+
+**Excepciones:** las librerías de `build/vendor/`, que también van incrustadas en `tribunator.html`,
+conservan su licencia: [SheetJS](https://sheetjs.com) (Apache 2.0), [jsPDF](https://github.com/parallax/jsPDF)
+(MIT) y [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) (MIT).
